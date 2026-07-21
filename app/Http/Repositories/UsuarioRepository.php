@@ -47,7 +47,8 @@ class UsuarioRepository
 
     public function eliminarUsuario(Usuario $usuario) {
         try {
-            $usuario->update(["activo" => false]);
+            $usuario->activo = false;
+            $usuario->save();
             return [
                 "mensaje" => "Usuario eliminado",
                 "usuario" => $usuario
