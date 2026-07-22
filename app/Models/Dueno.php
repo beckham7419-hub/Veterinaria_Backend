@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Dueno extends Authenticatable
+class Dueno extends Authenticatable implements JWTSubject
 {
     use HasFactory;
 
@@ -25,10 +26,19 @@ class Dueno extends Authenticatable
 
     protected $casts = [
         'activo' => 'boolean',
-        'contrasena' => 'hashed'
+        'contrasena' => 'hashed',
+        'tokens_validos_desde' => 'datetime'
     ];
 
     public function getAuthPassword() {
         return $this->contrasena;
+    }
+
+    public function getJWTIdentifier() {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims() {
+        return [];
     }
 }
