@@ -23,7 +23,7 @@ class Usuario extends Authenticatable
     ];
 
     protected $casts = [
-        'activo'     => 'boolean',
+        'activo' => 'boolean',
         'contrasena' => 'hashed'
     ];
 
