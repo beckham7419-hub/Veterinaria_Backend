@@ -5,8 +5,9 @@ use App\Http\Controllers\DuenoController;
 use App\Http\Controllers\AuthUsuarioController;
 use App\Http\Controllers\AuthDuenoController;
 
-Route::apiResource('usuarios', UsuarioController::class);
-Route::apiResource('duenos', DuenoController::class);
+Route::apiResource('usuarios', UsuarioController::class)->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
+Route::apiResource('duenos', DuenoController::class)->except(['store'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista']);
+Route::post('duenos', [DuenoController::class, 'store']);
 Route::post('auth/usuarios/login', [AuthUsuarioController::class, 'login']);
 Route::post('auth/usuarios/logout', [AuthUsuarioController::class, 'logout'])->middleware('auth:usuarios');
 Route::post('auth/duenos/login', [AuthDuenoController::class, 'login']);

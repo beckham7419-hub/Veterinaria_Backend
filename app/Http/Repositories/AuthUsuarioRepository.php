@@ -18,6 +18,10 @@ class AuthUsuarioRepository
             throw new \Exception("Credenciales invalidas");
         }
 
+        if (!$usuario->activo) {
+            throw new \Exception("Cuenta deshabilitada. Contacta al administrador.");
+        }
+
         if ($usuario->bloqueado_hasta) {
             if ($usuario->bloqueado_hasta->isFuture()) {
                 throw new \Exception("Cuenta bloqueada temporalmente. Intenta mas tarde.");

@@ -15,6 +15,10 @@ class AuthDuenoRepository
             throw new \Exception("Credenciales invalidas");
         }
 
+        if (!$dueno->activo) {
+            throw new \Exception("Cuenta deshabilitada. Contacta al administrador.");
+        }
+
         if (!Hash::check($credenciales["contrasena"], $dueno->contrasena)) {
             throw new \Exception("Credenciales invalidas");
         }
