@@ -22,6 +22,11 @@ Route::get('/panel/admin', function () {
     return view('panel.admin');
 });
 
+Route::get('/panel/veterinario', function () {
+    return view('panel.veterinario');
+});
+
+
 Route::apiResource('usuarios', UsuarioController::class)->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 Route::apiResource('duenos', DuenoController::class)->except(['store'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista']);
 Route::post('duenos', [DuenoController::class, 'store']);

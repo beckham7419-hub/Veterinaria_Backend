@@ -47,7 +47,7 @@
                     },
                     body: JSON.stringify({ 
                         correo: correo, 
-                        password: contrasena 
+                        contrasena: contrasena 
                     })
                 });
                 
@@ -60,7 +60,7 @@
                     if (datos.usuario.rol === 'recepcionista') {
                         window.location.href = '/panel/recepcion'; 
                     } else if (datos.usuario.rol === 'veterinario') {
-                        window.location.href = '/panel/consultas';
+                        window.location.href = '/panel/veterinario';
                     } else {
                         window.location.href = '/panel/admin';
                     }
