@@ -10,6 +10,18 @@ Route::get('/login-prueba', function () {
     return view('login');
 });
 
+Route::get('/panel/recepcion', function () {
+    return view('panel.recepcion'); 
+});
+
+Route::get('/panel/consultas', function () {
+    return view('panel.consultas');
+});
+
+Route::get('/panel/admin', function () {
+    return view('panel.admin');
+});
+
 Route::apiResource('usuarios', UsuarioController::class)->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 Route::apiResource('duenos', DuenoController::class)->except(['store'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista']);
 Route::post('duenos', [DuenoController::class, 'store']);

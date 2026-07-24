@@ -58,7 +58,7 @@
                     localStorage.setItem('rol_usuario', datos.usuario.rol);
                     
                     if (datos.usuario.rol === 'recepcionista') {
-                        window.location.href = '/panel/recepcion';
+                        window.location.href = '/panel/recepcion'; 
                     } else if (datos.usuario.rol === 'veterinario') {
                         window.location.href = '/panel/consultas';
                     } else {
