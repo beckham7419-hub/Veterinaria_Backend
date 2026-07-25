@@ -8,7 +8,7 @@ class DuenoRepository
 {
     public function obtenerDuenos() {
         try {
-            $duenos = Dueno::all();
+            $duenos = Dueno::where("activo", true)->get();
             return [
                 "mensaje" => "Duenos obtenidos",
                 "data" => $duenos

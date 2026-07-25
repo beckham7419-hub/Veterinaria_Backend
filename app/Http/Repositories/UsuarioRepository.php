@@ -8,7 +8,7 @@ class UsuarioRepository
 {
     public function obtenerUsuarios() {
         try {
-            $usuarios = Usuario::all();
+            $usuarios = Usuario::where("activo", true)->get();
             return [
                 "mensaje" => "Usuarios obtenidos",
                 "data" => $usuarios
