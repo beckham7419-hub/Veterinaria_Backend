@@ -3,12 +3,18 @@
 namespace App\Http\Repositories;
 
 use App\Models\Dueno;
+use App\Models\Mascota;
 use Illuminate\Support\Facades\Hash;
 
 class PerfilDuenoRepository
 {
     public function verPerfil(Dueno $dueno) {
-        return $dueno;
+        $totalMascotas = Mascota::where("dueno_id", $dueno->id)->where("activo", true)->count();
+
+        return [
+            "dueno" => $dueno,
+            "resumen_actividad" => ["total_mascotas" => $totalMascotas]
+        ];
     }
 
     public function actualizarPerfil(Dueno $dueno, array $data) {
