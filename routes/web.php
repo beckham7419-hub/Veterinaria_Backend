@@ -13,13 +13,17 @@ Route::get('/panel/recepcion', function () {
 });
 
 Route::get('/panel/admin', function () {
-    $users = Usuario::all();
+   $users = Usuario::where('activo', true)->get();
     return view('panel.admin', compact('users'));
 });
 
 Route::post('/agregarEmpleado',[UsuarioController::class, 'store'])->name('agregarEmpleado');
 
 Route::put('/actualizarEmpleado/{usuario}', [UsuarioController::class, 'update'])->name('actualizarEmpleado');
+
+Route::delete('/eliminarEmpleado/{usuario}', [UsuarioController::class, 'destroy'])->name('eliminarEmpleado');
+
+
 
 Route::get('/panel/veterinario', function () {
     return view('panel.veterinario');

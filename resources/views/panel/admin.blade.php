@@ -121,10 +121,43 @@
             <td>{{ $user->correo }}</td>
             <td><span class="badge bg-info text-dark">{{ ucfirst($user->rol) }}</span></td>
             <td>
+
+<button type="button" class="btn btn-info btn-sm text-white" data-bs-toggle="modal" data-bs-target="#ver-{{ $user->id }}">
+    Ver
+</button>
+
               <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#actualizar-{{ $user->id }}">
                 Actualizar
               </button>
-
+               <form action="{{ url('eliminarEmpleado', [$user->id]) }}" method="POST" class="d-inline">
+               @csrf
+   @method('DELETE')
+   <button type="submit" class="btn btn-danger btn-sm">
+      Eliminar
+   </button>
+</form>
+              
+<!-- Modal Ver Empleado -->
+<div class="modal fade" id="ver-{{ $user->id }}" tabindex="-1" aria-labelledby="verLabel-{{ $user->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="verLabel-{{ $user->id }}">Detalles del Empleado</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-start">
+        <p><strong>ID:</strong> {{ $user->id }}</p>
+        <p><strong>Nombre:</strong> {{ $user->nombre_completo }}</p>
+        <p><strong>Correo:</strong> {{ $user->correo }}</p>
+        <p><strong>Rol:</strong> <span class="badge bg-info text-dark">{{ ucfirst($user->rol) }}</span></p>
+        <p><strong>Estado:</strong> {{ $user->activo ? 'Activo' : 'Inactivo' }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
               <!-- Modal Actualizar -->
               <div class="modal fade" id="actualizar-{{ $user->id }}" tabindex="-1" aria-labelledby="actualizarLabel-{{ $user->id }}" aria-hidden="true">
                 <div class="modal-dialog">

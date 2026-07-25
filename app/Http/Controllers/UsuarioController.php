@@ -6,6 +6,7 @@ use App\Models\Usuario;
 use App\Http\Requests\StoreUsuarioRequest;
 use App\Http\Requests\UpdateUsuarioRequest;
 use App\Http\Repositories\UsuarioRepository;
+use Illuminate\Http\Request;
 
 class UsuarioController extends Controller
 {
@@ -66,7 +67,7 @@ class UsuarioController extends Controller
         }
     }
     
-    public function destroy(Usuario $usuario) {
+    public function destroy(Request $request, Usuario $usuario) {
         try {
             $this->usuarioRepository->eliminarUsuario($usuario);
            if ($request->expectsJson()) {
