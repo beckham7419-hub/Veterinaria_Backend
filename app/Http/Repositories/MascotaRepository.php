@@ -63,4 +63,17 @@ class MascotaRepository
             throw new \Exception("No se pudo dar de baja la mascota: " . $e -> getMessage(), 0, $e);
         }
     }
+
+    public function obtenerMascotasDeDueno(int $duenoId) {
+        try {
+            $mascotas = Mascota::where("dueno_id", $duenoId)->where("activo", true)->get();
+            return [
+                "mensaje" => "Mascotas obtenidas",
+                "data" => $mascotas
+            ];
+        }
+        catch (\Exception $e) {
+            throw new \Exception("No se pudieron obtener las mascotas: " . $e -> getMessage(), 0, $e);
+        }
+    }
 }

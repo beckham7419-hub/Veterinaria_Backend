@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthUsuarioController;
 use App\Http\Controllers\AuthDuenoController;
 use App\Http\Controllers\PerfilDuenoController;
 use App\Http\Controllers\MascotaController;
+use App\Http\Controllers\MisMascotasController;
 
 Route::get('/login-prueba', function () {
     return view('login');
@@ -39,3 +40,7 @@ Route::post('auth/usuarios/logout', [AuthUsuarioController::class, 'logout'])->m
 Route::post('auth/duenos/login', [AuthDuenoController::class, 'login']);
 Route::post('auth/duenos/logout', [AuthDuenoController::class, 'logout'])->middleware('auth:duenos');
 Route::apiResource('mascotas', MascotaController::class)->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista']);
+Route::get('mis-mascotas', [MisMascotasController::class, 'index'])->middleware(['auth:duenos', 'token.valido:duenos']);
+Route::post('mis-mascotas', [MisMascotasController::class, 'store'])->middleware(['auth:duenos', 'token.valido:duenos']);
+Route::get('mis-mascotas/{mascota}', [MisMascotasController::class, 'show'])->middleware(['auth:duenos', 'token.valido:duenos']);
+Route::put('mis-mascotas/{mascota}', [MisMascotasController::class, 'update'])->middleware(['auth:duenos', 'token.valido:duenos']);
