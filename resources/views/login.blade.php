@@ -10,7 +10,6 @@
     <!--HTML-->
    <div class="login-wrapper">
     <div class="contenedor-login">
-        <!-- Logo circular superior con desplazamiento sutil a la derecha -->
         <div class="logo-container">
             <img src="{{ asset('Imagenes/logo_de_la_veterinaria.jpg') }}" alt="Logo Veterinaria">
         </div>
@@ -29,8 +28,7 @@
             
             <button type="submit" class="btn btn-login">iniciar sesion</button>
         </form>
-        
-        <!-- Mensaje de error -->
+
         <p id="mensajeError" class="text-danger text-center mt-3" style="display: none;"></p>
     </div>
 </div>
@@ -53,7 +51,6 @@
 
     .contenedor-login {
         background-color: #242424;
-        /* Contorno rojo delgado alrededor de todo el cuadro */
         border: 2px solid #ff4d4d;
         padding: 40px 35px;
         border-radius: 14px;
@@ -64,27 +61,27 @@
         box-sizing: border-box;
     }
 
-    /* Contenedor circular con margen izquierdo ligeramente mayor para moverlo a la derecha */
     .logo-container {
-        width: 95px;
-        height: 95px;
+        width: 90px;
+        height: 90px;
         background-color: #2c2c2c;
-        border: 4px solid #ff4d4d;
-        border-radius: 50%;
+        border: 2px solid #ff4d4d;
+        border-radius: 16px; 
         margin: 0 auto 25px auto;
-        /* Desplaza ligeramente el logo hacia la derecha manteniendo el equilibrio */
         transform: translateX(10px); 
         display: flex;
         justify-content: center;
         align-items: center;
         overflow: hidden;
         box-shadow: 0 4px 10px rgba(255, 77, 77, 0.3);
+        box-sizing: border-box;
     }
 
     .logo-container img {
-        width: 95%;
-        height: 95%;
+        width: 100%;
+        height: 100%;
         object-fit: cover;
+        display: block;
     }
 
     .contenedor-login h2 {
