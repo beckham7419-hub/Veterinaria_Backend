@@ -8,24 +8,152 @@
 <body>
 
     <!--HTML-->
+   <div class="login-wrapper">
     <div class="contenedor-login">
-        <h2>Inicio de Sesión - Veterinaria</h2>
+        <!-- Logo circular superior con desplazamiento sutil a la derecha -->
+        <div class="logo-container">
+            <img src="{{ asset('Imagenes/logo_de_la_veterinaria.jpg') }}" alt="Logo Veterinaria">
+        </div>
+
+        <h2>Inicio de Sesión</h2>
+        <p class="subtitulovet">Sistema de Gestión Veterinaria</p>
+
         <form id="formularioLogin">
-            <div>
-                <label for="correo">Correo Electrónico:</label>
-                <input type="email" id="correo" name="correo" placeholder="ejemplo@clinica.com" required>
+            <div class="input-group-custom">
+                <input type="email" id="correo" name="correo" class="form-control" placeholder="Correo Electrónico" required>
             </div>
             
-            <div>
-                <label for="contrasena">Contraseña:</label>
-                <input type="password" id="contrasena" name="contrasena" placeholder="********" required>
+            <div class="input-group-custom">
+                <input type="password" id="contrasena" name="contrasena" class="form-control" placeholder="Contraseña" required>
             </div>
             
-            <button type="submit">Ingresar al Sistema</button>
+            <button type="submit" class="btn btn-login">iniciar sesion</button>
         </form>
         
-        <p id="mensajeError" style="color: red; display: none;"></p>
+        <!-- Mensaje de error -->
+        <p id="mensajeError" class="text-danger text-center mt-3" style="display: none;"></p>
     </div>
+</div>
+
+<style>
+    body {
+        background-color: #1a1a1a;
+        color: #ffffff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .login-wrapper {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #1e1e1e;
+        padding: 20px;
+    }
+
+    .contenedor-login {
+        background-color: #242424;
+        /* Contorno rojo delgado alrededor de todo el cuadro */
+        border: 2px solid #ff4d4d;
+        padding: 40px 35px;
+        border-radius: 14px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 77, 77, 0.15);
+        width: 100%;
+        max-width: 380px;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    /* Contenedor circular con margen izquierdo ligeramente mayor para moverlo a la derecha */
+    .logo-container {
+        width: 95px;
+        height: 95px;
+        background-color: #2c2c2c;
+        border: 4px solid #ff4d4d;
+        border-radius: 50%;
+        margin: 0 auto 25px auto;
+        /* Desplaza ligeramente el logo hacia la derecha manteniendo el equilibrio */
+        transform: translateX(10px); 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(255, 77, 77, 0.3);
+    }
+
+    .logo-container img {
+        width: 95%;
+        height: 95%;
+        object-fit: cover;
+    }
+
+    .contenedor-login h2 {
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 1.3rem;
+        margin-bottom: 5px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .subtitulovet {
+        color: #888888;
+        font-size: 0.85rem;
+        margin-bottom: 30px;
+    }
+
+    .input-group-custom {
+        margin-bottom: 18px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .contenedor-login .form-control {
+        background-color: #1a1a1a;
+        border: 1px solid #333333;
+        color: #ffffff;
+        border-radius: 6px;
+        padding: 14px 16px;
+        font-size: 0.95rem;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+    }
+
+    .contenedor-login .form-control::placeholder {
+        color: #777777;
+    }
+
+    .contenedor-login .form-control:focus {
+        background-color: #1a1a1a;
+        color: #ffffff;
+        border-color: #ff4d4d;
+        box-shadow: none;
+        outline: none;
+    }
+
+    .contenedor-login .btn-login {
+        background-color: #ff4d4d;
+        border: none;
+        color: #ffffff;
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 14px;
+        font-size: 0.95rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 10px;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .contenedor-login .btn-login:hover {
+        background-color: #e03b3b;
+        color: #ffffff;
+    }
+</style>
 
     <!--JAVASCRIPT-->
     <script>
