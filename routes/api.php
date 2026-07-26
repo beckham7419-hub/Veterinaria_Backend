@@ -22,6 +22,8 @@ Route::get('/panel/admin', function () {
     return view('panel.admin');
 });
 
+
+
 Route::get('/panel/veterinario', function () {
     return view('panel.veterinario');
 });
