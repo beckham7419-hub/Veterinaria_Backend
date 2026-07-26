@@ -6,6 +6,7 @@ use App\Models\Usuario;
 use App\Http\Requests\StoreUsuarioRequest;
 use App\Http\Requests\UpdateUsuarioRequest;
 use App\Http\Repositories\UsuarioRepository;
+use Illuminate\Http\Request;
 
 class UsuarioController extends Controller
 {
@@ -18,7 +19,10 @@ class UsuarioController extends Controller
     public function index() {
         try {
             $usuarios = $this->usuarioRepository->obtenerUsuarios();
-            return response()->json($usuarios,200);
+            if ($request->expectsJson()) {
+                return response()->json($usuarios, 200);
+            }
+            return view('panel.admin', ['users' => $usuarios['data']]);
         } 
         catch (\Exception $e) {
             return response()->json(["mensaje" => $e -> getMessage()],500);
@@ -28,7 +32,10 @@ class UsuarioController extends Controller
     public function store(StoreUsuarioRequest $request) {
         try {
             $usuario = $this->usuarioRepository->registrarUsuario($request->validated());
-            return response()->json($usuario,201);
+            if ($request->expectsJson()) {
+                return response()->json($usuario,201);
+            }
+          return redirect()->back()->with('exito', 'Empleado registrado correctamente');
         } 
         catch (\Exception $e) {
             return response()->json(["mensaje" => $e -> getMessage()],500);
@@ -37,7 +44,10 @@ class UsuarioController extends Controller
 
     public function show(Usuario $usuario) {
         try {
-            return response()->json($usuario,200);
+            if ($request->expectsJson()) {
+                return response()->json($usuario, 200);
+            }
+            return view('panel.admin_show', compact('usuario'));
         }
         catch(\Exception $e) {
             return response()->json(["mensaje" => $e -> getMessage()],404);
@@ -47,17 +57,24 @@ class UsuarioController extends Controller
     public function update(UpdateUsuarioRequest $request, Usuario $usuario) {
         try {
             $usuario = $this->usuarioRepository->actualizarUsuario($usuario, $request->validated());
-            return response()->json($usuario,200);
+         if ($request->expectsJson()) {
+                return response()->json($resultado, 200);
+            }
+            return redirect()->back()->with('exito', 'Empleado actualizado correctamente');
         } 
         catch (\Exception $e) {
             return response()->json(["mensaje" => $e -> getMessage()],404);
         }
     }
     
-    public function destroy(Usuario $usuario) {
+    public function destroy(Request $request, Usuario $usuario) {
         try {
             $this->usuarioRepository->eliminarUsuario($usuario);
-            return response()->json(["mensaje" => "Usuario dado de baja"],200);
+           if ($request->expectsJson()) {
+                return response()->json(["mensaje" => "Usuario dado de baja"], 200);
+            }
+
+            return redirect()->back()->with('exito', 'Empleado dado de baja correctamente');
         } 
         catch (\Exception $e) {
             return response()->json(["mensaje" => $e -> getMessage()],404);

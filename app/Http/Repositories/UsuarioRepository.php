@@ -34,6 +34,11 @@ class UsuarioRepository
 
     public function actualizarUsuario(Usuario $usuario, array $data) {
         try {
+            if (empty($data['contrasena'])) {
+            unset($data['contrasena']);
+        } else {
+            $data['contrasena'] = bcrypt($data['contrasena']);
+        }
             $usuario->update($data);
             return [
                 "mensaje" => "Usuario actualizado",
