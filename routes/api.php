@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthDuenoController;
 use App\Http\Controllers\PerfilDuenoController;
 use App\Http\Controllers\MascotaController;
 use App\Http\Controllers\MisMascotasController;
+use App\Http\Controllers\CitaController;
 
 Route::get('/login-prueba', function () {
     return view('login');
@@ -44,3 +45,4 @@ Route::get('mis-mascotas', [MisMascotasController::class, 'index'])->middleware(
 Route::post('mis-mascotas', [MisMascotasController::class, 'store'])->middleware(['auth:duenos', 'token.valido:duenos']);
 Route::get('mis-mascotas/{mascota}', [MisMascotasController::class, 'show'])->middleware(['auth:duenos', 'token.valido:duenos']);
 Route::put('mis-mascotas/{mascota}', [MisMascotasController::class, 'update'])->middleware(['auth:duenos', 'token.valido:duenos']);
+Route::apiResource('citas', CitaController::class)->except(['destroy'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista']);
