@@ -46,3 +46,5 @@ Route::post('mis-mascotas', [MisMascotasController::class, 'store'])->middleware
 Route::get('mis-mascotas/{mascota}', [MisMascotasController::class, 'show'])->middleware(['auth:duenos', 'token.valido:duenos']);
 Route::put('mis-mascotas/{mascota}', [MisMascotasController::class, 'update'])->middleware(['auth:duenos', 'token.valido:duenos']);
 Route::apiResource('citas', CitaController::class)->except(['destroy'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista']);
+Route::put('citas/{cita}/cancelar', [CitaController::class, 'cancelar'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista']);
+Route::put('citas/{cita}/check-in', [CitaController::class, 'registrarLlegada'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista']);

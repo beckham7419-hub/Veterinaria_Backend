@@ -101,4 +101,49 @@ class CitaRepository
             throw new \Exception("No se pudo actualizar la cita: " . $e -> getMessage(), 0, $e);
         }
     }
+
+    public function cancelarCita(Cita $cita, string $motivo, int $usuarioId) {
+        if ($cita->estado === "cancelada") {
+            throw new \Exception("Esta cita ya esta cancelada.");
+        }
+
+        if ($cita->estado === "completada") {
+            throw new \Exception("No se puede cancelar una cita ya completada.");
+        }
+
+        try {
+            $cita->estado = "cancelada";
+            $cita->motivo_cancelacion = $motivo;
+            $cita->cancelado_por_usuario_id = $usuarioId;
+            $cita->fecha_cancelacion = now();
+            $cita->save();
+            return ["mensaje" => "Cita cancelada", "cita" => $cita];
+        }
+        catch (\Exception $e) {
+            throw new \Exception("No se pudo cancelar la cita: " . $e -> getMessage(), 0, $e);
+        }
+    }
+
+    public function registrarLlegada(Cita $cita) {
+        if ($cita->estado === "cancelada") {
+            throw new \Exception("No se puede registrar la llegada de una cita cancelada.");
+        }
+
+        if ($cita->estado === "completada") {
+            throw new \Exception("No se puede registrar la llegada de una cita ya completada.");
+        }
+
+        if ($cita->hora_llegada) {
+            throw new \Exception("Ya se registro la llegada de esta cita.");
+        }
+
+        try {
+            $cita->hora_llegada = now();
+            $cita->save();
+            return ["mensaje" => "Llegada registrada", "cita" => $cita];
+        }
+        catch (\Exception $e) {
+            throw new \Exception("No se pudo registrar la llegada: " . $e -> getMessage(), 0, $e);
+        }
+    }
 }

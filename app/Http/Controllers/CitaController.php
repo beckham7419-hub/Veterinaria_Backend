@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Cita;
 use App\Http\Requests\StoreCitaRequest;
 use App\Http\Requests\UpdateCitaRequest;
+use App\Http\Requests\CancelarCitaRequest;
 use App\Http\Repositories\CitaRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CitaController extends Controller
 {
@@ -53,6 +55,31 @@ class CitaController extends Controller
         try {
             $cita = $this->citaRepository->actualizarCita($cita, $request->validated());
             return response()->json($cita,200);
+        }
+        catch (\Exception $e) {
+            return response()->json(["mensaje" => $e -> getMessage()],422);
+        }
+    }
+
+    public function cancelar(CancelarCitaRequest $request, Cita $cita) {
+        try {
+            $usuario = Auth::guard("usuarios")->user();
+            $resultado = $this->citaRepository->cancelarCita(
+                $cita,
+                $request->validated()["motivo_cancelacion"],
+                $usuario->id
+            );
+            return response()->json($resultado,200);
+        }
+        catch (\Exception $e) {
+            return response()->json(["mensaje" => $e -> getMessage()],422);
+        }
+    }
+
+    public function registrarLlegada(Cita $cita) {
+        try {
+            $resultado = $this->citaRepository->registrarLlegada($cita);
+            return response()->json($resultado,200);
         }
         catch (\Exception $e) {
             return response()->json(["mensaje" => $e -> getMessage()],422);
