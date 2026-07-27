@@ -89,7 +89,6 @@
                   <option value="" disabled selected>Selecciona el rol del empleado</option>
                   <option value="veterinario">Veterinario</option>
                   <option value="recepcionista">Recepcionista</option>
-                  <option value="administrador">Administrador</option>
                 </select>
               </div>
             </div>

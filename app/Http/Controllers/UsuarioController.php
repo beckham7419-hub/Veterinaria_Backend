@@ -80,4 +80,18 @@ class UsuarioController extends Controller
             return response()->json(["mensaje" => $e -> getMessage()],404);
         }
     }
+
+    public function readOne(Request $request, Usuario $usuario){
+     try {
+            $this->usuarioRepository->obtenerUnUsuario($request);
+           if ($request->expectsJson()) {
+                return response()->json(["mensaje" => "Usuario encontrado"], $usuario, 200);
+            }
+
+            return redirect()->back()->with('exito', 'Usuario encontrado');
+        } 
+        catch (\Exception $e) {
+            return response()->json(["mensaje" => $e -> getMessage()],404);
+        }
+    }
 }
