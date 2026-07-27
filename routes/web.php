@@ -15,7 +15,9 @@ Route::get('/panel/recepcion', function () {
 Route::get('/panel/admin', function () {
    $users = Usuario::where('activo', true)->get();
     return view('panel.admin', compact('users'));
-});
+})->name('gestionPersonal');
+
+Route::get('/buscarEmpleado', [UsuarioController::class, 'readOne'])->name('buscarEmpleado');
 
 Route::post('/agregarEmpleado',[UsuarioController::class, 'store'])->name('agregarEmpleado');
 

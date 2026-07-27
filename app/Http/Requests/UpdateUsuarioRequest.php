@@ -19,7 +19,7 @@ class UpdateUsuarioRequest extends FormRequest
         return [
             'nombre_completo' => 'sometimes|required|string|max:150',
             'correo' => ['sometimes', 'required', 'string', 'email', 'max:150',
-                Rule::unique('usuarios', 'correo')->ignore($this->route('usuario'))
+                Rule::unique('users', 'correo')->ignore($usuarioId)
             ],
             'contrasena' => 'nullable|string|min:8',
             'rol' => 'sometimes|required|string|in:administrador,veterinario,recepcionista'

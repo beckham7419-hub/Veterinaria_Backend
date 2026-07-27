@@ -60,6 +60,52 @@
       Agregar empleado 
     </button>
 
+    <!--formulario de busqueda de un empleado-->
+    <form action="{{route('buscarEmpleado')}}" method="GET" class="mb-4">
+    <div class="row align-items-end">
+            <div class="col-md-8">
+                <label class="form-label">Buscar empleado por correo:</label>
+                <input type="email" name="correo" class="form-control" placeholder="ejemplo@veterinaria.com" required value="{{ request('correo') }}">
+            </div>
+            <div class="col-md-4 mt-2 mt-md-0">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+                <a href="{{ url()->current() }}" class="btn btn-secondary">Limpiar</a>
+            </div>
+        </div>
+    </form>
+    <!-- Si se encuentra un empleado -->
+    @if(session('usuarioEncontrado'))
+    @php 
+        $buscado = (object) session('usuarioEncontrado'); 
+    @endphp
+    
+    <div class="card border-info mb-4 shadow-sm">
+        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-person-badge me-2"></i>Empleado Encontrado</h5>
+            <a href="{{ route('gestionPersonal') }}" class="btn-close btn-close-white" title="Cerrar resultado"></a>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <p class="mb-1"><strong>Nombre Completo:</strong> {{ $buscado->nombre_completo }}</p>
+                    <p class="mb-1"><strong>Correo Electrónico:</strong> {{ $buscado->correo }}</p>
+                    <p class="mb-1">
+                        <strong>Rol:</strong> 
+                        <span class="badge bg-info text-dark">{{ ucfirst($buscado->rol) }}</span>
+                    </p>
+                    <p class="mb-1">
+                        <strong>Estado:</strong> 
+                        @if(!empty($buscado->activo))
+                            <span class="badge bg-success">Activo</span>
+                        @else
+                            <span class="badge bg-secondary">Inactivo</span>
+                        @endif
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
     <!-- Modal Agregar Empleado -->
     <div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregarLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -89,6 +135,7 @@
                   <option value="" disabled selected>Selecciona el rol del empleado</option>
                   <option value="veterinario">Veterinario</option>
                   <option value="recepcionista">Recepcionista</option>
+                  <option value="administrador">Administrador</option>
                 </select>
               </div>
             </div>
@@ -114,6 +161,7 @@
       </thead>
       <tbody>
         @foreach ($users as $user)
+        @php $user = (object) $user; @endphp
           <tr>
             <td>{{ $user->id }}</td>
             <td>{{ $user->nombre_completo }}</td>
@@ -128,13 +176,17 @@
               <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#actualizar-{{ $user->id }}">
                 Actualizar
               </button>
-               <form action="{{ url('eliminarEmpleado', [$user->id]) }}" method="POST" class="d-inline">
-               @csrf
-   @method('DELETE')
-   <button type="submit" class="btn btn-danger btn-sm">
-      Eliminar
-   </button>
-</form>
+              <!--Boton de eliminar-->
+             @if($user->id != 1 && $user->id != auth('usuarios')->id())
+    <form action="{{ url('eliminarEmpleado', [$user->id]) }}" method="POST" class="d-inline">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-danger btn-sm">
+            Eliminar
+        </button>
+    </form>
+@endif
+              
               
 <!-- Modal Ver Empleado -->
 <div class="modal fade" id="ver-{{ $user->id }}" tabindex="-1" aria-labelledby="verLabel-{{ $user->id }}" aria-hidden="true">
@@ -145,7 +197,6 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body text-start">
-        <p><strong>ID:</strong> {{ $user->id }}</p>
         <p><strong>Nombre:</strong> {{ $user->nombre_completo }}</p>
         <p><strong>Correo:</strong> {{ $user->correo }}</p>
         <p><strong>Rol:</strong> <span class="badge bg-info text-dark">{{ ucfirst($user->rol) }}</span></p>

@@ -19,11 +19,11 @@ class UsuarioRepository
         }
     }
 
-     public function obtenerUnUsuario(String $correo) {
+     public function obtenerUnUsuario(string $correo) {
         try {
-            $usuario = Usuario::find($correo);
+            $usuario = Usuario::where('correo',$correo)->first();
             return [
-                "mensaje" => "Usuarios obtenidos",
+                "mensaje" => $usuario?"Usuarios encontrado":"Usuario no encontrado",
                 "data" => $usuario
             ];
         } 
