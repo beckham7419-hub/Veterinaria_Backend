@@ -33,19 +33,19 @@ class CitaRepository
 
     public function agendarCita(array $data) {
         $existeVeterinario = Cita::where("veterinario_id", $data["veterinario_id"])
-            ->where("fecha", $data["fecha"])
-            ->where("hora", $data["hora"])
-            ->where("estado", "!=", "cancelada")
-            ->exists();
+        ->where("fecha", $data["fecha"])
+        ->where("hora", $data["hora"])
+        ->where("estado", "!=", "cancelada")
+        ->exists();
 
         if ($existeVeterinario) {
             throw new \Exception("El veterinario ya tiene una cita agendada en ese horario.");
         }
 
         $existeMascota = Cita::where("mascota_id", $data["mascota_id"])
-            ->where("fecha", $data["fecha"])
-            ->where("estado", "!=", "cancelada")
-            ->exists();
+        ->where("fecha", $data["fecha"])
+        ->where("estado", "!=", "cancelada")
+        ->exists();
 
         if ($existeMascota) {
             throw new \Exception("Esta mascota ya tiene una cita activa programada para este dia.");
@@ -79,11 +79,11 @@ class CitaRepository
             $hora = $data["hora"] ?? $cita->hora;
 
             $existeVeterinario = Cita::where("veterinario_id", $veterinarioId)
-                ->where("fecha", $fecha)
-                ->where("hora", $hora)
-                ->where("estado", "!=", "cancelada")
-                ->where("id", "!=", $cita->id)
-                ->exists();
+            ->where("fecha", $fecha)
+            ->where("hora", $hora)
+            ->where("estado", "!=", "cancelada")
+            ->where("id", "!=", $cita->id)
+            ->exists();
 
             if ($existeVeterinario) {
                 throw new \Exception("El veterinario ya tiene una cita agendada en ese horario.");
@@ -144,6 +144,67 @@ class CitaRepository
         }
         catch (\Exception $e) {
             throw new \Exception("No se pudo registrar la llegada: " . $e -> getMessage(), 0, $e);
+        }
+    }
+
+    public function obtenerCitasDeDueno(int $duenoId) {
+        try {
+            $citas = Cita::where("dueno_id", $duenoId)
+            ->whereIn("estado", ["agendada", "confirmada"])
+            ->orderBy("fecha")->orderBy("hora")
+            ->get();
+
+            return ["mensaje" => "Citas obtenidas", "data" => $citas];
+        }
+        catch (\Exception $e) {
+            throw new \Exception("No se pudieron obtener las citas: " . $e -> getMessage(), 0, $e);
+        }
+    }
+
+    public function cancelarCitaDueno(Cita $cita, int $duenoId) {
+        if ((int) $cita->dueno_id !== (int) $duenoId) {
+            throw new \Exception("No tienes permiso para cancelar esta cita.");
+        }
+
+        if ($cita->estado === "cancelada") {
+            throw new \Exception("Esta cita ya esta cancelada.");
+        }
+
+        if ($cita->estado === "completada") {
+            throw new \Exception("No se puede cancelar una cita ya completada.");
+        }
+
+        $fechaHoraCita = \Carbon\Carbon::parse($cita->fecha->format("Y-m-d") . " " . $cita->hora);
+        $horasRestantes = ($fechaHoraCita->timestamp - now()->timestamp) / 3600;
+
+        if ($horasRestantes < 2) {
+            throw new \Exception("Solo puedes cancelar con al menos 2 horas de anticipacion.");
+        }
+
+        try {
+            $cita->estado = "cancelada";
+            $cita->cancelado_por_dueno_id = $duenoId;
+            $cita->fecha_cancelacion = now();
+            $cita->save();
+
+            return ["mensaje" => "Cita cancelada", "cita" => $cita];
+        }
+        catch (\Exception $e) {
+            throw new \Exception("No se pudo cancelar la cita: " . $e -> getMessage(), 0, $e);
+        }
+    }
+
+    public function obtenerHorariosOcupados(int $veterinarioId, string $fecha) {
+        try {
+            $ocupados = Cita::where("veterinario_id", $veterinarioId)
+            ->where("fecha", $fecha)
+            ->where("estado", "!=", "cancelada")
+            ->pluck("hora");
+
+            return ["mensaje" => "Horarios ocupados obtenidos", "data" => $ocupados];
+        }
+        catch (\Exception $e) {
+            throw new \Exception("No se pudieron obtener los horarios: " . $e -> getMessage(), 0, $e);
         }
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\PerfilDuenoController;
 use App\Http\Controllers\MascotaController;
 use App\Http\Controllers\MisMascotasController;
 use App\Http\Controllers\CitaController;
+use App\Http\Controllers\MisCitasController;
 
 Route::get('/login-prueba', function () {
     return view('login');
@@ -48,3 +49,7 @@ Route::put('mis-mascotas/{mascota}', [MisMascotasController::class, 'update'])->
 Route::apiResource('citas', CitaController::class)->except(['destroy'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista']);
 Route::put('citas/{cita}/cancelar', [CitaController::class, 'cancelar'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista']);
 Route::put('citas/{cita}/check-in', [CitaController::class, 'registrarLlegada'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista']);
+Route::get('mis-citas', [MisCitasController::class, 'index'])->middleware(['auth:duenos', 'token.valido:duenos']);
+Route::post('mis-citas', [MisCitasController::class, 'store'])->middleware(['auth:duenos', 'token.valido:duenos']);
+Route::put('mis-citas/{cita}/cancelar', [MisCitasController::class, 'cancelar'])->middleware(['auth:duenos', 'token.valido:duenos']);
+Route::get('mis-citas/horarios-disponibles', [MisCitasController::class, 'horariosDisponibles'])->middleware(['auth:duenos', 'token.valido:duenos']);
