@@ -43,9 +43,21 @@
 
   <div class="container mt-4">
     <h2>Gestionar personal</h2>
+    <!--Mensajes de exito en el blade-->
     @if(session('exito'))
   <div class="alert alert-success alert-dismissible fade show" role="alert">
     {{ session('exito') }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+@endif
+<!--Mensajes de error en el blade-->
+@if ($errors->any())
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <ul class="mb-0">
+      @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+      @endforeach
+    </ul>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 @endif
@@ -152,7 +164,6 @@
     <table class="table table-striped table-hover mt-3">
       <thead class="table-dark">
         <tr>
-          <th scope="col">Id</th>
           <th scope="col">Nombre</th>
           <th scope="col">Correo</th>
           <th scope="col">Rol</th>
@@ -163,7 +174,6 @@
         @foreach ($users as $user)
         @php $user = (object) $user; @endphp
           <tr>
-            <td>{{ $user->id }}</td>
             <td>{{ $user->nombre_completo }}</td>
             <td>{{ $user->correo }}</td>
             <td><span class="badge bg-info text-dark">{{ ucfirst($user->rol) }}</span></td>
@@ -177,7 +187,7 @@
                 Actualizar
               </button>
               <!--Boton de eliminar-->
-             @if($user->id != 1 && $user->id != auth('usuarios')->id())
+             @if($user->id != 1 && $user->id != auth('usuarios')->id() && $user->id != auth()->id())
     <form action="{{ url('eliminarEmpleado', [$user->id]) }}" method="POST" class="d-inline">
         @csrf
         @method('DELETE')

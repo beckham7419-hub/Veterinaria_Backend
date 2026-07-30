@@ -67,32 +67,40 @@ class UsuarioController extends Controller
         }
     }
     
+    
     public function destroy(Request $request, Usuario $usuario) {
-        try {
-            
-             if($usuario->id==1){
-                if ($request->expectsJson()) {
+    try {
+        
+        if ($usuario->id == 1) {
+            if ($request->expectsJson()) {
                 return response()->json(["mensaje" => "El administrador principal no puede ser eliminado"], 403);
             }
             return redirect()->back()->with('error', 'El administrador principal no puede ser eliminado');
         }
-             if ($usuario->id == auth('usuarios')->id() || $usuario->id == auth()->id()) {
-             if ($request->expectsJson()) {
-        return response()->json(["mensaje" => "No puedes eliminar tu propia cuenta con la sesión activa"], 403);
-    }
-    return redirect()->back()->with('error', 'No puedes eliminar tu propia cuenta con la sesión activa');
-}
-      $this->usuarioRepository->eliminarUsuario($usuario);
-      if ($request->expectsJson()) {
-                return response()->json(["mensaje" => "Usuario dado de baja"], 200);
-            }
 
-            return redirect()->back()->with('exito', 'Empleado dado de baja correctamente');
-        } 
-        catch (\Exception $e) {
-            return response()->json(["mensaje" => $e -> getMessage()],404);
+        $idAutenticado = auth('usuarios')->check() 
+    ? auth('usuarios')->id() 
+    : (auth()->check() ? auth()->id() : null);
+
+        if ($usuario->id == $idAutenticado) {
+            if ($request->expectsJson()) {
+                return response()->json(["mensaje" => "No puedes eliminar tu propia cuenta con la sesión activa"], 403);
+            }
+            return redirect()->back()->with('error', 'No puedes eliminar tu propia cuenta con la sesión activa');
         }
+
+        $this->usuarioRepository->eliminarUsuario($usuario);
+
+        if ($request->expectsJson()) {
+            return response()->json(["mensaje" => "Usuario dado de baja"], 200);
+        }
+
+        return redirect()->back()->with('exito', 'Empleado dado de baja correctamente');
+    } 
+    catch (\Exception $e) {
+        return response()->json(["mensaje" => $e->getMessage()], 500);
     }
+}
 
     public function readOne(Request $request){
      try {
