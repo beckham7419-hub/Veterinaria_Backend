@@ -6,10 +6,135 @@
   <title>Panel de recepción</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { background-color: #121212; }
-    .table { color: #fff; }
-    .nav-tabs .nav-link { color: #ccc; }
-    .nav-tabs .nav-link.active { background-color: #242424; color: #fff; border-color: #444 #444 #242424; }
+    body {
+      background-color: #1a1a1a;
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* ---------- Navbar ---------- */
+    .navbar-veterinaria {
+      background-color: #242424;
+      border-bottom: 2px solid #ff4d4d;
+      box-shadow: 0 2px 12px rgba(255, 77, 77, 0.15);
+    }
+
+    .logo-container-nav {
+      width: 48px;
+      height: 48px;
+      border: 2px solid #ff4d4d;
+      border-radius: 10px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(255, 77, 77, 0.3);
+    }
+
+    .logo-container-nav img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .navbar-brand-text {
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-size: 0.95rem;
+    }
+
+    #btnLogout {
+      border-color: #ff4d4d;
+      color: #ff4d4d;
+      font-weight: 600;
+    }
+
+    #btnLogout:hover {
+      background-color: #ff4d4d;
+      color: #ffffff;
+    }
+
+    /* ---------- Panel principal ---------- */
+    .panel-card {
+      background-color: #242424;
+      border: 2px solid #ff4d4d;
+      border-radius: 14px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 77, 77, 0.15);
+    }
+
+    /* ---------- Tabs ---------- */
+    .nav-tabs { border-bottom: 1px solid #333333; }
+    .nav-tabs .nav-link { color: #999999; border: none; font-weight: 500; }
+    .nav-tabs .nav-link:hover { color: #ffffff; border-color: transparent; }
+    .nav-tabs .nav-link.active {
+      background-color: transparent;
+      color: #ff4d4d;
+      border: none;
+      border-bottom: 2px solid #ff4d4d;
+    }
+
+    /* ---------- Tablas ---------- */
+    .table { color: #ffffff; }
+    .table > :not(caption) > * > * { background-color: transparent; color: #ffffff; border-bottom-color: #333333; }
+    .table-dark thead { background-color: #1a1a1a; }
+    .table-dark th { border-color: #333333; color: #ff4d4d; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
+    .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: #262626; }
+    .table-hover > tbody > tr:hover > * { background-color: #2f2020; }
+
+    /* ---------- Formularios ---------- */
+    .form-control, .form-select {
+      background-color: #1a1a1a;
+      border: 1px solid #333333;
+      color: #ffffff;
+      border-radius: 6px;
+    }
+
+    .form-control::placeholder { color: #777777; }
+
+    .form-control:focus, .form-select:focus {
+      background-color: #1a1a1a;
+      color: #ffffff;
+      border-color: #ff4d4d;
+      box-shadow: 0 0 0 0.2rem rgba(255, 77, 77, 0.25);
+    }
+
+    .form-select option { background-color: #1a1a1a; color: #ffffff; }
+
+    .form-label { color: #cccccc; }
+
+    /* ---------- Botones ---------- */
+    .btn-primary {
+      background-color: #ff4d4d;
+      border-color: #ff4d4d;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover, .btn-primary:focus {
+      background-color: #e03b3b;
+      border-color: #e03b3b;
+    }
+
+    .btn-outline-light:hover { color: #1a1a1a; }
+
+    /* ---------- Modales ---------- */
+    .modal-content-veterinaria {
+      background-color: #242424;
+      border: 2px solid #ff4d4d;
+      border-radius: 14px;
+      box-shadow: 0 0 20px rgba(255, 77, 77, 0.25);
+    }
+
+    .modal-content-veterinaria .modal-header,
+    .modal-content-veterinaria .modal-footer {
+      border-color: #333333;
+    }
+
+    /* ---------- Alertas ---------- */
+    .alert { border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); }
+
+    /* ---------- Badges de estado ---------- */
     .badge-estado-agendada { background-color: #6c757d; }
     .badge-estado-confirmada { background-color: #0d6efd; }
     .badge-estado-en_consulta { background-color: #fd7e14; }
@@ -18,11 +143,13 @@
   </style>
 </head>
 <body>
-  <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+  <nav class="navbar navbar-veterinaria" data-bs-theme="dark">
     <div class="container-fluid">
       <span class="navbar-brand d-flex align-items-center gap-2">
-        <img src="{{ asset('Imagenes/logo_de_la_veterinaria.jpg') }}" width="45" height="45" class="rounded-circle" alt="Logo">
-        Recepción — <span id="nombre-usuario">Cargando...</span>
+        <span class="logo-container-nav">
+          <img src="{{ asset('Imagenes/logo_veterinaria_transparente.png') }}" alt="Logo">
+        </span>
+        <span class="navbar-brand-text">Recepción — <span id="nombre-usuario">Cargando...</span></span>
       </span>
       <button class="btn btn-outline-light btn-sm" id="btnLogout">Cerrar sesión</button>
     </div>
@@ -31,6 +158,7 @@
   <div class="container-fluid mt-4">
     <div id="alertArea"></div>
 
+    <div class="panel-card">
     <ul class="nav nav-tabs">
       <li class="nav-item"><button class="nav-link active" id="tabBtnDuenos" data-bs-toggle="tab" data-bs-target="#tab-duenos" type="button">Dueños</button></li>
       <li class="nav-item"><button class="nav-link" id="tabBtnMascotas" data-bs-toggle="tab" data-bs-target="#tab-mascotas" type="button">Mascotas</button></li>
@@ -124,11 +252,12 @@
         </div>
       </div>
     </div>
+    </div>
   </div>
 
   <div class="modal fade" id="modalDueno" tabindex="-1">
     <div class="modal-dialog">
-      <div class="modal-content bg-dark text-white">
+      <div class="modal-content modal-content-veterinaria bg-dark text-white">
         <div class="modal-header">
           <h5 class="modal-title" id="modalDuenoTitulo">Agregar dueño</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -156,7 +285,7 @@
 
   <div class="modal fade" id="modalMascota" tabindex="-1">
     <div class="modal-dialog">
-      <div class="modal-content bg-dark text-white">
+      <div class="modal-content modal-content-veterinaria bg-dark text-white">
         <div class="modal-header">
           <h5 class="modal-title" id="modalMascotaTitulo">Agregar mascota</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -193,7 +322,7 @@
 
   <div class="modal fade" id="modalCita" tabindex="-1">
     <div class="modal-dialog">
-      <div class="modal-content bg-dark text-white">
+      <div class="modal-content modal-content-veterinaria bg-dark text-white">
         <div class="modal-header">
           <h5 class="modal-title">Agendar cita</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -230,7 +359,7 @@
 
   <div class="modal fade" id="modalReprogramar" tabindex="-1">
     <div class="modal-dialog">
-      <div class="modal-content bg-dark text-white">
+      <div class="modal-content modal-content-veterinaria bg-dark text-white">
         <div class="modal-header">
           <h5 class="modal-title">Reprogramar cita</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -256,7 +385,7 @@
 
   <div class="modal fade" id="modalCancelar" tabindex="-1">
     <div class="modal-dialog">
-      <div class="modal-content bg-dark text-white">
+      <div class="modal-content modal-content-veterinaria bg-dark text-white">
         <div class="modal-header">
           <h5 class="modal-title">Cancelar cita</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>

@@ -11,7 +11,7 @@
    <div class="login-wrapper">
     <div class="contenedor-login">
         <div class="logo-container">
-            <img src="{{ asset('Imagenes/logo_de_la_veterinaria.jpg') }}" alt="Logo Veterinaria">
+            <img src="{{ asset('Imagenes/logo_veterinaria_transparente.png') }}" alt="Logo Veterinaria">
         </div>
 
         <h2>Inicio de Sesión</h2>
@@ -62,25 +62,24 @@
     }
 
     .logo-container {
-        width: 90px;
-        height: 90px;
-        background-color: #2c2c2c;
+        width: 170px;
+        height: 120px;
+        background-color: transparent;
         border: 2px solid #ff4d4d;
-        border-radius: 16px; 
+        border-radius: 16px;
         margin: 0 auto 25px auto;
-        transform: translateX(10px); 
+        padding: 10px;
         display: flex;
         justify-content: center;
         align-items: center;
-        overflow: hidden;
-        box-shadow: 0 4px 10px rgba(255, 77, 77, 0.3);
+        box-shadow: 0 4px 14px rgba(255, 77, 77, 0.35);
         box-sizing: border-box;
     }
 
     .logo-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
         display: block;
     }
 
