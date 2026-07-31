@@ -11,16 +11,8 @@ Route::get('/panel/recepcion', function () {
 });
 
 Route::get('/panel/admin', function () {
-<<<<<<< HEAD
-   $users = Usuario::where('activo', true)->get();
-    return view('panel.admin', compact('users'));
-})->name('gestionPersonal');
-
-Route::get('/buscarEmpleado', [UsuarioController::class, 'readOne'])->name('buscarEmpleado');
-=======
     return view('panel.admin');
 });
->>>>>>> Taisha
 
 Route::get('/panel/veterinario', function () {
     return view('panel.veterinario');

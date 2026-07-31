@@ -16,15 +16,13 @@ class UpdateUsuarioRequest extends FormRequest
 
     public function rules(): array
     {
-        $usuarioParam = $this->route('usuario');
+    
+    $usuarioParam = $this->route('usuario');
     $usuarioId = is_object($usuarioParam) ? $usuarioParam->id : $usuarioParam;
         return [
             'nombre_completo' => 'sometimes|required|string|max:150',
             'correo' => ['sometimes', 'required', 'string', 'email', 'max:150',
-                Rule::unique('usuarios', 'correo')
-                ->where(fn ($query) => $query->where('activo', true)) 
-                ->ignore($usuarioId)
-            ],
+            Rule::unique('usuarios', 'correo')->ignore($usuarioId)],
             'contrasena' => 'nullable|string|min:8',
             'rol' => 'sometimes|required|string|in:administrador,veterinario,recepcionista'
         ];
@@ -42,12 +40,9 @@ class UpdateUsuarioRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        if ($this->expectsJson()) {
         throw new HttpResponseException(response()->json([
             'mensaje' => 'Validacion fallida',
             'errores' => $validator->errors()
         ], 422));
-        }
-        parent::failedValidation($validator);
     }
 }

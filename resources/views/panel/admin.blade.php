@@ -6,293 +6,203 @@
   <title>Panel del admin</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { background-color: #121212; }
-    .table { color: #fff; }
+   body {
+      background-color: #1a1a1a;
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* ---------- Navbar ---------- */
+    .navbar-veterinaria {
+      background-color: #242424;
+      border-bottom: 2px solid #ff4d4d;
+      box-shadow: 0 2px 12px rgba(255, 77, 77, 0.15);
+    }
+
+    .logo-container-nav {
+      width: 48px;
+      height: 48px;
+      border: 2px solid #ff4d4d;
+      border-radius: 10px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(255, 77, 77, 0.3);
+    }
+
+    .logo-container-nav img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .navbar-brand-text {
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-size: 0.95rem;
+    }
+
+    #btnLogout {
+      border-color: #ff4d4d;
+      color: #ff4d4d;
+      font-weight: 600;
+    }
+
+    #btnLogout:hover {
+      background-color: #ff4d4d;
+      color: #ffffff;
+    }
+
+    /* ---------- Panel principal ---------- */
+    .panel-card {
+      background-color: #242424;
+      border: 2px solid #ff4d4d;
+      border-radius: 14px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 77, 77, 0.15);
+    }
+
+    /* ---------- Tabs ---------- */
+    .nav-tabs { border-bottom: 1px solid #333333; }
+    .nav-tabs .nav-link { color: #999999; border: none; font-weight: 500; }
+    .nav-tabs .nav-link:hover { color: #ffffff; border-color: transparent; }
+    .nav-tabs .nav-link.active {
+      background-color: transparent;
+      color: #ff4d4d;
+      border: none;
+      border-bottom: 2px solid #ff4d4d;
+    }
+
+    /* ---------- Tablas ---------- */
+    .table { color: #ffffff; }
+    .table > :not(caption) > * > * { background-color: transparent; color: #ffffff; border-bottom-color: #333333; }
+    .table-dark thead { background-color: #1a1a1a; }
+    .table-dark th { border-color: #333333; color: #ff4d4d; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
+    .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: #262626; }
+    .table-hover > tbody > tr:hover > * { background-color: #2f2020; }
+
+    /* ---------- Formularios ---------- */
+    .form-control, .form-select {
+      background-color: #1a1a1a;
+      border: 1px solid #333333;
+      color: #ffffff;
+      border-radius: 6px;
+    }
+
+    .form-control::placeholder { color: #777777; }
+
+    .form-control:focus, .form-select:focus {
+      background-color: #1a1a1a;
+      color: #ffffff;
+      border-color: #ff4d4d;
+      box-shadow: 0 0 0 0.2rem rgba(255, 77, 77, 0.25);
+    }
+
+    .form-select option { background-color: #1a1a1a; color: #ffffff; }
+
+    .form-label { color: #cccccc; }
+
+    /* ---------- Botones ---------- */
+    .btn-primary {
+      background-color: #ff4d4d;
+      border-color: #ff4d4d;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover, .btn-primary:focus {
+      background-color: #e03b3b;
+      border-color: #e03b3b;
+    }
+
+    .btn-outline-light:hover { color: #1a1a1a; }
+
+    /* ---------- Modales ---------- */
+    .modal-content-veterinaria {
+      background-color: #242424;
+      border: 2px solid #ff4d4d;
+      border-radius: 14px;
+      box-shadow: 0 0 20px rgba(255, 77, 77, 0.25);
+    }
+
+    .modal-content-veterinaria .modal-header,
+    .modal-content-veterinaria .modal-footer {
+      border-color: #333333;
+    }
+
+    /* ---------- Alertas ---------- */
+    .alert { border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); }
+
+    /* ---------- Badges de estado ---------- */
+    .badge-estado-agendada { background-color: #6c757d; }
+    .badge-estado-confirmada { background-color: #0d6efd; }
+    .badge-estado-en_consulta { background-color: #fd7e14; }
+    .badge-estado-completada { background-color: #198754; }
+    .badge-estado-cancelada { background-color: #dc3545; }
   </style>
 </head>
 <body>
-  <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+  <nav class="navbar navbar-veterinaria" data-bs-theme="dark">
     <div class="container-fluid">
       <span class="navbar-brand d-flex align-items-center gap-2">
-        <img src="{{ asset('Imagenes/logo_de_la_veterinaria.jpg') }}" width="50" height="50" class="rounded-circle" alt="Logo">
+        <span class="logo-container-nav">
+        <img src="{{ asset('Imagenes/logo_veterinaria_transparente.png') }}" width="50" height="50" class="rounded-circle" alt="Logo">
+        </span>
         Admin — <span id="nombre-usuario">Cargando...</span>
       </span>
       <button class="btn btn-outline-light btn-sm" id="btnLogout">Cerrar sesión</button>
     </div>
   </nav>
 
-  <div class="container-fluid mt-4">
-    <div id="alertArea"></div>
-
-    <h2>Gestionar personal</h2>
-<<<<<<< HEAD
-    <!--Mensajes de exito en el blade-->
-    @if(session('exito'))
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
-    {{ session('exito') }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-@endif
-<!--Mensajes de error en el blade-->
-@if ($errors->any())
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <ul class="mb-0">
-      @foreach ($errors->all() as $error)
-        <li>{{ $error }}</li>
-      @endforeach
+  <div class="panel-card">
+    <ul class="nav nav-tabs">
+      <li class="nav-item"><button class="nav-link active" id="tabBtnPersonal" data-bs-toggle="tab" data-bs-target="#tab-gestionar-personal" type="button">Gestionar personal</button></li>
+      <li class="nav-item"><button class="nav-link" id="tabBtnInventario" data-bs-toggle="tab" data-bs-target="#tab-gestionar-inventario" type="button">Gestionar inventario</button></li>
+      <li class="nav-item"><button class="nav-link" id="tabBtnCitasAdmin" data-bs-toggle="tab" data-bs-target="#tab-citas-admin" type="button">Gestionar citas</button></li>
+      <li class="nav-item"><button class="nav-link" id="tabBtnClientes" data-bs-toggle="tab" data-bs-target="#tab-gestionar-clientes" type="button">Gestionar clientes</button></li>
+      <li class="nav-item"><button class="nav-link" id="tabBtnReportes" data-bs-toggle="tab" data-bs-target="#tab-reportes" type="button">Gestionar reportes</button></li>
     </ul>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-@endif
-=======
->>>>>>> Taisha
 
-    <button type="button" class="btn btn-primary my-3" id="btnAgregarUsuario" data-bs-toggle="modal" data-bs-target="#modalUsuario">
+    <div class="tab-content mt-3">
+      <div class="tab-pane fade show active" id="tab-gestionar-personal">
+      <div class="d-flex gap-2 mb-3 flex-wrap">
+     <input type="text" id="buscarEmpleado" class="form-control" style="max-width:320px" placeholder="Buscar empleado por su correo:">
+     <button class="btn btn-outline-light" id="btnBuscarEmpleado">Buscar</button>
+     <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaEmpleado">Limpiar</button>
+     <button type="button" class="btn btn-primary ms-auto" id="btnAgregarUsuario" data-bs-toggle="modal" data-bs-target="#modalUsuario">
       Agregar empleado
-    </button>
-
-<<<<<<< HEAD
-    <!--formulario de busqueda de un empleado-->
-    <form action="{{route('buscarEmpleado')}}" method="GET" class="mb-4">
-    <div class="row align-items-end">
-            <div class="col-md-8">
-                <label class="form-label">Buscar empleado por correo:</label>
-                <input type="email" name="correo" class="form-control" placeholder="ejemplo@veterinaria.com" required value="{{ request('correo') }}">
-            </div>
-            <div class="col-md-4 mt-2 mt-md-0">
-                <button type="submit" class="btn btn-primary">Buscar</button>
-                <a href="{{ url()->current() }}" class="btn btn-secondary">Limpiar</a>
-            </div>
-        </div>
-    </form>
-    <!-- Si se encuentra un empleado -->
-    @if(session('usuarioEncontrado'))
-    @php 
-        $buscado = (object) session('usuarioEncontrado'); 
-    @endphp
-    
-    <div class="card border-info mb-4 shadow-sm">
-        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="bi bi-person-badge me-2"></i>Empleado Encontrado</h5>
-            <a href="{{ route('gestionPersonal') }}" class="btn-close btn-close-white" title="Cerrar resultado"></a>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6 mb-2">
-                    <p class="mb-1"><strong>Nombre Completo:</strong> {{ $buscado->nombre_completo }}</p>
-                    <p class="mb-1"><strong>Correo Electrónico:</strong> {{ $buscado->correo }}</p>
-                    <p class="mb-1">
-                        <strong>Rol:</strong> 
-                        <span class="badge bg-info text-dark">{{ ucfirst($buscado->rol) }}</span>
-                    </p>
-                    <p class="mb-1">
-                        <strong>Estado:</strong> 
-                        @if(!empty($buscado->activo))
-                            <span class="badge bg-success">Activo</span>
-                        @else
-                            <span class="badge bg-secondary">Inactivo</span>
-                        @endif
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-@endif
-    <!-- Modal Agregar Empleado -->
-    <div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregarLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="modalAgregarLabel">Agregar empleado</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-=======
-    <div class="table-responsive">
-      <table class="table table-striped table-hover align-middle">
-        <thead class="table-dark">
-          <tr>
-            <th scope="col">Id</th>
-            <th scope="col">Nombre</th>
-            <th scope="col">Correo</th>
-            <th scope="col">Rol</th>
-            <th scope="col">Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="tablaUsuarios"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Modal Agregar/Actualizar Empleado -->
-  <div class="modal fade" id="modalUsuario" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content bg-dark text-white">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalUsuarioTitulo">Agregar empleado</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <form id="formUsuario">
-          <div class="modal-body">
-            <input type="hidden" id="usuario_id">
-            <div class="mb-3">
-              <label class="form-label">Nombre completo</label>
-              <input required class="form-control" id="usuario_nombre" maxlength="150">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Correo electrónico</label>
-              <input required type="email" class="form-control" id="usuario_correo" maxlength="150">
-            </div>
-            <div class="mb-3">
-              <label class="form-label" id="usuario_contrasena_label">Contraseña</label>
-              <input type="password" class="form-control" id="usuario_contrasena" minlength="8">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Rol</label>
-              <select class="form-select" id="usuario_rol" required>
-                <option value="" disabled selected>Selecciona el rol del empleado</option>
-                <option value="veterinario">Veterinario</option>
-                <option value="recepcionista">Recepcionista</option>
-                <option value="administrador">Administrador</option>
-              </select>
-            </div>
->>>>>>> Taisha
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            <button type="submit" class="btn btn-primary">Guardar</button>
-          </div>
-        </form>
+     </button>
       </div>
-    </div>
-  </div>
-
-  <!-- Modal Ver Empleado -->
-  <div class="modal fade" id="modalVerUsuario" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content bg-dark text-white">
-        <div class="modal-header">
-          <h5 class="modal-title">Detalles del empleado</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body text-start">
-          <p><strong>ID:</strong> <span id="ver_usuario_id"></span></p>
-          <p><strong>Nombre:</strong> <span id="ver_usuario_nombre"></span></p>
-          <p><strong>Correo:</strong> <span id="ver_usuario_correo"></span></p>
-          <p><strong>Rol:</strong> <span id="ver_usuario_rol" class="badge bg-info text-dark"></span></p>
-          <p><strong>Estado:</strong> <span id="ver_usuario_estado"></span></p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        </div>
-      </div>
-    </div>
-<<<<<<< HEAD
-
-    <!-- Tabla de Usuarios -->
-    <table class="table table-striped table-hover mt-3">
-      <thead class="table-dark">
-        <tr>
-          <th scope="col">Nombre</th>
-          <th scope="col">Correo</th>
-          <th scope="col">Rol</th>
-          <th scope="col">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach ($users as $user)
-        @php $user = (object) $user; @endphp
-          <tr>
-            <td>{{ $user->nombre_completo }}</td>
-            <td>{{ $user->correo }}</td>
-            <td><span class="badge bg-info text-dark">{{ ucfirst($user->rol) }}</span></td>
+       <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+              <tr><th>Nombre Completo</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr>
+            </thead>
+            <tbody id="tablaEmpleado">
+            @forEach ($users as $user)
+            <tr>
+            <td>{{$user->nombre_completo}}</td>
+            <td>{{$user->correo}}</td>
+            <td>{{ucfirst($user->rol)}}</td> 
+             <td>
+             @if($user->activo==1)
+             Activo
+             @endif
+             @if($user->activo==0)
+             Inactivo
+             @endif
+             </td> 
             <td>
 
-<button type="button" class="btn btn-info btn-sm text-white" data-bs-toggle="modal" data-bs-target="#ver-{{ $user->id }}">
-    Ver
-</button>
-
-              <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#actualizar-{{ $user->id }}">
-                Actualizar
-              </button>
-              <!--Boton de eliminar-->
-             @if($user->id != 1 && $user->id != auth('usuarios')->id() && $user->id != auth()->id())
-    <form action="{{ url('eliminarEmpleado', [$user->id]) }}" method="POST" class="d-inline">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-danger btn-sm">
-            Eliminar
-        </button>
-    </form>
-@endif
-              
-              
-<!-- Modal Ver Empleado -->
-<div class="modal fade" id="ver-{{ $user->id }}" tabindex="-1" aria-labelledby="verLabel-{{ $user->id }}" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="verLabel-{{ $user->id }}">Detalles del Empleado</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body text-start">
-        <p><strong>Nombre:</strong> {{ $user->nombre_completo }}</p>
-        <p><strong>Correo:</strong> {{ $user->correo }}</p>
-        <p><strong>Rol:</strong> <span class="badge bg-info text-dark">{{ ucfirst($user->rol) }}</span></p>
-        <p><strong>Estado:</strong> {{ $user->activo ? 'Activo' : 'Inactivo' }}</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </td>
+            </tr> 
+            @endforeach
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-              <!-- Modal Actualizar -->
-              <div class="modal fade" id="actualizar-{{ $user->id }}" tabindex="-1" aria-labelledby="actualizarLabel-{{ $user->id }}" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h1 class="modal-title fs-5" id="actualizarLabel-{{ $user->id }}">Actualizar Empleado</h1>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form method="post" action="{{ url('actualizarEmpleado', [$user->id]) }}">
-                      @csrf
-                      @method('PUT')
-                      <div class="modal-body text-start">
-                        <div class="mb-3">
-                          <label class="form-label">Nombre del empleado</label>
-                          <input type="text" name="nombre_completo" class="form-control" value="{{ $user->nombre_completo }}" required>
-                        </div>
-                        <div class="mb-3">
-                          <label class="form-label">Correo electrónico</label>
-                          <input type="email" name="correo" class="form-control" value="{{ $user->correo }}" required>
-                        </div>
-                        <div class="mb-3">
-                          <label class="form-label">Contraseña (Dejar en blanco para no cambiar)</label>
-                          <input type="password" name="contrasena" class="form-control" placeholder="Nueva contraseña opcional">
-                        </div>
-                        <div class="mb-3">
-                          <label class="form-label">Rol</label>
-                          <select class="form-select" name="rol" required>
-                            <option value="veterinario" {{ $user->rol == 'veterinario' ? 'selected' : '' }}>Veterinario</option>
-                            <option value="recepcionista" {{ $user->rol == 'recepcionista' ? 'selected' : '' }}>Recepcionista</option>
-                            <option value="administrador" {{ $user->rol == 'administrador' ? 'selected' : '' }}>Administrador</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Actualizar</button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div> 
-            </td>
-          </tr>
-        @endforeach
-      </tbody>
-    </table>
-=======
->>>>>>> Taisha
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
