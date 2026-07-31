@@ -17,15 +17,11 @@ class UsuarioController extends Controller
         $this->usuarioRepository = $usuarioRepository;
     }
 
-    public function index(Request $request)
+    public function index()
     {
         try {
             $usuarios = $this->usuarioRepository->obtenerUsuarios();
-            if ($request->expectsJson()) {
-                return response()->json($usuarios, 200);
-            }
-
-            return view('panel.admin', ['users' => $usuarios['data']]);
+            return response()->json($usuarios, 200);
         } catch (\Exception $e) {
             return response()->json(['mensaje' => $e->getMessage()], 500);
         }
@@ -35,7 +31,6 @@ class UsuarioController extends Controller
     {
         try {
             $veterinarios = $this->usuarioRepository->obtenerVeterinarios();
-
             return response()->json($veterinarios, 200);
         } catch (\Exception $e) {
             return response()->json(['mensaje' => $e->getMessage()], 500);
@@ -46,24 +41,18 @@ class UsuarioController extends Controller
     {
         try {
             $usuario = $this->usuarioRepository->registrarUsuario($request->validated());
-            if ($request->expectsJson()) {
-                return response()->json($usuario, 201);
-            }
-
-            return redirect()->back()->with('exito', 'Empleado registrado correctamente');
+            return response()->json($usuario, 201);
         } catch (\Exception $e) {
             return response()->json(['mensaje' => $e->getMessage()], 500);
         }
     }
 
-    public function show(Request $request, Usuario $usuario)
+    public function show(Usuario $usuario)
     {
         try {
-            if ($request->expectsJson()) {
-                return response()->json($usuario, 200);
-            }
 
-            return view('panel.admin_show', compact('usuario'));
+            return response()->json($usuario, 200);
+
         } catch (\Exception $e) {
             return response()->json(['mensaje' => $e->getMessage()], 404);
         }
@@ -72,28 +61,49 @@ class UsuarioController extends Controller
     public function update(UpdateUsuarioRequest $request, Usuario $usuario)
     {
         try {
-            $usuario = $this->usuarioRepository->actualizarUsuario($usuario, $request->validated());
-            if ($request->expectsJson()) {
-                return response()->json($usuario, 200);
-            }
 
-            return redirect()->back()->with('exito', 'Empleado actualizado correctamente');
+            $usuario = $this->usuarioRepository->actualizarUsuario($usuario, $request->validated());
+            return response()->json($usuario, 200);
+
         } catch (\Exception $e) {
             return response()->json(['mensaje' => $e->getMessage()], 404);
         }
     }
+    
+    
+    public function destroy(Request $request, Usuario $usuario) {
+    try {
 
-    public function destroy(Request $request, Usuario $usuario)
-    {
-        try {
-            $this->usuarioRepository->eliminarUsuario($usuario);
-            if ($request->expectsJson()) {
-                return response()->json(['mensaje' => 'Usuario dado de baja'], 200);
+        $this->usuarioRepository->eliminarUsuario($usuario);
+
+        return response()->json(["mensaje" => "Usuario dado de baja"], 200);
+        
+    } 
+    catch (\Exception $e) {
+        return response()->json(["mensaje" => $e->getMessage()], 500);
+    }
+}
+
+    public function readOne(Request $request){
+     try {
+        $request->validate([
+            'correo'=>'required|email'
+        ]);
+        
+        $correo=$request->input('correo');        
+        $resultado=$this->usuarioRepository->obtenerUnUsuario($correo);
+        
+        if (!$resultado) {
+                return response()->json(["mensaje" => "Usuario no encontrado"], 404);
             }
 
-            return redirect()->back()->with('exito', 'Empleado dado de baja correctamente');
-        } catch (\Exception $e) {
-            return response()->json(['mensaje' => $e->getMessage()], 404);
+                return response()->json([
+                    "mensaje" => "Usuario encontrado",
+                    "usuario"=> $resultado
+                    ], 200);
+        } 
+        catch (\Exception $e) {
+            return response()->json(["mensaje" => $e -> getMessage()],404);
         }
     }
 }

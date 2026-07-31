@@ -20,6 +20,18 @@ class UsuarioRepository
         }
     }
 
+     public function obtenerUnUsuario(string $correo) {
+        try {
+            $usuario = Usuario::where('correo',$correo)->first();
+            return [
+                "mensaje" => $usuario?"Usuarios encontrado":"Usuario no encontrado",
+                "data" => $usuario
+            ];
+        } 
+        catch (\Exception $e) {
+            throw new \Exception("No se pudo encontrar el usuario: " . $e -> getMessage(), 0, $e);
+        }
+    }
     public function obtenerVeterinarios()
     {
         try {
