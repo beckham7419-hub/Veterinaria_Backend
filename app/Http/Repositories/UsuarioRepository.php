@@ -95,4 +95,17 @@ class UsuarioRepository
             throw new \Exception('No se pudo dar de baja al usuario: '.$e->getMessage(), 0, $e);
         }
     }
+
+    public function reactivarUsuario(int $id)
+{
+     try {
+    $usuario = Usuario::findOrFail($id);
+    $usuario->activo = true;
+    $usuario->save();
+
+    return ['mensaje' => 'Usuario reactivado', 'usuario' => $usuario];
+     }catch (\Exception $e) {
+            throw new \Exception('No se pudo dar de reactivar al usuario: '.$e->getMessage(), 0, $e);
+        }
+}
 }
