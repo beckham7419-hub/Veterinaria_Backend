@@ -155,18 +155,20 @@
     </div>
   </nav>
 
+   <div class="container-fluid mt-4">
+    <div id="alertArea"></div>
+
   <div class="panel-card">
     <ul class="nav nav-tabs">
       <li class="nav-item"><button class="nav-link active" id="tabBtnPersonal" data-bs-toggle="tab" data-bs-target="#tab-gestionar-personal" type="button">Gestionar personal</button></li>
       <li class="nav-item"><button class="nav-link" id="tabBtnInventario" data-bs-toggle="tab" data-bs-target="#tab-gestionar-inventario" type="button">Gestionar inventario</button></li>
-      <li class="nav-item"><button class="nav-link" id="tabBtnCitasAdmin" data-bs-toggle="tab" data-bs-target="#tab-citas-admin" type="button">Gestionar citas</button></li>
-      <li class="nav-item"><button class="nav-link" id="tabBtnClientes" data-bs-toggle="tab" data-bs-target="#tab-gestionar-clientes" type="button">Gestionar clientes</button></li>
       <li class="nav-item"><button class="nav-link" id="tabBtnReportes" data-bs-toggle="tab" data-bs-target="#tab-reportes" type="button">Gestionar reportes</button></li>
     </ul>
 
     <div class="tab-content mt-3">
       <div class="tab-pane fade show active" id="tab-gestionar-personal">
       <div class="d-flex gap-2 mb-3 flex-wrap">
+
      <input type="text" id="buscarEmpleado" class="form-control" style="max-width:320px" placeholder="Buscar empleado por su correo:">
      <button class="btn btn-outline-light" id="btnBuscarEmpleado">Buscar</button>
      <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaEmpleado">Limpiar</button>
@@ -179,35 +181,78 @@
             <thead class="table-dark">
               <tr><th>Nombre Completo</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr>
             </thead>
-            <tbody id="tablaEmpleado">
-            @forEach ($users as $user)
-            <tr>
-            <td>{{$user->nombre_completo}}</td>
-            <td>{{$user->correo}}</td>
-            <td>{{ucfirst($user->rol)}}</td> 
-             <td>
-             @if($user->activo==1)
-             Activo
-             @endif
-             @if($user->activo==0)
-             Inactivo
-             @endif
-             </td> 
-            <td>
-
-            </td>
-            </tr> 
-            @endforeach
+            <tbody id="tablaUsuarios">
             </tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
+<!-- MODAL PARA CREAR / EDITAR EMPLEADO -->
+<div class="modal fade" id="modalUsuario" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content modal-content-veterinaria">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalUsuarioTitulo">Agregar empleado</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="formUsuario">
+        <div class="modal-body">
+          <input type="hidden" id="usuario_id">
+          <div class="mb-3">
+            <label class="form-label">Nombre completo</label>
+            <input type="text" id="usuario_nombre" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Correo electrónico</label>
+            <input type="email" id="usuario_correo" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Rol</label>
+            <select id="usuario_rol" class="form-select" required>
+              <option value="veterinario">Veterinario</option>
+              <option value="recepcionista">Recepcionista</option>
+              <option value="administrador">Administrador</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" id="usuario_contrasena_label">Contraseña</label>
+            <input type="password" id="usuario_contrasena" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PARA VER DETALLES -->
+<div class="modal fade" id="modalVerUsuario" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content modal-content-veterinaria">
+      <div class="modal-header">
+        <h5 class="modal-title">Detalles del Empleado</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Nombre:</strong> <span id="ver_usuario_nombre"></span></p>
+        <p><strong>Correo:</strong> <span id="ver_usuario_correo"></span></p>
+        <p><strong>Rol:</strong> <span id="ver_usuario_rol"></span></p>
+        <p><strong>Estado:</strong> <span id="ver_usuario_estado"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    const token = localStorage.getItem('token_veterinaria');
+   const token = localStorage.getItem('token_veterinaria');
     if (!token) {
       window.location.href = '/';
     }
@@ -260,6 +305,54 @@
       setTimeout(() => div.remove(), 6000);
     }
 
+    let usuariosCache = {};
+
+    // 1. OBTENER EMPLEADOS / USUARIOS
+    async function fetchEmpleados() {
+      try {
+        const res = await apiFetch('/usuarios');
+        const lista = res.data ? res.data : res;
+        renderEmpleados(lista);
+      } catch (e) {
+        mostrarAlerta(mensajeError(e), 'danger');
+      }
+    }
+
+    // 2. RENDERIZAR TABLA CON BOTÓN DINÁMICO (Baja / Reactivar)
+    function renderEmpleados(empleados) {
+      usuariosCache = {};
+      const tbody = document.getElementById('tablaUsuarios'); // Mantenemos tu id real de HTML
+      
+      if (!empleados || empleados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center">No se encontraron empleados.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = empleados.map((u) => {
+        usuariosCache[u.id] = u;
+        const esActivo = Boolean(u.activo);
+
+        const botonEstado = esActivo 
+          ? `<button class="btn btn-danger btn-sm mb-1" data-accion="baja" data-id="${u.id}">Dar de baja</button>`
+          : `<button class="btn btn-success btn-sm mb-1" data-accion="reactivar" data-id="${u.id}">Reactivar</button>`;
+
+        return `
+          <tr>
+            <td>${esc(u.nombre_completo)}</td>
+            <td>${esc(u.correo)}</td>
+            <td><span class="badge bg-info text-dark">${esc(u.rol ? u.rol.charAt(0).toUpperCase() + u.rol.slice(1) : '')}</span></td>
+            <td><span class="badge ${esActivo ? 'bg-success' : 'bg-secondary'}">${esActivo ? 'Activo' : 'Inactivo'}</span></td>
+            <td>
+              <button class="btn btn-info btn-sm text-white mb-1" data-accion="ver" data-id="${u.id}">Ver</button>
+              <button class="btn btn-warning btn-sm mb-1" data-accion="editar" data-id="${u.id}">Modificar</button>
+              ${botonEstado}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // EVENTOS DE CARGA Y LOGOUT
     document.addEventListener('DOMContentLoaded', () => {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
@@ -268,67 +361,59 @@
         document.getElementById('nombre-usuario').innerText = 'Usuario';
       }
 
-      fetchUsuarios();
+      fetchEmpleados();
     });
 
     document.getElementById('btnLogout').addEventListener('click', async () => {
       try {
         await apiFetch('/auth/usuarios/logout', { method: 'POST' });
-      } catch (e) {
-        // continua con el cierre de sesion local aunque falle la peticion
-      }
+      } catch (e) {}
       localStorage.removeItem('token_veterinaria');
       localStorage.removeItem('rol_usuario');
       window.location.href = '/';
     });
 
-    // ---------- USUARIOS ----------
-    let usuariosCache = {};
+    // BUSCADOR LOCAL O POR API
+    document.getElementById('btnBuscarEmpleado').addEventListener('click', async () => {
+      const correo = document.getElementById('buscarEmpleado').value.trim();
 
-    async function fetchUsuarios() {
-      try {
-        const res = await apiFetch('/usuarios');
-        renderUsuarios(res.data);
-      } catch (e) {
-        mostrarAlerta(mensajeError(e), 'danger');
+      if (!correo) {
+        mostrarAlerta('Ingresa un correo para buscar', 'warning');
+        return;
       }
-    }
 
-    function renderUsuarios(usuarios) {
-      usuariosCache = {};
-      usuarios.forEach((u) => { usuariosCache[u.id] = u; });
-      const tbody = document.getElementById('tablaUsuarios');
-      tbody.innerHTML = usuarios.map((u) => `
-        <tr>
-          <td>${u.id}</td>
-          <td>${esc(u.nombre_completo)}</td>
-          <td>${esc(u.correo)}</td>
-          <td><span class="badge bg-info text-dark">${esc(u.rol.charAt(0).toUpperCase() + u.rol.slice(1))}</span></td>
-          <td>
-            <button class="btn btn-info btn-sm text-white mb-1" data-accion="ver" data-id="${u.id}">Ver</button>
-            <button class="btn btn-warning btn-sm mb-1" data-accion="editar" data-id="${u.id}">Actualizar</button>
-            <button class="btn btn-danger btn-sm mb-1" data-accion="baja" data-id="${u.id}">Eliminar</button>
-          </td>
-        </tr>
-      `).join('');
-    }
+      try {
+        const res = await apiFetch('/usuarios/buscar-correo', {
+          method: 'POST',
+          body: JSON.stringify({ correo: correo })
+        });
 
-    document.getElementById('btnAgregarUsuario').addEventListener('click', () => {
-      document.getElementById('formUsuario').reset();
-      document.getElementById('usuario_id').value = '';
-      document.getElementById('modalUsuarioTitulo').innerText = 'Agregar empleado';
-      document.getElementById('usuario_contrasena_label').innerText = 'Contraseña';
-      document.getElementById('usuario_contrasena').required = true;
+        const usuarioEncontrado = res.usuario ? res.usuario.data : res.data;
+
+        if (usuarioEncontrado) {
+          renderEmpleados([usuarioEncontrado]); 
+        } else {
+          mostrarAlerta('No se encontró ningún usuario con ese correo', 'info');
+        }
+      } catch (err) {
+        mostrarAlerta(mensajeError(err), 'danger');
+      }
     });
 
+    document.getElementById('btnLimpiarBusquedaEmpleado').addEventListener('click', () => {
+      document.getElementById('buscarEmpleado').value = '';
+      fetchEmpleados(); 
+    });
+
+    // CAPTURA DE EVENTOS DE TABLA (VER, EDITAR, BAJA Y REACTIVAR)
     document.getElementById('tablaUsuarios').addEventListener('click', (e) => {
       const boton = e.target.closest('button[data-accion]');
       if (!boton) return;
       const id = boton.dataset.id;
+      const accion = boton.dataset.accion;
       const usuario = usuariosCache[id];
 
-      if (boton.dataset.accion === 'ver') {
-        document.getElementById('ver_usuario_id').innerText = usuario.id;
+      if (accion === 'ver' && usuario) {
         document.getElementById('ver_usuario_nombre').innerText = usuario.nombre_completo;
         document.getElementById('ver_usuario_correo').innerText = usuario.correo;
         document.getElementById('ver_usuario_rol').innerText = usuario.rol.charAt(0).toUpperCase() + usuario.rol.slice(1);
@@ -336,7 +421,7 @@
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalVerUsuario')).show();
       }
 
-      if (boton.dataset.accion === 'editar') {
+      if (accion === 'editar' && usuario) {
         document.getElementById('formUsuario').reset();
         document.getElementById('usuario_id').value = usuario.id;
         document.getElementById('usuario_nombre').value = usuario.nombre_completo;
@@ -348,15 +433,30 @@
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalUsuario')).show();
       }
 
-      if (boton.dataset.accion === 'baja') {
+      if (accion === 'baja' && usuario) {
         if (confirm(`¿Dar de baja a ${usuario.nombre_completo}?`)) {
           apiFetch(`/usuarios/${id}`, { method: 'DELETE' })
-            .then(() => { mostrarAlerta('Empleado dado de baja correctamente'); fetchUsuarios(); })
+            .then(() => { 
+              mostrarAlerta('Empleado dado de baja correctamente'); 
+              fetchEmpleados(); 
+            })
+            .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
+        }
+      }
+
+      if (accion === 'reactivar') {
+        if (confirm('¿Deseas reactivar a este empleado?')) {
+          apiFetch(`/usuarios/${id}/reactivar`, { method: 'PUT' })
+            .then(() => {
+              mostrarAlerta('Empleado reactivado con éxito');
+              fetchEmpleados(); 
+            })
             .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
         }
       }
     });
 
+    // CREAR Y EDITAR FORMULARIO
     document.getElementById('formUsuario').addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('usuario_id').value;
@@ -377,10 +477,18 @@
           mostrarAlerta('Empleado registrado correctamente');
         }
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalUsuario')).hide();
-        fetchUsuarios();
+        fetchEmpleados();
       } catch (err) {
         mostrarAlerta(mensajeError(err), 'danger');
       }
+    });
+
+    document.getElementById('btnAgregarUsuario').addEventListener('click', () => {
+      document.getElementById('formUsuario').reset();
+      document.getElementById('usuario_id').value = '';
+      document.getElementById('modalUsuarioTitulo').innerText = 'Agregar empleado';
+      document.getElementById('usuario_contrasena_label').innerText = 'Contraseña';
+      document.getElementById('usuario_contrasena').required = true;
     });
   </script>
 </body>

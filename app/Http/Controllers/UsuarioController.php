@@ -61,7 +61,11 @@ class UsuarioController extends Controller
     public function update(UpdateUsuarioRequest $request, Usuario $usuario)
     {
         try {
-
+             if ($usuario->correo === "administrador@veterinaria.com" ) {
+            return response()->json([
+                'mensaje' => 'No puedes editar la informacion del administrador principal.'
+            ], 403); 
+        }
             $usuario = $this->usuarioRepository->actualizarUsuario($usuario, $request->validated());
             return response()->json($usuario, 200);
 
@@ -73,7 +77,16 @@ class UsuarioController extends Controller
     
     public function destroy(Request $request, Usuario $usuario) {
     try {
-
+        if ($request->user() && $request->user()->id === $usuario->id) {
+            return response()->json([
+                'mensaje' => 'No puedes darte de baja a ti mismo estando en la misma sesión.'
+            ], 403); 
+        }
+         if ($usuario->correo === "administrador@veterinaria.com" ) {
+            return response()->json([
+                'mensaje' => 'No puedes eliminar al administrador principal.'
+            ], 403); 
+        }
         $this->usuarioRepository->eliminarUsuario($usuario);
 
         return response()->json(["mensaje" => "Usuario dado de baja"], 200);
@@ -106,4 +119,14 @@ class UsuarioController extends Controller
             return response()->json(["mensaje" => $e -> getMessage()],404);
         }
     }
+
+    public function reactivar($id)
+{
+    try {
+        $resultado = $this->usuarioRepository->reactivarUsuario($id);
+        return response()->json($resultado, 200);
+    } catch (\Exception $e) {
+        return response()->json(['mensaje' => $e->getMessage()], 500);
+    }
+}
 }
