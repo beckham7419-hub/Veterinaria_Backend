@@ -22,7 +22,7 @@ class splashVeterinaria : AppCompatActivity() {
         }
         lifecycleScope.launch() {
             delay(5000)
-            startActivity(Intent(this@splashVeterinaria, MainActivity::class.java))
+            startActivity(Intent(this@splashVeterinaria, menuLoginVeterinaria::class.java))
             finish()
         }
     }

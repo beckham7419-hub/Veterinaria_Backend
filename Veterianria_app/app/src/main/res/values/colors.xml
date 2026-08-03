@@ -2,4 +2,13 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="vet_bg_outer">#1E1E1E</color>
+    <color name="vet_bg_body">#1A1A1A</color>
+    <color name="vet_card_bg">#242424</color>
+    <color name="vet_red">#FF4D4D</color>
+    <color name="vet_red_dark">#E03B3B</color>
+    <color name="vet_border_gray">#333333</color>
+    <color name="vet_text_gray">#888888</color>
+    <color name="vet_placeholder_gray">#777777</color>
 </resources>

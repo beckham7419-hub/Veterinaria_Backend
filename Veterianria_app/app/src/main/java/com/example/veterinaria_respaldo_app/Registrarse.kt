@@ -9,9 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlin.collections.get
+import kotlinx.coroutines.launch
 
 lateinit var input_layout_nombre_usuario: TextInputLayout
 lateinit var input_edittext_nombre_usuario: TextInputEditText
@@ -49,38 +51,57 @@ class Registrarse : AppCompatActivity() {
       registrarse_btn =findViewById(R.id.registrarse_btn)
      boton_back2 =findViewById(R.id.boton_back2)
    registrarse_btn.setOnClickListener {
-            if( input_edittext_nombre_usuario.text.toString().isEmpty()||
-              input_edittext_telefono.text.toString().isEmpty()||
-               input_edittext_correo.text.toString().isEmpty()||
-               input_edittext_direccion.text.toString().isEmpty()||
-               input_edittext_password.text.toString().isEmpty()){
+            val nombre = input_edittext_nombre_usuario.text.toString()
+            val telefono = input_edittext_telefono.text.toString()
+            val correo = input_edittext_correo.text.toString()
+            val direccion = input_edittext_direccion.text.toString()
+            val contrasena = input_edittext_password.text.toString()
+
+            if( nombre.isEmpty()|| telefono.isEmpty()|| correo.isEmpty()|| direccion.isEmpty()|| contrasena.isEmpty()){
                 showMessage(0)
-            }else if(!input_edittext_correo.text.toString().matches(SingletonDeDatos.array_validaciones.get(0).toRegex())){
+            }else if(!correo.matches(SingletonDeDatos.array_validaciones.get(0).toRegex())){
                 showMessage(1)
             }
-            else if(!input_edittext_telefono.text.toString().matches(SingletonDeDatos.array_validaciones.get(1).toRegex())){
+            else if(!telefono.matches(SingletonDeDatos.array_validaciones.get(1).toRegex())){
                 showMessage(2)
             }else{
-                SingletonDeDatos.nombre_final_usuario=
-                    input_edittext_nombre_usuario.text.toString()
-                SingletonDeDatos.telefono_final_usuario=
-                   input_edittext_telefono.text.toString()
-                SingletonDeDatos.correo_final_usuario=
-                  input_edittext_correo.text.toString()
-                SingletonDeDatos.direccion_final_usuario=
-                  input_edittext_direccion.text.toString()
-                SingletonDeDatos.contraseña_final_usuario=
-                  input_edittext_password.text.toString()
-                startActivity(Intent(this@Registrarse, MainActivity::class.java))
-                finish();
+                lifecycleScope.launch {
+                    try {
+                        val response = RetrofitClient.instance.registrarDueno(
+                            RegistroDuenoRequest(
+                                nombre_completo = nombre,
+                                telefono = telefono,
+                                correo = correo,
+                                contrasena = contrasena,
+                                direccion = direccion
+                            )
+                        )
+
+                        if (response.isSuccessful) {
+                            SingletonDeDatos.nombre_final_usuario = nombre
+                            SingletonDeDatos.telefono_final_usuario = telefono
+                            SingletonDeDatos.correo_final_usuario = correo
+                            SingletonDeDatos.direccion_final_usuario = direccion
+
+                            startActivity(Intent(this@Registrarse, Iniciarsesion::class.java))
+                            finish()
+                        } else if (response.code() == 422) {
+                            input_layout_correo.error = "Ese correo ya esta registrado"
+                        } else {
+                            showMessage(0)
+                        }
+                    } catch (e: Exception) {
+                        showMessage(0)
+                    }
+                }
             }
 
-            if(input_edittext_correo.text.toString().matches(SingletonDeDatos.array_validaciones.get(0).toRegex())){
+            if(correo.matches(SingletonDeDatos.array_validaciones.get(0).toRegex())){
              input_layout_correo.error=null
             }else{
                input_layout_correo.error="Formato de correo invalido"
             }
-            if(input_edittext_telefono.text.toString().matches(SingletonDeDatos.array_validaciones.get(1).toRegex())){
+            if(telefono.matches(SingletonDeDatos.array_validaciones.get(1).toRegex())){
                 input_layout_telefono.error=null
             }else{
                input_layout_telefono.error="Formato de telefono invalido"

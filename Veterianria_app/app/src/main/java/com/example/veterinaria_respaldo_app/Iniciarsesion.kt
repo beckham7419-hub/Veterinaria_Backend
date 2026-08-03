@@ -9,8 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.launch
 
 lateinit var input_layout_iniciars: TextInputLayout
 lateinit var input_edittext_iniciars: TextInputEditText
@@ -37,29 +39,42 @@ class Iniciarsesion : AppCompatActivity() {
        boton_back =findViewById(R.id.boton_back)
 
       iniciarsesion.setOnClickListener {
-            if(input_edittext_iniciars.text.toString().isEmpty()|| input_edittext_password_in.text.toString().isEmpty()){
-                showMessage(0)
-            }else if(!input_edittext_iniciars.text.toString().matches(SingletonDeDatos.array_validaciones.get(0).toRegex())){
-                showMessage(1)
-            }else if(input_edittext_iniciars.text.toString().contentEquals(SingletonDeDatos.usuario_por_defecto)&& input_edittext_password_in.text.toString().contentEquals(
-                    SingletonDeDatos.contraseña_por_defecto)){
-                SingletonDeDatos.nombre_final_usuario=
-                  input_edittext_iniciars.text.toString()
-                SingletonDeDatos.contraseña_final_usuario=
-                  input_edittext_password_in.text.toString()
-                startActivity(Intent(this@Iniciarsesion, MainActivity2iniciarsesion::class.java))
-                finish();
+            val correo = input_edittext_iniciars.text.toString()
+            val contrasena = input_edittext_password_in.text.toString()
 
-            }
-            if(input_edittext_iniciars.text.contentEquals(SingletonDeDatos.usuario_por_defecto)){
-              input_layout_iniciars.error=null
+            if(correo.isEmpty() || contrasena.isEmpty()){
+                showMessage(0)
+            }else if(!correo.matches(SingletonDeDatos.array_validaciones.get(0).toRegex())){
+                showMessage(1)
             }else{
-               input_layout_iniciars.error="Usuario incorrecto"
-            }
-            if(input_edittext_password_in.text.contentEquals(SingletonDeDatos.contraseña_por_defecto)){
-               input_layout_password_in.error=null
-            }else{
-                input_layout_password_in.error="Contraseña incorrecta"
+                lifecycleScope.launch {
+                    try {
+                        val response = RetrofitClient.instance.login(LoginRequest(correo, contrasena))
+
+                        if (response.isSuccessful && response.body() != null) {
+                            val body = response.body()!!
+                            RetrofitClient.setToken(body.token)
+                            getSharedPreferences("app_prefs", MODE_PRIVATE)
+                                .edit()
+                                .putString("token", body.token)
+                                .apply()
+
+                            input_layout_iniciars.error = null
+                            input_layout_password_in.error = null
+
+                            SingletonDeDatos.nombre_final_usuario = body.dueno.nombre_completo
+                            SingletonDeDatos.correo_final_usuario = body.dueno.correo
+
+                            startActivity(Intent(this@Iniciarsesion, MainActivity::class.java))
+                            finish()
+                        } else {
+                            input_layout_iniciars.error = "Correo o contraseña incorrectos"
+                            input_layout_password_in.error = "Correo o contraseña incorrectos"
+                        }
+                    } catch (e: Exception) {
+                        input_layout_password_in.error = "Error de conexion: ${e.message}"
+                    }
+                }
             }
         }
 

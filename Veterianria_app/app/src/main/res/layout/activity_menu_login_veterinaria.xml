@@ -5,64 +5,109 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/vet_bg_outer"
     tools:context=".menuLoginVeterinaria">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="2"
-            android:text="¡Bienvenido!"
-            android:layout_marginBottom="15dp"
-            android:textStyle="bold"
-            android:textSize="30sp"/>
-        <TextView
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:maxLines="2"
-            android:text="¡El mejor lugar para llevar a sus mascotas!"
-            android:layout_marginBottom="10dp"
-            android:textStyle="normal"
-            android:textSize="25sp"/>
-        <TextView
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:maxLines="2"
-            android:text="Selecciona una opcion:"
-            android:textStyle="normal"
-            android:layout_marginBottom="10dp"
-            android:textSize="20sp"/>
-        <Button
-            android:id="@+id/boton_iniciosesion"
-            android:layout_width="wrap_content"
-            android:maxLines="1"
-            android:layout_height="50dp"
-            android:text="Iniciar Sesion"
-            android:textSize="20sp"
-            android:layout_marginBottom="10dp"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="2"
-            android:text="O"
-            android:textStyle="normal"
-            android:layout_marginBottom="10dp"
-            android:textSize="20sp"/>
-        <Button
-            android:id="@+id/boton_registrarsa"
-            android:layout_width="wrap_content"
-            android:maxLines="1"
-            android:layout_height="50dp"
-            android:text="Registrarse"
-            android:textSize="20sp"
-            android:layout_marginBottom="10dp"
-            />
+        android:layout_height="match_parent">
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="24dp"
+            android:minHeight="600dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_card_login"
+                android:padding="32dp">
+
+                <FrameLayout
+                    android:layout_width="150dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/bg_logo_container"
+                    android:padding="10dp">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/fenixlogo"
+                        android:contentDescription="@string/app_name" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="¡BIENVENIDO!"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.02" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    android:text="El mejor lugar para llevar a sus mascotas"
+                    android:textColor="@color/vet_text_gray"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="Selecciona una opción"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/boton_iniciosesion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    android:background="@drawable/bg_button_login"
+                    android:text="INICIAR SESIÓN"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:letterSpacing="0.03"
+                    android:elevation="0dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="O"
+                    android:textColor="@color/vet_text_gray"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/boton_registrarsa"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    android:background="@drawable/bg_card_login"
+                    android:text="REGISTRARSE"
+                    android:textColor="@color/vet_red"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:letterSpacing="0.03"
+                    android:elevation="0dp" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

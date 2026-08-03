@@ -5,9 +5,7 @@ plugins {
 android {
     namespace = "com.example.veterinaria_respaldo_app"
     compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
+        version = release(37)
     }
 
     defaultConfig {
