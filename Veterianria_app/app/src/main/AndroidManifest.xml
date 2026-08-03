@@ -15,6 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Veterinaria_Respaldo_app">
         <activity
+            android:name=".splashVeterinaria"
+            android:exported="true" >
             android:name=".Registrarse"
             android:exported="false" />
         <activity
@@ -34,6 +36,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
+            android:exported="false"/>
             android:exported="false" />
     </application>
 
