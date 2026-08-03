@@ -17,6 +17,17 @@
         <activity
             android:name=".splashVeterinaria"
             android:exported="true" >
+            android:name=".Registrarse"
+            android:exported="false" />
+        <activity
+            android:name=".Iniciarsesion"
+            android:exported="false" />
+        <activity
+            android:name=".menuLoginVeterinaria"
+            android:exported="false" />
+        <activity
+            android:name=".splashVeterinaria"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,6 +37,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="false"/>
+            android:exported="false" />
     </application>
 
 </manifest>
