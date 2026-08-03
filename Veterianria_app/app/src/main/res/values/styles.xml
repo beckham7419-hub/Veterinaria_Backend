@@ -3,7 +3,7 @@
 
     <style name="fuente_titulos_principales">
         <item name="android:textColor">
-            @color/black
+            @color/white
         </item>
         <item name="android:textStyle">
             bold
