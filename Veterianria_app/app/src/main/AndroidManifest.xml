@@ -12,8 +12,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Veterinaria_Respaldo_app">
         <activity
+            android:name=".Registrarse"
+            android:exported="false" />
+        <activity
+            android:name=".Iniciarsesion"
+            android:exported="false" />
+        <activity
+            android:name=".menuLoginVeterinaria"
+            android:exported="false" />
+        <activity
             android:name=".splashVeterinaria"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,7 +31,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="false"/>
+            android:exported="false" />
     </application>
 
 </manifest>

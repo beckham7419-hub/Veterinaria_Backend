@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Registrarse">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/black"
+            android:gravity="center"
+            >
+            <androidx.cardview.widget.CardView
+                android:id="@+id/boton_back2"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="10dp"
+                app:cardCornerRadius="15dp">
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="@color/white"
+                    android:src="@drawable/baseline_arrow_back_24"
+                    />
+            </androidx.cardview.widget.CardView>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@color/white"
+                android:src="@drawable/logodeveterinaria"
+                />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+        </LinearLayout>
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="35dp"
+                android:text="Registrarse"
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:layout_marginTop="85dp"
+                android:layout_marginBottom="15sp"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_nombre_usuario"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:hint="Ingresa tu usuario:"
+                app:helperTextEnabled="true"
+                app:helperText="Tu nombre de usuario"
+                app:counterMaxLength="100"
+                app:endIconMode="clear_text"
+                android:layout_marginBottom="25dp"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_edittext_nombre_usuario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_telefono"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:hint="Ingresa tu telefono:"
+                app:helperTextEnabled="true"
+                app:helperText="Tu numero de telefono"
+                app:counterMaxLength="17"
+                app:endIconMode="clear_text"
+                android:layout_marginBottom="25dp"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_edittext_telefono"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_correo"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:hint="Ingresa tu correo:"
+                app:helperTextEnabled="true"
+                app:helperText="Tu correo"
+                app:counterMaxLength="100"
+                app:endIconMode="clear_text"
+                android:layout_marginBottom="25dp"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_edittext_correo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_direccion"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:hint="Ingresa tu direccion:"
+                app:helperTextEnabled="true"
+                app:helperText="Tu direccion"
+                app:counterMaxLength="100"
+                app:endIconMode="clear_text"
+                android:layout_marginBottom="25dp"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_edittext_direccion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_password"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:hint="Ingresa tu contraseña:"
+                app:helperTextEnabled="true"
+                app:helperText="Debe tener al menos 8 caracteres"
+                app:counterMaxLength="50"
+                app:endIconMode="password_toggle"
+                android:layout_marginBottom="25dp"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_edittext_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <CheckBox
+                android:id="@+id/cbTerms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="italic"
+                android:text="He leido y acepto todos los terminos y condiciones"
+                />
+
+            <Button
+                android:id="@+id/registrarse_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Registrarse"
+                android:textStyle="bold"
+                android:textSize="15sp"/>
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
