@@ -39,8 +39,8 @@
             <ImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:background="@color/white"
-                android:src="@drawable/logodeveterinaria"
+                android:background="@color/black"
+                android:src="@drawable/logo_de_la_veterinaria_transparente"
                 />
             <View
                 android:layout_width="0dp"
