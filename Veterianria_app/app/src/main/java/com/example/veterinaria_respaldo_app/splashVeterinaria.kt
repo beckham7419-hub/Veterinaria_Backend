@@ -20,11 +20,10 @@ class splashVeterinaria : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-    }
-}
+
         lifecycleScope.launch() {
             delay(5000)
-            startActivity(Intent(this@splashVeterinaria, MainActivity::class.java))
+            startActivity(Intent(this@splashVeterinaria, menuLoginVeterinaria::class.java))
             finish()
         }
     }
