@@ -33,7 +33,7 @@
             <ImageView
                 android:layout_width="220dp"
                 android:layout_height="150dp"
-                android:src="@drawable/logo_de_la_veterinaria" />
+                android:src="@drawable/fenixlogo" />
         </androidx.cardview.widget.CardView>
 
         <ProgressBar
