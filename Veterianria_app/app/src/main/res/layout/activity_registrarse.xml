@@ -111,7 +111,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="textPersonName"
                         android:maxLength="100"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/white"
+                        />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -139,7 +140,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/white"
+                        android:maxLength="100"
+                        />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -167,7 +170,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="phone"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/white"
+                        android:maxLength="10"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -217,7 +221,9 @@
                     app:helperText="Debe tener al menos 8 caracteres"
                     app:helperTextEnabled="true"
                     app:helperTextTextColor="@color/vet_text_gray"
-                    app:hintTextColor="@color/vet_text_gray">
+                    app:hintTextColor="@color/vet_text_gray"
+                    app:endIconTint="@color/vet_red"
+                    >
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/input_edittext_password"
@@ -227,6 +233,38 @@
                         android:maxLength="50"
                         android:textColor="@color/white" />
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/input_layout_password_confirm"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Confirmar contraseña"
+                    app:boxBackgroundColor="@color/vet_bg_body"
+                    app:boxCornerRadiusBottomEnd="6dp"
+                    app:boxCornerRadiusBottomStart="6dp"
+                    app:boxCornerRadiusTopEnd="6dp"
+                    app:boxCornerRadiusTopStart="6dp"
+                    app:boxStrokeColor="@color/vet_input_stroke"
+                    app:counterMaxLength="50"
+                    app:endIconMode="password_toggle"
+                    app:helperText="Debe tener al menos 8 caracteres"
+                    app:helperTextEnabled="true"
+                    app:helperTextTextColor="@color/vet_text_gray"
+                    app:hintTextColor="@color/vet_text_gray"
+                    app:endIconTint="@color/vet_red"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/input_edittext_password_confirm"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:maxLength="50"
+                        android:textColor="@color/white" />
+                </com.google.android.material.textfield.TextInputLayout>
+
 
                 <CheckBox
                     android:id="@+id/cbTerms"
