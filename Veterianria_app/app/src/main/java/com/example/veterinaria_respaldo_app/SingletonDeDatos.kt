@@ -16,6 +16,8 @@ object SingletonDeDatos {
 
     var contraseña_final_usuario:String
 
+    var respuesta_server=""
+
     init {
         usuario_por_defecto="RafaelMorenov@gmail.com"
         contraseña_por_defecto="12345"

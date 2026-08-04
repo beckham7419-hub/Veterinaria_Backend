@@ -3,6 +3,7 @@ package com.example.veterinaria_respaldo_app
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.Toast
@@ -12,6 +13,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import  com.android.volley.Request
+import com.android.volley.VolleyLog.d
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 
 lateinit var boton_more_options: CardView
 
@@ -75,6 +80,26 @@ class MainActivity : AppCompatActivity() {
             @Suppress("DEPRECATION")
             overridePendingTransition(0, 0)
         }
+        fun cargarApiVeterinaria(){
+            val url="http://10.0.2.2:8000/api/"
+            val queue= Volley.newRequestQueue(this)
 
+            val StringRequest= StringRequest(
+                Request.Method.GET,
+                url,
+                {
+                        respuesta->
+                    Log.v("TAB", "Ok"+respuesta)
+                    SingletonDeDatos.respuesta_server=respuesta
+                    startActivity(Intent(this@MainActivity, Pantalla_Perfil::class.java))
+                },
+                {
+                        error->
+                    Log.v("TAB", "No hubo respuesta"+error)
+                }
+
+            )
+            queue.add(StringRequest)
+        }
     }
 }
