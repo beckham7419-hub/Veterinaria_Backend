@@ -39,7 +39,8 @@ class Registrarse : AppCompatActivity() {
         setContentView(R.layout.activity_registrarse)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, maxOf(systemBars.bottom, ime.bottom))
             insets
         }
         input_layout_nombre_usuario =findViewById(R.id.input_layout_nombre_usuario)
@@ -57,13 +58,16 @@ class Registrarse : AppCompatActivity() {
         cbTerms=findViewById(R.id.cbTerms)
 
    registrarse_btn.setOnClickListener {
+       input_layout_nombre_usuario.error = null
        input_layout_correo.error = null
        input_layout_telefono.error = null
+       input_layout_direccion.error = null
+       input_layout_password.error = null
 
-            val nombre = input_edittext_nombre_usuario.text.toString()
+            val nombre = input_edittext_nombre_usuario.text.toString().trim()
             val telefono = input_edittext_telefono.text.toString()
             val correo = input_edittext_correo.text.toString()
-            val direccion = input_edittext_direccion.text.toString()
+            val direccion = input_edittext_direccion.text.toString().trim()
             val contrasena = input_edittext_password.text.toString()
 
        if (nombre.isEmpty() || telefono.isEmpty() || correo.isEmpty() || direccion.isEmpty() || contrasena.isEmpty()) {
@@ -80,6 +84,24 @@ class Registrarse : AppCompatActivity() {
        if (!telefono.matches(SingletonDeDatos.array_validaciones[1].toRegex())) {
            input_layout_telefono.error = "Formato de teléfono inválido"
            showMessage(2)
+           return@setOnClickListener
+       }
+
+       if (nombre.length !in 3..100 || !nombre.matches(SingletonDeDatos.array_validaciones[2].toRegex())) {
+           input_layout_nombre_usuario.error = "Solo letras y espacios (3 a 100 caracteres)"
+           showMessage(3)
+           return@setOnClickListener
+       }
+
+       if (!direccion.matches(SingletonDeDatos.array_validaciones[3].toRegex())) {
+           input_layout_direccion.error = "Dirección inválida (5 a 100 caracteres)"
+           showMessage(4)
+           return@setOnClickListener
+       }
+
+       if (contrasena.length !in 8..50) {
+           input_layout_password.error = "Debe tener entre 8 y 50 caracteres"
+           showMessage(5)
            return@setOnClickListener
        }
 
@@ -109,10 +131,51 @@ class Registrarse : AppCompatActivity() {
                             SingletonDeDatos.correo_final_usuario = correo
                             SingletonDeDatos.direccion_final_usuario = direccion
 
-                            startActivity(Intent(this@Registrarse, Iniciarsesion::class.java))
-                            finish()
+                            AlertDialog.Builder(this@Registrarse)
+                                .setMessage("¡Cuenta creada correctamente! Ahora puedes iniciar sesión.")
+                                .setCancelable(false)
+                                .setPositiveButton("Ok") { d, _ ->
+                                    d.dismiss()
+                                    startActivity(Intent(this@Registrarse, Iniciarsesion::class.java))
+                                    finish()
+                                }
+                                .show()
                         } else if (response.code() == 422) {
-                            input_layout_correo.error = "Ese correo ya esta registrado"
+                            val erroresPorCampo = parseErroresValidacion(response.errorBody()?.string())
+                            val errorCorreo = erroresPorCampo?.optJSONArray("correo")?.optString(0)
+                            val errorTelefono = erroresPorCampo?.optJSONArray("telefono")?.optString(0)
+                            val errorNombre = erroresPorCampo?.optJSONArray("nombre_completo")?.optString(0)
+                            val errorDireccion = erroresPorCampo?.optJSONArray("direccion")?.optString(0)
+                            val errorContrasena = erroresPorCampo?.optJSONArray("contrasena")?.optString(0)
+
+                            var mostroErrorEnCampo = false
+                            if (!errorCorreo.isNullOrEmpty()) {
+                                input_layout_correo.error = errorCorreo
+                                mostroErrorEnCampo = true
+                            }
+                            if (!errorTelefono.isNullOrEmpty()) {
+                                input_layout_telefono.error = errorTelefono
+                                mostroErrorEnCampo = true
+                            }
+                            if (!errorNombre.isNullOrEmpty()) {
+                                input_layout_nombre_usuario.error = errorNombre
+                                mostroErrorEnCampo = true
+                            }
+                            if (!errorDireccion.isNullOrEmpty()) {
+                                input_layout_direccion.error = errorDireccion
+                                mostroErrorEnCampo = true
+                            }
+                            if (!errorContrasena.isNullOrEmpty()) {
+                                input_layout_password.error = errorContrasena
+                                mostroErrorEnCampo = true
+                            }
+
+                            if (!mostroErrorEnCampo) {
+                                AlertDialog.Builder(this@Registrarse)
+                                    .setMessage("No se pudo completar el registro. Revisa los datos ingresados.")
+                                    .setPositiveButton("Ok") { d, _ -> d.dismiss() }
+                                    .show()
+                            }
                         } else {
                             AlertDialog.Builder(this@Registrarse)
                                 .setMessage("Error del servidor (código ${response.code()}). Intenta de nuevo.")
@@ -147,5 +210,14 @@ class Registrarse : AppCompatActivity() {
         builder.setPositiveButton("Ok") { dialog, which -> dialog.dismiss() }
         var dialog = builder.create()
         dialog.show()
+    }
+
+    private fun parseErroresValidacion(errorBody: String?): org.json.JSONObject? {
+        if (errorBody.isNullOrEmpty()) return null
+        return try {
+            org.json.JSONObject(errorBody).optJSONObject("errores")
+        } catch (e: Exception) {
+            null
+        }
     }
 }
