@@ -27,6 +27,10 @@ lateinit var input_edittext_direccion: TextInputEditText
 lateinit var input_layout_password: TextInputLayout
 lateinit var input_edittext_password: TextInputEditText
 
+lateinit var input_layout_password_confirm: TextInputLayout
+
+lateinit var input_edittext_password_confirm: TextInputEditText
+
 lateinit var cbTerms: CheckBox
 
 lateinit var registrarse_btn: Button
@@ -56,6 +60,8 @@ class Registrarse : AppCompatActivity() {
         registrarse_btn =findViewById(R.id.registrarse_btn)
         boton_back2 =findViewById(R.id.boton_back2)
         cbTerms=findViewById(R.id.cbTerms)
+        input_layout_password_confirm=findViewById(R.id.input_layout_password_confirm)
+        input_edittext_password_confirm=findViewById(R.id.input_edittext_password_confirm)
 
    registrarse_btn.setOnClickListener {
        input_layout_nombre_usuario.error = null
@@ -63,38 +69,40 @@ class Registrarse : AppCompatActivity() {
        input_layout_telefono.error = null
        input_layout_direccion.error = null
        input_layout_password.error = null
+       input_layout_password_confirm.error=null
 
             val nombre = input_edittext_nombre_usuario.text.toString().trim()
-            val telefono = input_edittext_telefono.text.toString()
-            val correo = input_edittext_correo.text.toString()
+            val telefono = input_edittext_telefono.text.toString().trim()
+            val correo = input_edittext_correo.text.toString().trim()
             val direccion = input_edittext_direccion.text.toString().trim()
-            val contrasena = input_edittext_password.text.toString()
+            val contrasena = input_edittext_password.text.toString().trim()
+            val confirmar_contraseña=input_edittext_password_confirm.text.toString().trim()
 
-       if (nombre.isEmpty() || telefono.isEmpty() || correo.isEmpty() || direccion.isEmpty() || contrasena.isEmpty()) {
+       if (nombre.isEmpty() || telefono.isEmpty() || correo.isEmpty() || direccion.isEmpty() || contrasena.isEmpty() || confirmar_contraseña.isEmpty()) {
            showMessage(0)
            return@setOnClickListener
        }
 
        if (!correo.matches(SingletonDeDatos.array_validaciones[0].toRegex())) {
-           input_layout_correo.error = "Formato de correo inválido"
+           input_layout_correo.error = "Formato de correo invalido, ejemplo válido: usuario@correo.com"
            showMessage(1)
            return@setOnClickListener
        }
 
        if (!telefono.matches(SingletonDeDatos.array_validaciones[1].toRegex())) {
-           input_layout_telefono.error = "Formato de teléfono inválido"
+           input_layout_telefono.error = "Debe iniciar con 871 y tener 10 dígitos"
            showMessage(2)
            return@setOnClickListener
        }
 
        if (nombre.length !in 3..100 || !nombre.matches(SingletonDeDatos.array_validaciones[2].toRegex())) {
-           input_layout_nombre_usuario.error = "Solo letras y espacios (3 a 100 caracteres)"
+           input_layout_nombre_usuario.error = "Ingresa nombre y ambos apellidos (mínimo 3 palabras)"
            showMessage(3)
            return@setOnClickListener
        }
 
        if (!direccion.matches(SingletonDeDatos.array_validaciones[3].toRegex())) {
-           input_layout_direccion.error = "Dirección inválida (5 a 100 caracteres)"
+           input_layout_direccion.error = "Ingresa calle, número y colonia (ej. Av Juárez 123 Col Centro)"
            showMessage(4)
            return@setOnClickListener
        }
@@ -104,6 +112,12 @@ class Registrarse : AppCompatActivity() {
            showMessage(5)
            return@setOnClickListener
        }
+
+      if (confirmar_contraseña!=contrasena){
+          input_layout_password_confirm.error = "Las contraseñas debe de ser la iguales"
+          showMessage(6)
+          return@setOnClickListener
+      }
 
        if (!cbTerms.isChecked) {
            AlertDialog.Builder(this)

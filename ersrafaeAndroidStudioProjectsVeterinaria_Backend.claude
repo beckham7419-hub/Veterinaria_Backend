@@ -1,0 +1,16 @@
+[33m66bbfd4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mCampos[m[33m, [m[1;31morigin/Michelle[m[33m, [m[1;31morigin/Campos[m[33m)[m Merge pull request #1 from beckham7419-hub/features/admin
+[33m37201a3[m Testeo de login de prueba y correciones en este, se añadio a web.php las rutas del login
+[33mb9dfcb0[m Inserccion de seeders para probar el login al igual que algo de codigo html para ver la vista de cada uno
+[33m326bec5[m Merge remote-tracking branch 'origin/main' into features/admin
+[33m9ed9c9a[m Funcionamiento y pruebas del login
+[33md8b09c6[m agregue vistasy redirecciones pero sin nada aun
+[33m8c44bf1[m view del login
+[33m350d3a7[m Perfil de dueno: ver, editar y cambiar contrasena
+[33meba3a75[m Middleware de control de acceso por rol y sesion
+[33m15361f9[m Login JWT para duenos, espejo de usuarios sin bloqueo por intentos
+[33ma37d482[m Autenticacion JWT completa para usuarios
+[33m45af9bf[m Eliminacion de espacio en la linea 26
+[33mf56864a[m CRUD completo de duenos: model, migration, controller, repository y requests
+[33m1330485[m Actualizacion de delete - ya actualiza el campo activo a 0
+[33m1667c30[m CRUD completo de usuarios: model, migration, controller, repository y requests
+[33mb172b69[m Proyecto laravel con conexion a MySQL configurada

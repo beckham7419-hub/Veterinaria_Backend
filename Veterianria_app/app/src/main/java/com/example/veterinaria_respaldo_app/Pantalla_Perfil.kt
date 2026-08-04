@@ -12,6 +12,14 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
+lateinit var boton_back_perf: CardView
+lateinit var nombre_dueno: TextView
+lateinit var correo_dueno: TextView
+lateinit var telefono_dueno: TextView
+lateinit var direccion_dueno: TextView
+lateinit var editar_perfil: Button
+lateinit var boton_cerrar_sesion: Button
+
 class Pantalla_Perfil : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,26 +30,25 @@ class Pantalla_Perfil : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        boton_back_perf=findViewById(R.id.boton_back_perf)
+        nombre_dueno=findViewById(R.id.nombre_dueno)
+        correo_dueno=findViewById(R.id.correo_dueno)
+        telefono_dueno=findViewById(R.id.telefono_dueno)
+        direccion_dueno=findViewById(R.id.direccion_dueno)
+        editar_perfil=findViewById(R.id.editar_perfil)
+        boton_cerrar_sesion=findViewById(R.id.boton_cerrar_sesion)
 
-        val botonBack = findViewById<CardView>(R.id.boton_more_perf)
-        val textoNombre = findViewById<TextView>(R.id.texto_nombre_perfil)
-        val textoCorreo = findViewById<TextView>(R.id.texto_correo_perfil)
-        val botonCerrarSesion = findViewById<Button>(R.id.boton_cerrar_sesion)
 
-        textoNombre.text = SingletonDeDatos.nombre_final_usuario
-        textoCorreo.text = SingletonDeDatos.correo_final_usuario
-
-        botonBack.setOnClickListener {
+        boton_back_perf.setOnClickListener {
             finish()
         }
 
-        botonCerrarSesion.setOnClickListener {
-            botonCerrarSesion.isEnabled = false
+        boton_cerrar_sesion.setOnClickListener {
+            boton_cerrar_sesion.isEnabled = false
             lifecycleScope.launch {
                 try {
                     RetrofitClient.instance.logout()
                 } catch (e: Exception) {
-                    // Aunque falle la petición, la sesión se cierra localmente igual.
                 }
                 cerrarSesionLocal()
             }
