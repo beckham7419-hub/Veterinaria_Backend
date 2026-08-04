@@ -170,6 +170,24 @@
                 </LinearLayout>
             </ScrollView>
 
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/boton_cerrar_sesion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_button_login"
+                    android:elevation="0dp"
+                    android:letterSpacing="0.03"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    android:text="CERRAR SESIÓN"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
         </LinearLayout>

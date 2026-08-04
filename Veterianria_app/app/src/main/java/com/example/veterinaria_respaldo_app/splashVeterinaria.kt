@@ -21,9 +21,39 @@ class splashVeterinaria : AppCompatActivity() {
             insets
         }
 
-        lifecycleScope.launch() {
+        lifecycleScope.launch {
+            val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
+            val token = prefs.getString("token", null)
+
             delay(5000)
-            startActivity(Intent(this@splashVeterinaria, menuLoginVeterinaria::class.java))
+
+            val destino = if (token.isNullOrEmpty()) {
+                menuLoginVeterinaria::class.java
+            } else {
+                RetrofitClient.setToken(token)
+                val sesionValida = try {
+                    val response = RetrofitClient.instance.getMiPerfil()
+                    if (response.isSuccessful) {
+                        response.body()?.let { dueno ->
+                            SingletonDeDatos.nombre_final_usuario = dueno.nombre_completo
+                            SingletonDeDatos.correo_final_usuario = dueno.correo
+                        }
+                    }
+                    response.isSuccessful
+                } catch (e: Exception) {
+                    false
+                }
+
+                if (sesionValida) {
+                    MainActivity::class.java
+                } else {
+                    prefs.edit().remove("token").apply()
+                    RetrofitClient.setToken(null)
+                    menuLoginVeterinaria::class.java
+                }
+            }
+
+            startActivity(Intent(this@splashVeterinaria, destino))
             finish()
         }
     }
