@@ -15,8 +15,8 @@ class UsuarioSeederPruebas extends Seeder
     public function run(): void
     {
         DB::table('usuarios')->insert([
-            [
-                'nombre_completo' => 'Rafael Administrador',
+               [
+                'nombre_completo' => 'Rafael Moreno',
                 'correo'          => 'admin@veterinaria.com',
                 'contrasena'      => Hash::make('12345678'), 
                 'rol'             => 'administrador',
@@ -28,7 +28,7 @@ class UsuarioSeederPruebas extends Seeder
             [
                 'nombre_completo' => 'Michelle veterinario',
                 'correo'          => 'vet@veterinaria.com',
-                'contrasena'      => Hash::make('12345678'),
+                'contrasena'      => Hash::make('12345678'), 
                 'rol'             => 'veterinario',
                 'activo'          => true,
                 'intentos_fallidos' => 0,
@@ -38,8 +38,18 @@ class UsuarioSeederPruebas extends Seeder
             [
                 'nombre_completo' => 'Taisha Recepcionista',
                 'correo'          => 'Tai@veterinaria.com',
-                'contrasena'      => Hash::make('12345678'),
+                'contrasena'      => Hash::make('12345678'), 
                 'rol'             => 'recepcionista',
+                'activo'          => true,
+                'intentos_fallidos' => 0,
+                'created_at'      => now(),
+                'updated_at'      => now(),
+            ],
+             [
+                'nombre_completo' => 'Rafael Moreno',
+                'correo'          => 'administrador@veterinaria.com',
+                'contrasena'      => Hash::make('12345678'), 
+                'rol'             => 'administrador',
                 'activo'          => true,
                 'intentos_fallidos' => 0,
                 'created_at'      => now(),
