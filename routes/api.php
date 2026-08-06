@@ -9,6 +9,7 @@ use App\Http\Controllers\MisCitasController;
 use App\Http\Controllers\MisMascotasController;
 use App\Http\Controllers\PerfilDuenoController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\ConsultaController;
 
 Route::get('/login-prueba', function () {
     return view('login');
@@ -59,3 +60,6 @@ Route::get('mis-citas', [MisCitasController::class, 'index'])->middleware(['auth
 Route::post('mis-citas', [MisCitasController::class, 'store'])->middleware(['auth:duenos', 'token.valido:duenos']);
 Route::put('mis-citas/{cita}/cancelar', [MisCitasController::class, 'cancelar'])->middleware(['auth:duenos', 'token.valido:duenos']);
 Route::get('mis-citas/horarios-disponibles', [MisCitasController::class, 'horariosDisponibles'])->middleware(['auth:duenos', 'token.valido:duenos']);
+Route::post('citas/{cita}/consulta', [ConsultaController::class, 'store'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
+Route::get('citas/{cita}/consulta', [ConsultaController::class, 'show'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
+Route::put('consultas/{consulta}', [ConsultaController::class, 'update'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);

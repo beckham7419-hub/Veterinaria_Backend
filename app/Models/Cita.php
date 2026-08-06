@@ -36,4 +36,8 @@ class Cita extends Model
     public function dueno() {
         return $this->belongsTo(Dueno::class);
     }
+
+    public function consulta() {
+        return $this->hasOne(Consulta::class);
+    }
 }
