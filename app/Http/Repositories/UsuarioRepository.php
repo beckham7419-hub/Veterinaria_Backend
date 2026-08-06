@@ -20,11 +20,11 @@ class UsuarioRepository
         }
     }
 
-     public function obtenerUnUsuario(string $correo) {
+    public function obtenerUnUsuario(string $correo) {
         try {
             $usuario = Usuario::where('correo',$correo)->first();
             return [
-                "mensaje" => $usuario?"Usuarios encontrado":"Usuario no encontrado",
+                "mensaje" => $usuario?"Usuario encontrado":"Usuario no encontrado",
                 "data" => $usuario
             ];
         } 
@@ -67,8 +67,6 @@ class UsuarioRepository
         try {
             if (empty($data['contrasena'])) {
                 unset($data['contrasena']);
-            } else {
-                $data['contrasena'] = bcrypt($data['contrasena']);
             }
             $usuario->update($data);
 
@@ -105,7 +103,7 @@ class UsuarioRepository
 
     return ['mensaje' => 'Usuario reactivado', 'usuario' => $usuario];
      }catch (\Exception $e) {
-            throw new \Exception('No se pudo dar de reactivar al usuario: '.$e->getMessage(), 0, $e);
+            throw new \Exception('No se pudo reactivar al usuario: '.$e->getMessage(), 0, $e);
         }
 }
 }

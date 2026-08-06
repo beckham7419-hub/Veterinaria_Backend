@@ -66,7 +66,7 @@ class MascotaController extends Controller
 
             return response()->json(['mensaje' => 'Mascota dada de baja'], 200);
         } catch (\Exception $e) {
-            return response()->json(['mensaje' => $e->getMessage()], 422);
+            return response()->json(['mensaje' => $e->getMessage()], 500);
         }
     }
 }
