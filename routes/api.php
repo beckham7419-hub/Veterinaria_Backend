@@ -11,6 +11,7 @@ use App\Http\Controllers\PerfilDuenoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\ArchivoConsultaController;
+use App\Http\Controllers\VacunaController;
 
 Route::get('/login-prueba', function () {
     return view('login');
@@ -66,3 +67,5 @@ Route::get('citas/{cita}/consulta', [ConsultaController::class, 'show'])->middle
 Route::put('consultas/{consulta}', [ConsultaController::class, 'update'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
 Route::post('consultas/{consulta}/archivos', [ArchivoConsultaController::class, 'store'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
 Route::get('consultas/{consulta}/archivos', [ArchivoConsultaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
+Route::post('mascotas/{mascota}/vacunas', [VacunaController::class, 'store'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
+Route::get('mascotas/{mascota}/vacunas', [VacunaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
