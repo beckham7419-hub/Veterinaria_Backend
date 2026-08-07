@@ -203,7 +203,7 @@
         <div class="table-responsive">
           <table class="table table-striped table-hover align-middle">
             <thead class="table-dark">
-              <tr><th>Expediente</th><th>Nombre</th><th>Especie</th><th>Raza</th><th>Sexo</th><th>Nacimiento</th><th>Color</th><th>Dueño</th><th>Acciones</th></tr>
+              <tr><th>Foto</th><th>Expediente</th><th>Nombre</th><th>Especie</th><th>Raza</th><th>Sexo</th><th>Nacimiento</th><th>Color</th><th>Dueño</th><th>Acciones</th></tr>
             </thead>
             <tbody id="tablaMascotas"></tbody>
           </table>
@@ -316,7 +316,11 @@
             </div>
             <div class="mb-3"><label class="form-label">Fecha de nacimiento</label><input type="date" class="form-control" id="mascota_fecha_nacimiento" max="{{ now()->format('Y-m-d') }}"></div>
             <div class="mb-3"><label class="form-label">Color</label><input class="form-control" id="mascota_color" maxlength="50"></div>
-            <div class="mb-3"><label class="form-label">URL de la foto</label><input class="form-control" id="mascota_foto_url" maxlength="255" placeholder="https://..."></div>
+            <div class="mb-3">
+              <label class="form-label">Foto</label>
+              <input type="file" accept="image/*" class="form-control" id="mascota_foto_archivo">
+              <img id="mascota_foto_preview" class="mt-2 rounded border" style="max-width:120px; max-height:120px; display:none;" alt="Vista previa de la foto">
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -438,7 +442,7 @@
 
     async function apiFetch(path, options = {}) {
       const headers = Object.assign({ Accept: 'application/json' }, options.headers || {});
-      if (options.body) headers['Content-Type'] = 'application/json';
+      if (options.body && !(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
       headers['Authorization'] = `Bearer ${token}`;
 
       const res = await fetch(`/api${path}`, Object.assign({}, options, { headers }));
@@ -639,6 +643,26 @@
 
     // ---------- MASCOTAS ----------
     let mascotasCache = {};
+    let mascotaFotoArchivo = null;
+
+    function mostrarFotoPreview(url) {
+      const preview = document.getElementById('mascota_foto_preview');
+      if (url) {
+        preview.src = url;
+        preview.style.display = 'block';
+      } else {
+        preview.removeAttribute('src');
+        preview.style.display = 'none';
+      }
+    }
+
+    document.getElementById('mascota_foto_archivo').addEventListener('change', (e) => {
+      const archivo = e.target.files[0] || null;
+      mascotaFotoArchivo = archivo;
+      if (archivo) {
+        mostrarFotoPreview(URL.createObjectURL(archivo));
+      }
+    });
 
     async function fetchMascotas() {
       const buscar = document.getElementById('buscarMascota').value.trim();
@@ -661,8 +685,12 @@
       const tbody = document.getElementById('tablaMascotas');
       tbody.innerHTML = mascotas.map((m) => {
         const dueno = duenosCache[m.dueno_id];
+        const fotoHtml = m.foto_url
+          ? `<img src="${esc(m.foto_url)}" alt="Foto de ${esc(m.nombre)}" class="rounded" style="width:40px; height:40px; object-fit:cover;">`
+          : '<span class="text-secondary">—</span>';
         return `
         <tr>
+          <td>${fotoHtml}</td>
           <td>${esc(m.numero_expediente)}</td>
           <td>${esc(m.nombre)}</td>
           <td>${esc(m.especie)}</td>
@@ -693,6 +721,8 @@
     document.getElementById('btnAgregarMascota').addEventListener('click', () => {
       document.getElementById('formMascota').reset();
       document.getElementById('mascota_id').value = '';
+      mascotaFotoArchivo = null;
+      mostrarFotoPreview(null);
       document.getElementById('modalMascotaTitulo').innerText = 'Agregar mascota';
     });
 
@@ -712,7 +742,8 @@
         document.getElementById('mascota_sexo').value = mascota.sexo;
         document.getElementById('mascota_fecha_nacimiento').value = soloFecha(mascota.fecha_nacimiento);
         document.getElementById('mascota_color').value = mascota.color || '';
-        document.getElementById('mascota_foto_url').value = mascota.foto_url || '';
+        mascotaFotoArchivo = null;
+        mostrarFotoPreview(mascota.foto_url || null);
         document.getElementById('modalMascotaTitulo').innerText = `Editar mascota — ${mascota.numero_expediente}`;
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalMascota')).show();
       }
@@ -738,23 +769,25 @@
         mostrarAlerta('La fecha de nacimiento no puede ser una fecha futura', 'danger');
         return;
       }
-      const payload = {
-        dueno_id: document.getElementById('mascota_dueno_id').value,
-        nombre: document.getElementById('mascota_nombre').value,
-        especie: document.getElementById('mascota_especie').value,
-        raza: document.getElementById('mascota_raza').value,
-        sexo: document.getElementById('mascota_sexo').value,
-        fecha_nacimiento: document.getElementById('mascota_fecha_nacimiento').value || null,
-        color: document.getElementById('mascota_color').value,
-        foto_url: document.getElementById('mascota_foto_url').value,
-      };
+      const formData = new FormData();
+      formData.append('dueno_id', document.getElementById('mascota_dueno_id').value);
+      formData.append('nombre', document.getElementById('mascota_nombre').value);
+      formData.append('especie', document.getElementById('mascota_especie').value);
+      formData.append('raza', document.getElementById('mascota_raza').value);
+      formData.append('sexo', document.getElementById('mascota_sexo').value);
+      formData.append('fecha_nacimiento', fechaNacimiento);
+      formData.append('color', document.getElementById('mascota_color').value);
+      if (mascotaFotoArchivo) {
+        formData.append('foto', mascotaFotoArchivo);
+      }
 
       try {
         if (id) {
-          await apiFetch(`/mascotas/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+          formData.append('_method', 'PUT');
+          await apiFetch(`/mascotas/${id}`, { method: 'POST', body: formData });
           mostrarAlerta('Mascota actualizada');
         } else {
-          await apiFetch('/mascotas', { method: 'POST', body: JSON.stringify(payload) });
+          await apiFetch('/mascotas', { method: 'POST', body: formData });
           mostrarAlerta('Mascota registrada');
         }
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalMascota')).hide();
