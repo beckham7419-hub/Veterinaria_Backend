@@ -16,6 +16,8 @@ use App\Http\Controllers\VacunaController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\ArchivoConsultaController;
 
+use App\Http\Controllers\HistorialClinicoController;
+
 Route::get('/login-prueba', function () {
     return view('login');
 });
@@ -128,3 +130,11 @@ Route::put('consultas/{consulta}', [ConsultaController::class, 'update'])->middl
 Route::post('consultas/{consulta}/archivos', [ArchivoConsultaController::class, 'store'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
 Route::get('consultas/{consulta}/archivos', [ArchivoConsultaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
 
+Route::get(
+    'mascotas/{mascota}/historial-clinico',
+    [HistorialClinicoController::class, 'show']
+)->middleware([
+    'auth:usuarios',
+    'token.valido:usuarios',
+    'rol:veterinario'
+]);
