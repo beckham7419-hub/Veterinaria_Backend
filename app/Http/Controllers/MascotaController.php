@@ -7,6 +7,8 @@ use App\Http\Requests\StoreMascotaRequest;
 use App\Http\Requests\UpdateMascotaRequest;
 use App\Models\Mascota;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class MascotaController extends Controller
 {
@@ -31,7 +33,16 @@ class MascotaController extends Controller
     public function store(StoreMascotaRequest $request)
     {
         try {
-            $mascota = $this->mascotaRepository->registrarMascota($request->validated());
+            $datos = $request->validated();
+            unset($datos['foto']);
+
+            if ($request->hasFile('foto')) {
+                $datos['foto_url'] = Storage::disk('public')->url(
+                    $request->file('foto')->store('mascotas', 'public')
+                );
+            }
+
+            $mascota = $this->mascotaRepository->registrarMascota($datos);
 
             return response()->json($mascota, 201);
         } catch (\Exception $e) {
@@ -51,7 +62,20 @@ class MascotaController extends Controller
     public function update(UpdateMascotaRequest $request, Mascota $mascota)
     {
         try {
-            $mascota = $this->mascotaRepository->actualizarMascota($mascota, $request->validated());
+            $datos = $request->validated();
+            unset($datos['foto']);
+
+            if ($request->hasFile('foto')) {
+                if ($mascota->foto_url) {
+                    Storage::disk('public')->delete(Str::after($mascota->foto_url, '/storage/'));
+                }
+
+                $datos['foto_url'] = Storage::disk('public')->url(
+                    $request->file('foto')->store('mascotas', 'public')
+                );
+            }
+
+            $mascota = $this->mascotaRepository->actualizarMascota($mascota, $datos);
 
             return response()->json($mascota, 200);
         } catch (\Exception $e) {

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateMascotaRequest extends FormRequest
@@ -21,9 +21,9 @@ class UpdateMascotaRequest extends FormRequest
             'especie' => 'sometimes|required|string|max:50',
             'raza' => 'nullable|string|max:50',
             'sexo' => 'sometimes|required|string|in:macho,hembra',
-            'fecha_nacimiento' => 'nullable|date',
+            'fecha_nacimiento' => 'nullable|date|before_or_equal:today',
             'color' => 'nullable|string|max:50',
-            'foto_url' => 'nullable|string|max:255'
+            'foto' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
         ];
     }
 
@@ -31,7 +31,10 @@ class UpdateMascotaRequest extends FormRequest
     {
         return [
             'dueno_id.exists' => 'El dueno especificado no existe.',
-            'sexo.in' => 'El sexo debe ser macho o hembra.'
+            'sexo.in' => 'El sexo debe ser macho o hembra.',
+            'fecha_nacimiento.before_or_equal' => 'La fecha de nacimiento no puede ser una fecha futura.',
+            'foto.mimes' => 'La foto debe ser una imagen jpg, jpeg o png.',
+            'foto.max' => 'La foto no debe pesar mas de 5MB.',
         ];
     }
 
@@ -39,7 +42,7 @@ class UpdateMascotaRequest extends FormRequest
     {
         throw new HttpResponseException(response()->json([
             'mensaje' => 'Validacion fallida',
-            'errores' => $validator->errors()
+            'errores' => $validator->errors(),
         ], 422));
     }
 }
