@@ -24,4 +24,9 @@ class Consulta extends Model
     {
         return $this->belongsTo(Cita::class);
     }
+
+    public function archivos()
+    {
+        return $this->hasMany(ArchivoConsulta::class, 'consulta_id');
+    }
 }
