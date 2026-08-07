@@ -18,6 +18,7 @@ class StoreConsultaRequest extends FormRequest
         return [
             'diagnostico' => 'nullable|string',
             'tratamiento' => 'nullable|string',
+            'medicamentos_recetados' => 'nullable|string',
             'observaciones' => 'nullable|string',
             'peso' => 'nullable|numeric|min:0|max:999.99',
             'temperatura' => 'nullable|numeric|min:0|max:999.9'

@@ -31,7 +31,7 @@ class MisMascotasController extends Controller
         try {
             $dueno = Auth::guard("duenos")->user();
             $data = $request->validated();
-            $data['dueno_id'] = $dueno->id;
+            $data["dueno_id"] = $dueno->id;
 
             $mascota = $this->mascotaRepository->registrarMascota($data);
             return response()->json($mascota,201);
@@ -48,7 +48,29 @@ class MisMascotasController extends Controller
             return response()->json(["mensaje" => "No tienes permiso para ver esta mascota"],403);
         }
 
-        return response()->json($mascota,200);
+        try {
+            $resultado = $this->mascotaRepository->obtenerPerfilCompleto($mascota);
+            return response()->json($resultado,200);
+        }
+        catch (\Exception $e) {
+            return response()->json(["mensaje" => $e -> getMessage()],500);
+        }
+    }
+
+    public function historial(Mascota $mascota) {
+        $dueno = Auth::guard("duenos")->user();
+
+        if ((int) $mascota->dueno_id !== (int) $dueno->id) {
+            return response()->json(["mensaje" => "No tienes permiso para ver esta mascota"],403);
+        }
+
+        try {
+            $resultado = $this->mascotaRepository->obtenerHistorialCompleto($mascota);
+            return response()->json($resultado,200);
+        }
+        catch (\Exception $e) {
+            return response()->json(["mensaje" => $e -> getMessage()],500);
+        }
     }
 
     public function update(UpdateMiMascotaRequest $request, Mascota $mascota) {

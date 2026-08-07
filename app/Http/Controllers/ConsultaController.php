@@ -29,13 +29,12 @@ class ConsultaController extends Controller
     }
 
     public function show(Cita $cita) {
-        $consulta = $cita->consulta;
-
-        if (!$consulta) {
-            return response()->json(["mensaje" => "Esta cita no tiene consulta registrada"], 404);
-        }
-
-        return response()->json($consulta, 200);
+        return response()->json([
+            "consulta" => $cita->consulta,
+            "mascota" => $cita->mascota,
+            "dueno" => $cita->dueno,
+            "motivo" => $cita->motivo,
+        ], 200);
     }
 
     public function update(UpdateConsultaRequest $request, Consulta $consulta) {

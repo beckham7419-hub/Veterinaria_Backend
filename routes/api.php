@@ -63,9 +63,10 @@ Route::post('mis-citas', [MisCitasController::class, 'store'])->middleware(['aut
 Route::put('mis-citas/{cita}/cancelar', [MisCitasController::class, 'cancelar'])->middleware(['auth:duenos', 'token.valido:duenos']);
 Route::get('mis-citas/horarios-disponibles', [MisCitasController::class, 'horariosDisponibles'])->middleware(['auth:duenos', 'token.valido:duenos']);
 Route::post('citas/{cita}/consulta', [ConsultaController::class, 'store'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
-Route::get('citas/{cita}/consulta', [ConsultaController::class, 'show'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
 Route::put('consultas/{consulta}', [ConsultaController::class, 'update'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
 Route::post('consultas/{consulta}/archivos', [ArchivoConsultaController::class, 'store'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
-Route::get('consultas/{consulta}/archivos', [ArchivoConsultaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
 Route::post('mascotas/{mascota}/vacunas', [VacunaController::class, 'store'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
-Route::get('mascotas/{mascota}/vacunas', [VacunaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
+Route::get('mis-mascotas/{mascota}/historial', [MisMascotasController::class, 'historial'])->middleware(['auth:duenos', 'token.valido:duenos']);
+Route::get('citas/{cita}/consulta', [ConsultaController::class, 'show'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista']);
+Route::get('consultas/{consulta}/archivos', [ArchivoConsultaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista']);
+Route::get('mascotas/{mascota}/vacunas', [VacunaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista']);

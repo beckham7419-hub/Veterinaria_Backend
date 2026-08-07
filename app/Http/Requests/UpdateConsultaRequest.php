@@ -18,6 +18,7 @@ class UpdateConsultaRequest extends FormRequest
         return [
             'diagnostico' => 'sometimes|nullable|string',
             'tratamiento' => 'sometimes|nullable|string',
+            'medicamentos_recetados' => 'sometimes|nullable|string',
             'observaciones' => 'sometimes|nullable|string',
             'peso' => 'sometimes|nullable|numeric|min:0|max:999.99',
             'temperatura' => 'sometimes|nullable|numeric|min:0|max:999.9'
