@@ -49,4 +49,15 @@ class VacunaRepository
             ]),
         ];
     }
+
+    public function obtenerProximasVacunas()
+    {
+    return Vacuna::with([
+        'mascota',
+        'consultaMedica'
+    ])
+    ->whereNotNull('proxima_dosis')
+    ->orderBy('proxima_dosis')
+    ->get();
+    }
 }

@@ -76,4 +76,11 @@ class VacunaController extends Controller
 
         }
     }
+
+    public function proximas()
+{
+    return response()->json(
+        $this->vacunaRepository->obtenerProximasVacunas()
+    );
+}
 }

@@ -34,6 +34,18 @@ class ConsultaMedicaController extends Controller
         }
     }
 
+    public function index()
+    {
+    return response()->json(
+        ConsultaMedica::with([
+            'cita',
+            'vacunas'
+        ])->get()
+    );
+}
+
+
+
     public function show(ConsultaMedica $consultaMedica)
     {
         try {

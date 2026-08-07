@@ -10,8 +10,9 @@ class HistorialClinicoController extends Controller
     {
         return response()->json([
             'mascota' => $mascota->load([
-                'consultasMedicas',
-                'vacunas'
+                'vacunas',
+                'consultasMedicas.cita',
+                'consultasMedicas.vacunas'
             ])
         ]);
     }

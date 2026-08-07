@@ -124,3 +124,12 @@ return [
     ],
 
 ];
+
+Route::get(
+    'consultas-medicas',
+    [ConsultaMedicaController::class, 'index']
+)->middleware([
+    'auth:usuarios',
+    'token.valido:usuarios',
+    'rol:veterinario'
+]);
