@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreMascotaRequest extends FormRequest
@@ -21,9 +21,9 @@ class StoreMascotaRequest extends FormRequest
             'especie' => 'required|string|max:50',
             'raza' => 'nullable|string|max:50',
             'sexo' => 'required|string|in:macho,hembra',
-            'fecha_nacimiento' => 'nullable|date',
+            'fecha_nacimiento' => 'nullable|date|before_or_equal:today',
             'color' => 'nullable|string|max:50',
-            'foto_url' => 'nullable|string|max:255'
+            'foto_url' => 'nullable|string|max:255',
         ];
     }
 
@@ -35,7 +35,8 @@ class StoreMascotaRequest extends FormRequest
             'nombre.required' => 'El nombre de la mascota es obligatorio.',
             'especie.required' => 'La especie es obligatoria.',
             'sexo.required' => 'El sexo es obligatorio.',
-            'sexo.in' => 'El sexo debe ser macho o hembra.'
+            'sexo.in' => 'El sexo debe ser macho o hembra.',
+            'fecha_nacimiento.before_or_equal' => 'La fecha de nacimiento no puede ser una fecha futura.',
         ];
     }
 
@@ -43,7 +44,7 @@ class StoreMascotaRequest extends FormRequest
     {
         throw new HttpResponseException(response()->json([
             'mensaje' => 'Validacion fallida',
-            'errores' => $validator->errors()
+            'errores' => $validator->errors(),
         ], 422));
     }
 }

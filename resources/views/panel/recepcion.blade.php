@@ -104,7 +104,14 @@
 
     .form-label { color: #cccccc; }
 
-    /* ---------- Botones ---------- */
+    /* ---------- Inputs de fecha ---------- */
+    input[type="date"] {
+      zoom: 2.1;
+      cursor: pointer;
+      font-size: calc(1rem / 2.1); 
+    }
+
+    /* ---------- Bot ones ---------- */
     .btn-primary {
       background-color: #ff4d4d;
       border-color: #ff4d4d;
@@ -307,7 +314,7 @@
                 <option value="hembra">Hembra</option>
               </select>
             </div>
-            <div class="mb-3"><label class="form-label">Fecha de nacimiento</label><input type="date" class="form-control" id="mascota_fecha_nacimiento"></div>
+            <div class="mb-3"><label class="form-label">Fecha de nacimiento</label><input type="date" class="form-control" id="mascota_fecha_nacimiento" max="{{ now()->format('Y-m-d') }}"></div>
             <div class="mb-3"><label class="form-label">Color</label><input class="form-control" id="mascota_color" maxlength="50"></div>
             <div class="mb-3"><label class="form-label">URL de la foto</label><input class="form-control" id="mascota_foto_url" maxlength="255" placeholder="https://..."></div>
           </div>
@@ -726,6 +733,11 @@
     document.getElementById('formMascota').addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('mascota_id').value;
+      const fechaNacimiento = document.getElementById('mascota_fecha_nacimiento').value;
+      if (fechaNacimiento && fechaNacimiento > new Date().toISOString().slice(0, 10)) {
+        mostrarAlerta('La fecha de nacimiento no puede ser una fecha futura', 'danger');
+        return;
+      }
       const payload = {
         dueno_id: document.getElementById('mascota_dueno_id').value,
         nombre: document.getElementById('mascota_nombre').value,
@@ -798,6 +810,13 @@
       });
       activarTab('tabBtnCitas');
       fetchCitas();
+    }
+
+    function irAMascotaDesdeCita(mascotaId, mascotaNombre) {
+      activarTab('tabBtnMascotas');
+      document.getElementById('filtroDuenoMascota').value = '';
+      document.getElementById('buscarMascota').value = mascotaNombre || '';
+      fetchMascotas();
     }
 
     function mostrarFechaEnCalendario(fecha) {
@@ -873,7 +892,7 @@
           acciones += `<button class="btn btn-sm btn-success mb-1" data-accion="completar" data-id="${c.id}">Completar</button> `;
         }
 
-        acciones += `<button class="btn btn-sm btn-outline-light mb-1" data-accion="historial" data-id="${c.id}">Historial mascota</button>`;
+        acciones += `<button class="btn btn-sm btn-outline-light mb-1" data-accion="ver-mascota" data-id="${c.id}">Ver mascota</button>`;
 
         return `
         <tr>
@@ -928,8 +947,8 @@
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCancelar')).show();
       }
 
-      if (accion === 'historial') {
-        irAHistorialMascota(cita.mascota_id, cita.mascota ? cita.mascota.nombre : cita.mascota_id);
+      if (accion === 'ver-mascota') {
+        irAMascotaDesdeCita(cita.mascota_id, cita.mascota ? cita.mascota.nombre : cita.mascota_id);
       }
     });
 
