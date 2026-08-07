@@ -7,6 +7,8 @@ use App\Http\Requests\StoreMiMascotaRequest;
 use App\Http\Requests\UpdateMiMascotaRequest;
 use App\Http\Repositories\MascotaRepository;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class MisMascotasController extends Controller
 {
@@ -30,10 +32,17 @@ class MisMascotasController extends Controller
     public function store(StoreMiMascotaRequest $request) {
         try {
             $dueno = Auth::guard("duenos")->user();
-            $data = $request->validated();
-            $data["dueno_id"] = $dueno->id;
+            $datos = $request->validated();
+            unset($datos["foto"]);
+            $datos["dueno_id"] = $dueno->id;
 
-            $mascota = $this->mascotaRepository->registrarMascota($data);
+            if ($request->hasFile("foto")) {
+                $datos["foto_url"] = Storage::disk("public")->url(
+                    $request->file("foto")->store("mascotas", "public")
+                );
+            }
+
+            $mascota = $this->mascotaRepository->registrarMascota($datos);
             return response()->json($mascota,201);
         }
         catch (\Exception $e) {
@@ -81,7 +90,20 @@ class MisMascotasController extends Controller
         }
 
         try {
-            $mascota = $this->mascotaRepository->actualizarMascota($mascota, $request->validated());
+            $datos = $request->validated();
+            unset($datos["foto"]);
+
+            if ($request->hasFile("foto")) {
+                if ($mascota->foto_url) {
+                    Storage::disk("public")->delete(Str::after($mascota->foto_url, "/storage/"));
+                }
+
+                $datos["foto_url"] = Storage::disk("public")->url(
+                    $request->file("foto")->store("mascotas", "public")
+                );
+            }
+
+            $mascota = $this->mascotaRepository->actualizarMascota($mascota, $datos);
             return response()->json($mascota,200);
         }
         catch (\Exception $e) {

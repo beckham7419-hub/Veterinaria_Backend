@@ -20,16 +20,19 @@ class UpdateMiMascotaRequest extends FormRequest
             'especie' => 'sometimes|required|string|max:50',
             'raza' => 'nullable|string|max:50',
             'sexo' => 'sometimes|required|string|in:macho,hembra',
-            'fecha_nacimiento' => 'nullable|date',
+            'fecha_nacimiento' => 'nullable|date|before_or_equal:today',
             'color' => 'nullable|string|max:50',
-            'foto_url' => 'nullable|string|max:255'
+            'foto' => 'nullable|file|mimes:jpg,jpeg,png|max:5120'
         ];
     }
 
     public function messages(): array
     {
         return [
-            'sexo.in' => 'El sexo debe ser macho o hembra.'
+            'sexo.in' => 'El sexo debe ser macho o hembra.',
+            'fecha_nacimiento.before_or_equal' => 'La fecha de nacimiento no puede ser una fecha futura.',
+            'foto.mimes' => 'La foto debe ser una imagen jpg, jpeg o png.',
+            'foto.max' => 'La foto no debe pesar mas de 5MB.'
         ];
     }
 
