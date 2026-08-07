@@ -1,24 +1,24 @@
-<?php
+    <?php
 
-namespace App\Models;
+    namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Database\Eloquent\Model;
 
-class ArchivoConsulta extends Model
-{
-    protected $table = 'archivos_consulta';
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'consulta_id',
-        'nombre_archivo',
-        'ruta_archivo',
-        'tipo',
-    ];
-
-    public function consulta()
+    class ArchivoConsulta extends Model
     {
-        return $this->belongsTo(Consulta::class);
+        protected $table = 'archivos_consulta';
+
+        public $timestamps = false;
+
+        protected $fillable = [
+            'consulta_id',
+            'nombre_archivo',
+            'ruta_archivo',
+            'tipo',
+        ];
+
+        public function consulta()
+        {
+            return $this->belongsTo(Consulta::class);
+        }
     }
-}

@@ -25,8 +25,9 @@ class ConsultaMedica extends Model
     {
         return $this->belongsTo(Cita::class);
     }
+
     public function vacunas()
     {
-    return $this->hasMany(Vacuna::class);
+        return $this->hasMany(Vacuna::class);
     }
 }
