@@ -2,40 +2,31 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreConsultaMedicaRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
-{
-    return [
-        'cita_id' => 'required|exists:citas,id',
+    {
+        return [
+            'cita_id' => 'required|exists:citas,id',
 
-        'diagnostico' => 'required|string',
+            'diagnostico' => 'required|string|max:1000',
 
-        'tratamiento' => 'nullable|string',
+            'tratamiento' => 'nullable|string|max:1000',
 
-        'medicamentos' => 'nullable|string',
+            'medicamentos' => 'nullable|string|max:1000',
 
-        'observaciones' => 'nullable|string',
+            'observaciones' => 'nullable|string|max:2000',
 
-        'peso' => 'nullable|numeric|min:0',
+            'peso' => 'nullable|numeric|min:0|max:200',
 
-        'temperatura' => 'nullable|numeric|min:0',
-    ];
-}
+            'temperatura' => 'nullable|numeric|min:30|max:50',
+        ];
+    }
 }

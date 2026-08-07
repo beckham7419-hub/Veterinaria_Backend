@@ -58,6 +58,11 @@ class VacunaController extends Controller
 
             $vacuna->update($request->validated());
 
+            $vacuna->load([
+                'mascota',
+                'consultaMedica'
+            ]);
+
             return response()->json([
                 'mensaje' => 'Vacuna actualizada',
                 'vacuna' => $vacuna

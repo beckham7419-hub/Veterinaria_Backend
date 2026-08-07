@@ -31,13 +31,17 @@ class ConsultaMedicaRepository
                 $e
             );
         }
+        
     }
 
     public function obtenerConsulta(ConsultaMedica $consulta)
     {
         return [
             'mensaje' => 'Consulta medica obtenida',
-            'consulta' => $consulta->load('cita'),
+            'consulta' => $consulta->load([
+    'cita',
+    'vacunas'
+    ])
         ];
     }
 }

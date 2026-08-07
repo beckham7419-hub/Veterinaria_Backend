@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateConsultaMedicaRequest extends FormRequest
@@ -15,17 +14,17 @@ class UpdateConsultaMedicaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'diagnostico' => 'sometimes|string',
+            'diagnostico' => 'sometimes|string|max:1000',
 
-            'tratamiento' => 'sometimes|nullable|string',
+            'tratamiento' => 'sometimes|nullable|string|max:1000',
 
-            'medicamentos' => 'sometimes|nullable|string',
+            'medicamentos' => 'sometimes|nullable|string|max:1000',
 
-            'observaciones' => 'sometimes|nullable|string',
+            'observaciones' => 'sometimes|nullable|string|max:2000',
 
-            'peso' => 'sometimes|nullable|numeric|min:0',
+            'peso' => 'sometimes|nullable|numeric|min:0|max:200',
 
-            'temperatura' => 'sometimes|nullable|numeric|min:0',
+            'temperatura' => 'sometimes|nullable|numeric|min:30|max:50',
         ];
     }
 }
