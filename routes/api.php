@@ -1,30 +1,20 @@
-<?php
+<<?php
 
-<<<<<<< HEAD
 use App\Http\Controllers\UsuarioController;
-<<<<<<< HEAD
 use App\Http\Controllers\DuenoController;
-use App\Http\Controllers\AuthUsuarioController;
-=======
->>>>>>> 15dc3ebb5282873499bc39e87cda2b8bb120bc99
 use App\Http\Controllers\AuthDuenoController;
 use App\Http\Controllers\AuthUsuarioController;
-use App\Http\Controllers\CitaController;
-use App\Http\Controllers\DuenoController;
 use App\Http\Controllers\MascotaController;
-use App\Http\Controllers\MisCitasController;
 use App\Http\Controllers\MisMascotasController;
 use App\Http\Controllers\PerfilDuenoController;
-<<<<<<< HEAD
-=======
+use App\Http\Controllers\CitaController;
+use App\Http\Controllers\MisCitasController;
+
 use App\Http\Controllers\ConsultaMedicaController;
 use App\Http\Controllers\VacunaController;
->>>>>>> 98a6ac0 (chavos aqui esta gran parte de mi jale, vean en controllers consulta medica y vacuna, de los repo igual, consulta medica y vacuna, de request storeconsultamedica, storevacuna, update consulta medica y update vacuna, de los models consulta medica y vacuna, aqui ojo por que en mascota agregue algo bonito que ocupaba, tambien sus migraciones ya estan, sobres ahi les mando lo demas al raton, arriba el santos)
-=======
-use App\Http\Controllers\UsuarioController;
+
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\ArchivoConsultaController;
->>>>>>> 15dc3ebb5282873499bc39e87cda2b8bb120bc99
 
 Route::get('/login-prueba', function () {
     return view('login');
@@ -58,12 +48,7 @@ Route::put('mi-perfil/contrasena', [PerfilDuenoController::class, 'cambiarContra
 Route::post('auth/usuarios/login', [AuthUsuarioController::class, 'login']);
 Route::post('auth/usuarios/logout', [AuthUsuarioController::class, 'logout'])->middleware('auth:usuarios');
 Route::post('auth/duenos/login', [AuthDuenoController::class, 'login']);
-<<<<<<< HEAD
-<<<<<<< HEAD
 Route::post('auth/duenos/logout', [AuthDuenoController::class, 'logout'])->middleware('auth:duenos');
-=======
-=======
->>>>>>> 15dc3ebb5282873499bc39e87cda2b8bb120bc99
 Route::post('auth/duenos/logout', [AuthDuenoController::class, 'logout'])->middleware('auth:duenos');
 Route::apiResource('mascotas', MascotaController::class)->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista']);
 Route::get('mis-mascotas', [MisMascotasController::class, 'index'])->middleware(['auth:duenos', 'token.valido:duenos']);
@@ -77,7 +62,7 @@ Route::put('citas/{cita}/check-in', [CitaController::class, 'registrarLlegada'])
 Route::put('citas/{cita}/confirmar', [CitaController::class, 'confirmar'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista']);
 Route::put('citas/{cita}/iniciar-consulta', [CitaController::class, 'iniciarConsulta'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista,veterinario']);
 Route::put('citas/{cita}/completar', [CitaController::class, 'completar'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista,veterinario']);
-<<<<<<< HEAD
+
 
 Route::post(
     'consultas-medicas',
@@ -132,8 +117,7 @@ Route::put(
     'token.valido:usuarios',
     'rol:veterinario'
 ]);
->>>>>>> 98a6ac0 (chavos aqui esta gran parte de mi jale, vean en controllers consulta medica y vacuna, de los repo igual, consulta medica y vacuna, de request storeconsultamedica, storevacuna, update consulta medica y update vacuna, de los models consulta medica y vacuna, aqui ojo por que en mascota agregue algo bonito que ocupaba, tambien sus migraciones ya estan, sobres ahi les mando lo demas al raton, arriba el santos)
-=======
+
 Route::get('mis-citas', [MisCitasController::class, 'index'])->middleware(['auth:duenos', 'token.valido:duenos']);
 Route::post('mis-citas', [MisCitasController::class, 'store'])->middleware(['auth:duenos', 'token.valido:duenos']);
 Route::put('mis-citas/{cita}/cancelar', [MisCitasController::class, 'cancelar'])->middleware(['auth:duenos', 'token.valido:duenos']);
@@ -143,4 +127,4 @@ Route::get('citas/{cita}/consulta', [ConsultaController::class, 'show'])->middle
 Route::put('consultas/{consulta}', [ConsultaController::class, 'update'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
 Route::post('consultas/{consulta}/archivos', [ArchivoConsultaController::class, 'store'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
 Route::get('consultas/{consulta}/archivos', [ArchivoConsultaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario']);
->>>>>>> 15dc3ebb5282873499bc39e87cda2b8bb120bc99
+
