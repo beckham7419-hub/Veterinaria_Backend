@@ -12,6 +12,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\ArchivoConsultaController;
 use App\Http\Controllers\VacunaController;
+use App\Http\Controllers\ProveedorController;
 
 Route::get('/login-prueba', function () {
     return view('login');
@@ -70,3 +71,4 @@ Route::get('mis-mascotas/{mascota}/historial', [MisMascotasController::class, 'h
 Route::get('citas/{cita}/consulta', [ConsultaController::class, 'show'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista']);
 Route::get('consultas/{consulta}/archivos', [ArchivoConsultaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista']);
 Route::get('mascotas/{mascota}/vacunas', [VacunaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista']);
+Route::apiResource('proveedores', ProveedorController::class)->parameters(['proveedores' => 'proveedor'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
