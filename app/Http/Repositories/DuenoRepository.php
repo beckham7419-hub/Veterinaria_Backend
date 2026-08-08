@@ -72,4 +72,28 @@ class DuenoRepository
             throw new \Exception('No se pudo dar de baja al dueno: '.$e->getMessage(), 0, $e);
         }
     }
+      public function reactivarDueno(int $id)
+{
+     try {
+      $dueno= Dueno::findOrFail($id);
+      $dueno->activo = true;
+      $dueno->save();
+
+    return ['mensaje' => 'Dueño reactivado', 'dueño' => $dueno];
+     }catch (\Exception $e) {
+            throw new \Exception('No se pudo reactivar al deuño: '.$e->getMessage(), 0, $e);
+        }
+}
+
+public function buscarPorCorreo(string $correo)
+{
+    try {
+        $dueno = Dueno::where('correo', $correo)->first();
+
+        return $dueno;
+    } catch (\Exception $e) {
+        throw new \Exception('No se pudo buscar el dueño: '.$e->getMessage(), 0, $e);
+    }
+}
+
 }
