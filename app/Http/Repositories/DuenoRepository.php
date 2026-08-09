@@ -64,8 +64,12 @@ class DuenoRepository
             $dueno->activo = false;
             $dueno->save();
 
+            // El historial clinico (citas, consultas, vacunas) de las mascotas se conserva intacto;
+            // solo se marcan como inactivas para que dejen de operarse (agendar citas, etc).
+            $dueno->mascotas()->update(['activo' => false]);
+
             return [
-                'mensaje' => 'Dueno eliminado',
+                'mensaje' => 'Dueno dado de baja junto con sus mascotas. El historial clinico se conserva.',
                 'dueno' => $dueno,
             ];
         } catch (\Exception $e) {
@@ -76,14 +80,16 @@ class DuenoRepository
     public function reactivarDueno(int $id)
     {
         try {
-        $dueno= Dueno::findOrFail($id);
-        $dueno->activo = true;
-        $dueno->save();
+            $dueno = Dueno::findOrFail($id);
+            $dueno->activo = true;
+            $dueno->save();
 
-        return ['mensaje' => 'Dueno reactivado', 'dueno' => $dueno];
-        }catch (\Exception $e) {
-                throw new \Exception('No se pudo reactivar al dueno: '.$e->getMessage(), 0, $e);
-            }
+            $dueno->mascotas()->update(['activo' => true]);
+
+            return ['mensaje' => 'Dueno reactivado junto con sus mascotas', 'dueno' => $dueno];
+        } catch (\Exception $e) {
+            throw new \Exception('No se pudo reactivar al dueno: '.$e->getMessage(), 0, $e);
+        }
     }
 
     public function buscarPorCorreo(string $correo)
@@ -96,5 +102,4 @@ class DuenoRepository
             throw new \Exception('No se pudo buscar el dueno: '.$e->getMessage(), 0, $e);
         }
     }
-
 }
