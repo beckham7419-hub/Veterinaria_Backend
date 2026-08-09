@@ -357,7 +357,7 @@
             </div>
             <div class="mb-3"><label class="form-label">Motivo de consulta</label><input required class="form-control" id="cita_motivo" maxlength="255"></div>
             <div class="mb-3"><label class="form-label">Fecha</label><input required type="date" class="form-control" id="cita_fecha"></div>
-            <div class="mb-3"><label class="form-label">Hora</label><input required type="time" class="form-control" id="cita_hora"></div>
+            <div class="mb-3"><label class="form-label">Hora</label><input required type="time" class="form-control" id="cita_hora" min="07:00" max="21:00"></div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -383,7 +383,7 @@
               <select required class="form-select" id="reprogramar_veterinario_id"></select>
             </div>
             <div class="mb-3"><label class="form-label">Fecha</label><input required type="date" class="form-control" id="reprogramar_fecha"></div>
-            <div class="mb-3"><label class="form-label">Hora</label><input required type="time" class="form-control" id="reprogramar_hora"></div>
+            <div class="mb-3"><label class="form-label">Hora</label><input required type="time" class="form-control" id="reprogramar_hora" min="07:00" max="21:00"></div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -909,9 +909,11 @@
       tbody.innerHTML = citas.map((c) => {
         const mascotaNombre = c.mascota ? c.mascota.nombre : `#${c.mascota_id}`;
         const vetNombre = c.veterinario ? c.veterinario.nombre_completo : `#${c.veterinario_id}`;
+         const vencida = citaVencida(c);
         let acciones = '';
-
-        if (c.estado === 'agendada' || c.estado === 'confirmada') {
+        if (c.estado === 'agendada' && vencida) {
+        } 
+        else if (c.estado === 'agendada' || c.estado === 'confirmada') {
           if (c.estado === 'agendada') {
             acciones += `<button class="btn btn-sm btn-info text-white mb-1" data-accion="confirmar" data-id="${c.id}">Confirmar</button> `;
           }
@@ -1012,6 +1014,11 @@
 
     document.getElementById('formCita').addEventListener('submit', async (e) => {
       e.preventDefault();
+      const hora = document.getElementById('cita_hora').value;
+      if (!horaValida(hora)) {
+      mostrarAlerta('Las citas solo se pueden agendar entre las 7:00 y las 22:00 horas', 'danger');
+      return;
+      }
       const payload = {
         mascota_id: document.getElementById('cita_mascota_id').value,
         veterinario_id: document.getElementById('cita_veterinario_id').value,
@@ -1032,6 +1039,11 @@
 
     document.getElementById('formReprogramar').addEventListener('submit', async (e) => {
       e.preventDefault();
+      const hora = document.getElementById('cita_hora').value;
+      if (!horaValida(hora)) {
+      mostrarAlerta('Las citas solo se pueden agendar entre las 7:00 y las 22:00 horas', 'danger');
+      return;
+      }
       const id = document.getElementById('reprogramar_cita_id').value;
       const payload = {
         veterinario_id: document.getElementById('reprogramar_veterinario_id').value,
@@ -1064,6 +1076,14 @@
       }
     });
 
+    function citaVencida(c) {
+    return new Date(`${soloFecha(c.fecha)}T${soloHora(c.hora)}`) < new Date();
+    }
+    
+    function horaValida(hora) {
+  const [h] = hora.split(':').map(Number);
+  return h >= 7 && h < 22;
+}
     document.getElementById('tabBtnCitas').addEventListener('click', () => { if (Object.keys(citasCache).length === 0) fetchCitas(); });
     document.getElementById('tabBtnMascotas').addEventListener('click', () => { if (Object.keys(mascotasCache).length === 0) fetchMascotas(); });
   </script>

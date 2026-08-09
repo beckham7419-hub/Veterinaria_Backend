@@ -10,6 +10,7 @@ use App\Mail\CitaConfirmadaMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
 
 class MisCitasController extends Controller
 {
@@ -78,4 +79,14 @@ class MisCitasController extends Controller
             return response()->json(["mensaje" => $e -> getMessage()],500);
         }
     }
+
+    public function confirmar(Cita $cita)
+{
+    if (Carbon::parse("{$cita->fecha} {$cita->hora}")->isPast()) {
+        return response()->json(['mensaje' => 'No se puede confirmar una cita que ya venció'], 422);
+    }
+    $cita->update(['estado' => 'confirmada']);
+    return response()->json(['data' => $cita]);
+}
+
 }

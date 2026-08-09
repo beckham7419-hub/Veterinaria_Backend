@@ -79,3 +79,5 @@ Route::get('citas/{cita}/consulta', [ConsultaController::class, 'show'])->middle
 Route::get('consultas/{consulta}/archivos', [ArchivoConsultaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista,administrador']);
 Route::get('mascotas/{mascota}/vacunas', [VacunaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista,administrador']);
 Route::apiResource('proveedores', ProveedorController::class)->parameters(['proveedores' => 'proveedor'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
+
+Schedule::command('app:vencer-citas-no-confirmadas')->everyFiveMinutes();

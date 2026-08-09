@@ -761,26 +761,28 @@
 
     // ============ DUEÑOS ============
     let duenosCache = {};
+    let duenosCacheListo = null;
 
+   
     async function cargarDuenosCache() {
-      try {
-        const res = await apiFetch('/duenos');
-        duenosCache = {};
-        res.data.forEach((d) => { duenosCache[d.id] = d; });
+  try {
+    const res = await apiFetch('/duenos');
+    duenosCache = {};
+    res.data.forEach((d) => { duenosCache[d.id] = d; });
 
-        const selectMascota = document.getElementById('mascota_dueno_id');
-        const selectFiltro = document.getElementById('filtroDuenoMascota');
-        selectMascota.innerHTML = '';
-        selectFiltro.innerHTML = '<option value="">Todos los dueños</option>';
+    const selectMascota = document.getElementById('mascota_dueno_id');
+    const selectFiltro = document.getElementById('filtroDuenoMascota');
+    selectMascota.innerHTML = '';
+    selectFiltro.innerHTML = '<option value="">Todos los dueños</option>';
 
-        res.data.forEach((d) => {
-          selectMascota.innerHTML += `<option value="${d.id}">${esc(d.nombre_completo)}</option>`;
-          selectFiltro.innerHTML += `<option value="${d.id}">${esc(d.nombre_completo)}</option>`;
-        });
-      } catch (e) {
-        mostrarAlerta(mensajeError(e), 'danger');
-      }
-    }
+    res.data.forEach((d) => {
+      selectMascota.innerHTML += `<option value="${d.id}">${esc(d.nombre_completo)}</option>`;
+      selectFiltro.innerHTML += `<option value="${d.id}">${esc(d.nombre_completo)}</option>`;
+    });
+  } catch (e) {
+    mostrarAlerta(mensajeError(e), 'danger');
+  }
+}
 
     async function fetchDuenos() {
       const buscar = document.getElementById('buscarDueno').value.trim();
@@ -961,20 +963,21 @@
     });
 
     async function fetchMascotas() {
-      const buscar = document.getElementById('buscarMascota').value.trim();
-      const duenoId = document.getElementById('filtroDuenoMascota').value;
-      const params = new URLSearchParams();
-      if (buscar) params.set('buscar', buscar);
-      if (duenoId) params.set('dueno_id', duenoId);
+  if (duenosCacheListo) await duenosCacheListo; 
 
-      try {
-        const res = await apiFetch(`/mascotas?${params.toString()}`);
-        renderMascotas(res.data);
-      } catch (e) {
-        mostrarAlerta(mensajeError(e), 'danger');
-      }
-    }
+  const buscar = document.getElementById('buscarMascota').value.trim();
+  const duenoId = document.getElementById('filtroDuenoMascota').value;
+  const params = new URLSearchParams();
+  if (buscar) params.set('buscar', buscar);
+  if (duenoId) params.set('dueno_id', duenoId);
 
+  try {
+    const res = await apiFetch(`/mascotas?${params.toString()}`);
+    renderMascotas(res.data);
+  } catch (e) {
+    mostrarAlerta(mensajeError(e), 'danger');
+  }
+}
     function renderMascotas(mascotas) {
       mascotasCache = {};
       mascotas.forEach((m) => { mascotasCache[m.id] = m; });
