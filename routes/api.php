@@ -13,6 +13,8 @@ use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\ArchivoConsultaController;
 use App\Http\Controllers\VacunaController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\MedicamentoController;
+use App\Http\Controllers\MovimientoInventarioController;
 
 Route::get('/login-prueba', function () {
     return view('login');
@@ -79,3 +81,7 @@ Route::get('citas/{cita}/consulta', [ConsultaController::class, 'show'])->middle
 Route::get('consultas/{consulta}/archivos', [ArchivoConsultaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista,administrador']);
 Route::get('mascotas/{mascota}/vacunas', [VacunaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista,administrador']);
 Route::apiResource('proveedores', ProveedorController::class)->parameters(['proveedores' => 'proveedor'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
+Route::apiResource('medicamentos', MedicamentoController::class)->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
+Route::post('medicamentos/{medicamento}/entrada', [MovimientoInventarioController::class, 'entrada'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
+Route::post('medicamentos/{medicamento}/salida', [MovimientoInventarioController::class, 'salida'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador,veterinario']);
+Route::get('medicamentos/{medicamento}/movimientos', [MovimientoInventarioController::class, 'historial'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
