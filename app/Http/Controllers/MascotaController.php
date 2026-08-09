@@ -63,7 +63,7 @@ class MascotaController extends Controller
     {
         try {
             $datos = $request->validated();
-            unset($datos['foto']);
+            unset($datos['foto'], $datos['dueno_id'], $datos['especie'], $datos['raza']);
 
             if ($request->hasFile('foto')) {
                 if ($mascota->foto_url) {
