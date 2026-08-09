@@ -4,12 +4,54 @@ namespace App\Http\Repositories;
 
 use App\Models\Cita;
 use App\Models\Mascota;
+use Carbon\Carbon;
 
 class CitaRepository
 {
+    /**
+     * Marca como 'vencida' cualquier cita 'agendada' cuya fecha y hora ya pasaron
+     * sin haber sido confirmada. Se ejecuta antes de listar o de operar sobre una cita.
+     */
+    private function expirarAgendadasVencidas(): void
+    {
+        Cita::where('estado', 'agendada')
+            ->where(function ($query) {
+                $query->whereDate('fecha', '<', now()->toDateString())
+                    ->orWhere(function ($query) {
+                        $query->whereDate('fecha', now()->toDateString())
+                            ->where('hora', '<', now()->format('H:i:s'));
+                    });
+            })
+            ->update(['estado' => 'vencida']);
+    }
+
+    /**
+     * Si la cita individual sigue 'agendada' pero ya paso su fecha y hora, la marca
+     * como 'vencida' y detiene la accion en curso con un mensaje explicativo.
+     */
+    private function expirarSiVencida(Cita $cita): void
+    {
+        if ($cita->estado !== 'agendada') {
+            return;
+        }
+
+        $fechaHoraCita = Carbon::parse($cita->fecha->format('Y-m-d').' '.$cita->hora);
+
+        if ($fechaHoraCita->isFuture()) {
+            return;
+        }
+
+        $cita->estado = 'vencida';
+        $cita->save();
+
+        throw new \Exception('Esta cita ya caduco: paso su fecha y hora programada sin haber sido confirmada.');
+    }
+
     public function obtenerCitas(?string $estado = null, $mascotaId = null, $veterinarioId = null, ?string $fechaInicio = null, ?string $fechaFin = null)
     {
         try {
+            $this->expirarAgendadasVencidas();
+
             $query = Cita::with(['mascota', 'veterinario']);
 
             if ($estado) {
@@ -86,6 +128,8 @@ class CitaRepository
 
     public function actualizarCita(Cita $cita, array $data)
     {
+        $this->expirarSiVencida($cita);
+
         if (isset($data['fecha']) || isset($data['hora']) || isset($data['veterinario_id'])) {
             $veterinarioId = $data['veterinario_id'] ?? $cita->veterinario_id;
             $fecha = $data['fecha'] ?? $cita->fecha->format('Y-m-d');
@@ -117,6 +161,8 @@ class CitaRepository
 
     public function cancelarCita(Cita $cita, string $motivo, int $usuarioId)
     {
+        $this->expirarSiVencida($cita);
+
         if ($cita->estado === 'cancelada') {
             throw new \Exception('Esta cita ya esta cancelada.');
         }
@@ -140,6 +186,8 @@ class CitaRepository
 
     public function confirmarCita(Cita $cita)
     {
+        $this->expirarSiVencida($cita);
+
         if ($cita->estado !== 'agendada') {
             throw new \Exception('Solo se pueden confirmar citas en estado agendada.');
         }
@@ -156,7 +204,9 @@ class CitaRepository
 
     public function iniciarConsulta(Cita $cita)
     {
-        if (! in_array($cita->estado, ['agendada', 'confirmada'])) {
+        $this->expirarSiVencida($cita);
+
+        if (! \in_array($cita->estado, ['agendada', 'confirmada'])) {
             throw new \Exception('Solo se puede iniciar la consulta de una cita agendada o confirmada.');
         }
 
@@ -188,6 +238,8 @@ class CitaRepository
 
     public function registrarLlegada(Cita $cita)
     {
+        $this->expirarSiVencida($cita);
+
         if ($cita->estado === 'cancelada') {
             throw new \Exception('No se puede registrar la llegada de una cita cancelada.');
         }
@@ -217,6 +269,8 @@ class CitaRepository
     public function obtenerCitasDeDueno(int $duenoId)
     {
         try {
+            $this->expirarAgendadasVencidas();
+
             $citas = Cita::where('dueno_id', $duenoId)
                 ->whereIn('estado', ['agendada', 'confirmada'])
                 ->orderBy('fecha')->orderBy('hora')
@@ -234,6 +288,8 @@ class CitaRepository
             throw new \Exception('No tienes permiso para cancelar esta cita.');
         }
 
+        $this->expirarSiVencida($cita);
+
         if ($cita->estado === 'cancelada') {
             throw new \Exception('Esta cita ya esta cancelada.');
         }
@@ -242,7 +298,7 @@ class CitaRepository
             throw new \Exception('No se puede cancelar una cita ya completada.');
         }
 
-        $fechaHoraCita = \Carbon\Carbon::parse($cita->fecha->format('Y-m-d').' '.$cita->hora);
+        $fechaHoraCita = Carbon::parse($cita->fecha->format('Y-m-d').' '.$cita->hora);
         $horasRestantes = ($fechaHoraCita->timestamp - now()->timestamp) / 3600;
 
         if ($horasRestantes < 2) {
