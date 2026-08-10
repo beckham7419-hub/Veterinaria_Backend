@@ -17,26 +17,6 @@ use App\Http\Controllers\MedicamentoController;
 use App\Http\Controllers\MovimientoInventarioController;
 use App\Http\Controllers\ReporteController;
 
-Route::get('/login-prueba', function () {
-    return view('login');
-});
-
-Route::get('/panel/recepcion', function () {
-    return view('panel.recepcion');
-});
-
-Route::get('/panel/consultas', function () {
-    return view('panel.consultas');
-});
-
-Route::get('/panel/admin', function () {
-    return view('panel.admin');
-});
-
-Route::get('/panel/veterinario', function () {
-    return view('panel.veterinario');
-});
-
 Route::apiResource('usuarios', UsuarioController::class)->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 Route::get('veterinarios', [UsuarioController::class, 'veterinarios'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista,administrador']);
 Route::post('usuarios/buscar-correo', [UsuarioController::class, 'readOne'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
