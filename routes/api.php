@@ -101,3 +101,7 @@ Route::get('reportes/resumen-del-dia/excel', [ReporteController::class, 'resumen
 Route::get('reportes/motivos-frecuentes/excel', [ReporteController::class, 'motivosFrecuentesExcel'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 Route::get('reportes/vacunas-por-vencer/excel', [ReporteController::class, 'vacunasPorVencerExcel'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 Route::get('reportes/consultas-por-periodo/excel', [ReporteController::class, 'consultasPorPeriodoExcel'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
+Route::post('auth/usuarios/olvide-contrasena', [AuthUsuarioController::class, 'olvideContrasena']);
+Route::post('auth/usuarios/restablecer-contrasena', [AuthUsuarioController::class, 'restablecerContrasena']);
+Route::post('auth/duenos/olvide-contrasena', [AuthDuenoController::class, 'olvideContrasena']);
+Route::post('auth/duenos/restablecer-contrasena', [AuthDuenoController::class, 'restablecerContrasena']);
