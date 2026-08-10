@@ -71,10 +71,13 @@ class DuenoRepository
             $dueno->activo = false;
             $dueno->save();
 
-            $dueno->mascotas()->update(['activo' => false]);
+            $dueno->mascotas()->where('activo', true)->update([
+                'activo' => false,
+                'baja_por_dueno' => true,
+            ]);
 
             return [
-                'mensaje' => 'Dueno dado de baja junto con sus mascotas. El historial clinico se conserva.',
+                'mensaje' => 'Dueno dado de baja junto con sus mascotas activas. El historial clinico se conserva.',
                 'dueno' => $dueno,
             ];
         }
@@ -89,9 +92,12 @@ class DuenoRepository
             $dueno->activo = true;
             $dueno->save();
 
-            $dueno->mascotas()->update(['activo' => true]);
+            $dueno->mascotas()->where('baja_por_dueno', true)->update([
+                'activo' => true,
+                'baja_por_dueno' => false,
+            ]);
 
-            return ['mensaje' => 'Dueno reactivado junto con sus mascotas', 'dueno' => $dueno];
+            return ['mensaje' => 'Dueno reactivado junto con las mascotas que se dieron de baja junto con el', 'dueno' => $dueno];
         }
         catch (\Exception $e) {
             throw new \Exception('No se pudo reactivar al dueno: '.$e->getMessage(), 0, $e);

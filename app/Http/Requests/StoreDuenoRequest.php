@@ -38,7 +38,7 @@ class StoreDuenoRequest extends FormRequest
     {
         return [
             'nombre_completo.required' => 'El nombre completo es obligatorio.',
-            'nombre_completo.regex' => 'El nombre completo debe incluir nombre, apellido paterno y apellido materno, cada uno con entre 3 y 50 letras.',
+            'nombre_completo.regex' => 'El nombre completo debe incluir nombre, apellido paterno y apellido materno, separados por un solo espacio.',
             'telefono.required' => 'El telefono es obligatorio.',
             'telefono.digits' => 'El telefono debe tener exactamente 10 digitos.',
             'correo.required' => 'El correo es obligatorio.',
