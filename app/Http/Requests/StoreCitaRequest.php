@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Mascota;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 use App\Rules\ValidarHoraVeterinaria;
@@ -18,9 +19,22 @@ class StoreCitaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'mascota_id' => 'required|integer|exists:mascotas,id',
-            'veterinario_id' => ['required', 'integer', 
-            Rule::exists('usuarios', 'id')->where('rol', 'veterinario')],
+            'mascota_id' => ['required', 'integer', 'exists:mascotas,id', function ($attribute, $value, $fail) {
+                $mascota = Mascota::with('dueno')->find($value);
+
+                if (! $mascota || ! $mascota->activo) {
+                    $fail('No se puede agendar una cita para una mascota dada de baja.');
+
+                    return;
+                }
+
+                if (! $mascota->dueno || ! $mascota->dueno->activo) {
+                    $fail('No se puede agendar una cita: la mascota debe tener un dueño activo.');
+                }
+            }],
+            'veterinario_id' => ['required', 'integer',
+                Rule::exists('usuarios', 'id')->where('rol', 'veterinario')
+                ->where('activo', true)],
             'motivo' => 'required|string|max:255',
             'fecha' => 'required|date|after_or_equal:today',
               'hora' => ['required', 'date_format:H:i', new ValidarHoraVeterinaria(7, 22)]
@@ -38,7 +52,7 @@ class StoreCitaRequest extends FormRequest
             'fecha.required' => 'La fecha es obligatoria.',
             'fecha.after_or_equal' => 'No se pueden agendar citas en una fecha pasada.',
             'hora.required' => 'La hora es obligatoria.',
-            'hora.date_format' => 'La hora debe tener el formato HH:MM.'
+            'hora.date_format' => 'La hora debe tener el formato HH:MM.',
         ];
     }
 
@@ -46,7 +60,7 @@ class StoreCitaRequest extends FormRequest
     {
         throw new HttpResponseException(response()->json([
             'mensaje' => 'Validacion fallida',
-            'errores' => $validator->errors()
+            'errores' => $validator->errors(),
         ], 422));
     }
 }
