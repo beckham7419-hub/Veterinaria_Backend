@@ -32,7 +32,8 @@ class StoreMiCitaRequest extends FormRequest
                 }
             }],
             'veterinario_id' => ['required', 'integer',
-                Rule::exists('usuarios', 'id')->where('rol', 'veterinario')],
+                Rule::exists('usuarios', 'id')->where('rol', 'veterinario')
+                ->where('activo', true)],
             'motivo' => 'required|string|max:255',
             'fecha' => 'required|date|after_or_equal:today',
             'hora' => 'required|date_format:H:i',

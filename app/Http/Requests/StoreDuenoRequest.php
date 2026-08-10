@@ -16,7 +16,7 @@ class StoreDuenoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre_completo' => ['required', 'string', 'regex:/^\p{L}{3,50}(\s\p{L}{3,50}){2,}$/u'],
+            'nombre_completo' => ['required', 'string', 'min:6', 'max:150', 'regex:/^\p{L}+(\s\p{L}+){2,}$/u'],
             'telefono' => 'required|digits:10',
             'correo' => 'required|string|email|max:150|unique:duenos,correo',
             'contrasena' => 'required|string|min:8',

@@ -17,7 +17,7 @@ class UpdateDuenoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre_completo' => ['sometimes', 'required', 'string', 'regex:/^\p{L}{3,50}(\s\p{L}{3,50}){2,}$/u'],
+            'nombre_completo' => ['sometimes', 'required', 'string', 'min:6', 'max:150', 'regex:/^\p{L}+(\s\p{L}+){2,}$/u'],
             'telefono' => 'sometimes|required|digits:10',
             'correo' => ['sometimes', 'required', 'string', 'email', 'max:150',
                 Rule::unique('duenos', 'correo')->ignore($this->route('dueno')),
