@@ -8,8 +8,8 @@
 <body>
 
     <!--HTML-->
-   <div class="login-wrapper">
-    <div class="contenedor-login">
+    <div class="login-wrapper">
+    <div class="contenedor-login" id="contenedorLogin">
         <div class="logo-container">
             <img src="{{ asset('Imagenes/logo_veterinaria_transparente.png') }}" alt="Logo Veterinaria">
         </div>
@@ -29,7 +29,28 @@
             <button type="submit" class="btn btn-login">iniciar sesion</button>
         </form>
 
+        <a href="#" id="enlaceOlvide" class="enlace-olvide">¿Olvidaste tu contraseña?</a>
+
         <p id="mensajeError" class="text-danger text-center mt-3" style="display: none;"></p>
+    </div>
+</div>
+
+<!-- ===================== VENTANA DE RECUPERACIÓN ===================== -->
+<div id="overlayOlvide" class="login-wrapper" style="display:none; position: fixed; inset: 0; background-color: rgba(0,0,0,0.75); z-index: 1000;">
+    <div class="contenedor-login">
+        <h2>Recuperar Contraseña</h2>
+        <p class="subtitulovet">Te enviaremos un enlace a tu correo</p>
+
+        <form id="formOlvideContrasena">
+            <div class="input-group-custom">
+                <input type="email" id="olvide_correo" class="form-control" placeholder="Correo Electrónico" required>
+            </div>
+            <button type="submit" class="btn btn-login">Enviar enlace</button>
+        </form>
+
+        <p id="olvideMensaje" class="text-center mt-3" style="display: none;"></p>
+
+        <button type="button" id="btnCerrarOlvide" class="btn-cerrar-overlay">Cancelar</button>
     </div>
 </div>
 
@@ -149,6 +170,33 @@
         background-color: #e03b3b;
         color: #ffffff;
     }
+
+    .enlace-olvide {
+        display: block;
+        text-align: center;
+        margin-top: 18px;
+        color: #ff4d4d;
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+
+    .enlace-olvide:hover {
+        text-decoration: underline;
+    }
+
+    .btn-cerrar-overlay {
+        background: none;
+        border: none;
+        color: #888888;
+        width: 100%;
+        margin-top: 10px;
+        cursor: pointer;
+        font-size: 0.85rem;
+    }
+
+    .btn-cerrar-overlay:hover {
+        color: #ffffff;
+    }
 </style>
 
     <!--JAVASCRIPT-->
@@ -197,6 +245,49 @@
             } catch (error) {
                 mensajeError.textContent = 'Error de conexión con el servidor. Intenta nuevamente.';
                 mensajeError.style.display = 'block';
+            }
+        });
+
+        // ============ RECUPERAR CONTRASEÑA ============
+        const overlayOlvide = document.getElementById('overlayOlvide');
+
+        document.getElementById('enlaceOlvide').addEventListener('click', function(evento) {
+            evento.preventDefault();
+            overlayOlvide.style.display = 'flex';
+        });
+
+        document.getElementById('btnCerrarOlvide').addEventListener('click', function() {
+            overlayOlvide.style.display = 'none';
+            document.getElementById('formOlvideContrasena').reset();
+            document.getElementById('olvideMensaje').style.display = 'none';
+        });
+
+        document.getElementById('formOlvideContrasena').addEventListener('submit', async function(evento) {
+            evento.preventDefault();
+
+            const correo = document.getElementById('olvide_correo').value;
+            const mensajeEl = document.getElementById('olvideMensaje');
+
+            try {
+                const respuesta = await fetch('/api/auth/usuarios/olvide-contrasena', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ correo: correo })
+                });
+
+                const datos = await respuesta.json();
+
+                mensajeEl.textContent = datos.mensaje;
+                mensajeEl.style.color = '#4dff4d';
+                mensajeEl.style.display = 'block';
+
+            } catch (error) {
+                mensajeEl.textContent = 'Error de conexión con el servidor.';
+                mensajeEl.style.color = '#ff4d4d';
+                mensajeEl.style.display = 'block';
             }
         });
     </script>
