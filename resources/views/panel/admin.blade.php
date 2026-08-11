@@ -140,6 +140,7 @@
     .badge-estado-en_consulta { background-color: #fd7e14; }
     .badge-estado-completada { background-color: #198754; }
     .badge-estado-cancelada { background-color: #dc3545; }
+    .badge-estado-vencida { background-color: #6c757d; }
   </style>
 </head>
 <body>
@@ -155,104 +156,398 @@
     </div>
   </nav>
 
-   <div class="container-fluid mt-4">
+  <div class="container-fluid mt-4">
     <div id="alertArea"></div>
 
-  <div class="panel-card">
-    <ul class="nav nav-tabs">
-      <li class="nav-item"><button class="nav-link active" id="tabBtnPersonal" data-bs-toggle="tab" data-bs-target="#tab-gestionar-personal" type="button">Gestionar personal</button></li>
-      <li class="nav-item"><button class="nav-link" id="tabBtnInventario" data-bs-toggle="tab" data-bs-target="#tab-gestionar-inventario" type="button">Gestionar inventario</button></li>
-      <li class="nav-item"><button class="nav-link" id="tabBtnReportes" data-bs-toggle="tab" data-bs-target="#tab-reportes" type="button">Gestionar reportes</button></li>
-    </ul>
+    <div class="panel-card">
+      <ul class="nav nav-tabs">
+        <li class="nav-item"><button class="nav-link active" id="tabBtnPersonal" data-bs-toggle="tab" data-bs-target="#tab-gestionar-personal" type="button">Gestionar personal</button></li>
+        <li class="nav-item"><button class="nav-link" id="tabBtnDuenos" data-bs-toggle="tab" data-bs-target="#tab-gestionar-duenos" type="button">Gestionar dueños</button></li>
+        <li class="nav-item"><button class="nav-link" id="tabBtnMascotas" data-bs-toggle="tab" data-bs-target="#tab-gestionar-mascotas" type="button">Gestionar mascotas</button></li>
+        <li class="nav-item"><button class="nav-link" id="tabBtnCitas" data-bs-toggle="tab" data-bs-target="#tab-gestionar-citas" type="button">Gestionar citas</button></li>
+        <li class="nav-item"><button class="nav-link" id="tabBtnInventario" data-bs-toggle="tab" data-bs-target="#tab-gestionar-inventario" type="button">Gestionar inventario</button></li>
+        <li class="nav-item"><button class="nav-link" id="tabBtnReportes" data-bs-toggle="tab" data-bs-target="#tab-reportes" type="button">Gestionar reportes</button></li>
+      </ul>
 
-    <div class="tab-content mt-3">
-      <div class="tab-pane fade show active" id="tab-gestionar-personal">
-      <div class="d-flex gap-2 mb-3 flex-wrap">
+      <div class="tab-content mt-3">
 
-     <input type="text" id="buscarEmpleado" class="form-control" style="max-width:320px" placeholder="Buscar empleado por su correo:">
-     <button class="btn btn-outline-light" id="btnBuscarEmpleado">Buscar</button>
-     <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaEmpleado">Limpiar</button>
-     <button type="button" class="btn btn-primary ms-auto" id="btnAgregarUsuario" data-bs-toggle="modal" data-bs-target="#modalUsuario">
-      Agregar empleado
-     </button>
-      </div>
-       <div class="table-responsive">
-          <table class="table table-striped table-hover align-middle">
-            <thead class="table-dark">
-              <tr><th>Nombre Completo</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr>
-            </thead>
-            <tbody id="tablaUsuarios">
-            </tbody>
-          </table>
+        <!-- ===================== PERSONAL ===================== -->
+        <div class="tab-pane fade show active" id="tab-gestionar-personal">
+          <div class="d-flex gap-2 mb-3 flex-wrap">
+            <input type="text" id="buscarEmpleado" class="form-control" style="max-width:620px" placeholder="Buscar empleado por su correo para restaurarlo o hacer otras acciones:">
+            <button class="btn btn-outline-light" id="btnBuscarEmpleado">Buscar</button>
+            <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaEmpleado">Limpiar</button>
+            <button type="button" class="btn btn-primary ms-auto" id="btnAgregarUsuario" data-bs-toggle="modal" data-bs-target="#modalUsuario">
+              Agregar empleado
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+              <thead class="table-dark">
+                <tr><th>Nombre Completo</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr>
+              </thead>
+              <tbody id="tablaUsuarios"></tbody>
+            </table>
+          </div>
         </div>
+
+        <!-- ===================== DUEÑOS ===================== -->
+        <div class="tab-pane fade" id="tab-gestionar-duenos">
+  <div class="d-flex gap-2 mb-3 flex-wrap">
+    <input type="text" id="buscarDueno" class="form-control" style="max-width:320px" placeholder="Buscar por nombre, correo o teléfono">
+    <button class="btn btn-outline-light" id="btnBuscarDueno">Buscar</button>
+    <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaDueno">Limpiar</button>
+
+    <input type="text" id="buscarDuenoCorreo" class="form-control" style="max-width:420px" placeholder="Buscar dueño por correo para restaurarlo">
+    <button class="btn btn-outline-light" id="btnBuscarDuenoCorreo">Buscar por correo</button>
+    <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaDuenoCorreo">Limpiar</button>
+
+    <button class="btn btn-primary ms-auto" id="btnAgregarDueno" data-bs-toggle="modal" data-bs-target="#modalDueno">Agregar dueño</button>
+  </div>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+              <thead class="table-dark">
+               <tr><th>Id</th><th>Nombre</th><th>Teléfono</th><th>Correo</th><th>Dirección</th><th>Estado</th><th>Acciones</th></tr>
+              </thead>
+              <tbody id="tablaDuenos"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===================== MASCOTAS ===================== -->
+        <div class="tab-pane fade" id="tab-gestionar-mascotas">
+          <div class="d-flex gap-2 mb-3 flex-wrap">
+            <input type="text" id="buscarMascota" class="form-control" style="max-width:320px" placeholder="Buscar por nombre, especie o expediente">
+            <button class="btn btn-outline-light" id="btnBuscarMascota">Buscar</button>
+            <select id="filtroDuenoMascota" class="form-select" style="max-width:280px">
+              <option value="">Todos los dueños</option>
+            </select>
+            <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaMascota">Limpiar</button>
+            <button class="btn btn-primary ms-auto" id="btnAgregarMascota" data-bs-toggle="modal" data-bs-target="#modalMascota">Agregar mascota</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+              <thead class="table-dark">
+                <tr><th>Foto</th><th>Expediente</th><th>Nombre</th><th>Especie</th><th>Raza</th><th>Sexo</th><th>Nacimiento</th><th>Color</th><th>Dueño</th><th>Acciones</th></tr>
+              </thead>
+              <tbody id="tablaMascotas"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===================== CITAS ===================== -->
+        <div class="tab-pane fade" id="tab-gestionar-citas">
+          <div class="row g-2 mb-2 align-items-end">
+            <div class="col-auto">
+              <label class="form-label small mb-0">Estado</label>
+              <select id="filtroEstado" class="form-select">
+                <option value="">Todos</option>
+                <option value="agendada">Agendada</option>
+                <option value="confirmada">Confirmada</option>
+                <option value="en_consulta">En consulta</option>
+                <option value="completada">Completada</option>
+                <option value="cancelada">Cancelada</option>
+                <option value="vencida">Vencida</option>
+              </select>
+            </div>
+            <div class="col-auto">
+              <label class="form-label small mb-0">Veterinario</label>
+              <select id="filtroVeterinario" class="form-select">
+                <option value="">Todos</option>
+              </select>
+            </div>
+            <div class="col-auto">
+              <label class="form-label small mb-0">Rango</label>
+              <select id="filtroRango" class="form-select">
+                <option value="dia">Día</option>
+                <option value="semana">Semana</option>
+                <option value="todas">Sin filtro de fecha</option>
+              </select>
+            </div>
+            <div class="col-auto">
+              <label class="form-label small mb-0">Fecha</label>
+              <input type="date" id="filtroFecha" class="form-control">
+            </div>
+            <div class="col-auto">
+              <button class="btn btn-outline-light" id="btnFiltrarCitas">Filtrar</button>
+            </div>
+            <div class="col-auto ms-auto">
+              <button class="btn btn-primary" id="btnAgendarCita" data-bs-toggle="modal" data-bs-target="#modalCita">Agendar cita</button>
+            </div>
+          </div>
+          <div id="filtroMascotaInfo" class="mb-2"></div>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+              <thead class="table-dark">
+                <tr><th>Folio</th><th>Fecha</th><th>Hora</th><th>Mascota</th><th>Veterinario</th><th>Motivo</th><th>Estado</th><th>Llegada</th><th>Acciones</th></tr>
+              </thead>
+              <tbody id="tablaCitas"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ===================== INVENTARIO (pendiente) ===================== -->
+        <div class="tab-pane fade" id="tab-gestionar-inventario">
+          <p class="text-secondary">Sección en construcción.</p>
+        </div>
+
+        <!-- ===================== REPORTES (pendiente) ===================== -->
+        <div class="tab-pane fade" id="tab-reportes">
+          <p class="text-secondary">Sección en construcción.</p>
+        </div>
+
+      </div><!-- /tab-content -->
+    </div><!-- /panel-card -->
+  </div><!-- /container-fluid -->
+
+  <!-- ===================== MODALES ===================== -->
+
+  <div class="modal fade" id="modalUsuario" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content modal-content-veterinaria">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalUsuarioTitulo">Agregar empleado</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="formUsuario">
+          <div class="modal-body">
+            <input type="hidden" id="usuario_id">
+            <div class="mb-3">
+              <label class="form-label">Nombre completo</label>
+              <input type="text" id="usuario_nombre" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Correo electrónico</label>
+              <input type="email" id="usuario_correo" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Rol</label>
+              <select id="usuario_rol" class="form-select" required>
+                <option value="veterinario">Veterinario</option>
+                <option value="recepcionista">Recepcionista</option>
+                <option value="administrador">Administrador</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" id="usuario_contrasena_label">Contraseña</label>
+              <input type="password" id="usuario_contrasena" class="form-control">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
-<!-- MODAL PARA CREAR / EDITAR EMPLEADO -->
-<div class="modal fade" id="modalUsuario" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content modal-content-veterinaria">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalUsuarioTitulo">Agregar empleado</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <form id="formUsuario">
+
+  <div class="modal fade" id="modalVerUsuario" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content modal-content-veterinaria">
+        <div class="modal-header">
+          <h5 class="modal-title">Detalles del Empleado</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
         <div class="modal-body">
-          <input type="hidden" id="usuario_id">
-          <div class="mb-3">
-            <label class="form-label">Nombre completo</label>
-            <input type="text" id="usuario_nombre" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Correo electrónico</label>
-            <input type="email" id="usuario_correo" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Rol</label>
-            <select id="usuario_rol" class="form-select" required>
-              <option value="veterinario">Veterinario</option>
-              <option value="recepcionista">Recepcionista</option>
-              <option value="administrador">Administrador</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label" id="usuario_contrasena_label">Contraseña</label>
-            <input type="password" id="usuario_contrasena" class="form-control">
-          </div>
+          <p><strong>Nombre:</strong> <span id="ver_usuario_nombre"></span></p>
+          <p><strong>Correo:</strong> <span id="ver_usuario_correo"></span></p>
+          <p><strong>Rol:</strong> <span id="ver_usuario_rol"></span></p>
+          <p><strong>Estado:</strong> <span id="ver_usuario_estado"></span></p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
         </div>
-      </form>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- MODAL PARA VER DETALLES -->
-<div class="modal fade" id="modalVerUsuario" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content modal-content-veterinaria">
-      <div class="modal-header">
-        <h5 class="modal-title">Detalles del Empleado</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <p><strong>Nombre:</strong> <span id="ver_usuario_nombre"></span></p>
-        <p><strong>Correo:</strong> <span id="ver_usuario_correo"></span></p>
-        <p><strong>Rol:</strong> <span id="ver_usuario_rol"></span></p>
-        <p><strong>Estado:</strong> <span id="ver_usuario_estado"></span></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+  <div class="modal fade" id="modalDueno" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content modal-content-veterinaria bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalDuenoTitulo">Agregar dueño</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="formDueno">
+          <div class="modal-body">
+            <input type="hidden" id="dueno_id">
+            <div class="mb-3">
+              <label class="form-label">Nombre completo</label>
+              <input required class="form-control" id="dueno_nombre" maxlength="160"
+                pattern="[A-Za-zÀ-ÿÑñ]{3,50}(\s[A-Za-zÀ-ÿÑñ]{3,50}){2,}"
+                title="Debe incluir nombre, apellido paterno y apellido materno, cada uno con 3 a 50 letras."
+                placeholder="Nombre Apellido paterno Apellido materno">
+              <div class="form-text">Nombre, apellido paterno y apellido materno (mínimo 3 letras cada uno).</div>
+            </div>
+            <div class="mb-3"><label class="form-label">Teléfono</label><input required class="form-control" id="dueno_telefono" maxlength="10" pattern="\d{10}" inputmode="numeric"></div>
+            <div class="mb-3"><label class="form-label">Correo</label><input required type="email" class="form-control" id="dueno_correo" maxlength="150"></div>
+            <div class="mb-3">
+              <label class="form-label">Dirección</label>
+              <input required class="form-control" id="dueno_direccion" maxlength="255"
+                placeholder="Ciudad, Colonia, Calle, Número (ej: Tijuana, Centro, Av. Insurgentes, 123)">
+              <div class="form-text">Debe incluir ciudad, colonia, calle y número de casa, separados por comas.</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" id="dueno_contrasena_label">Contraseña</label>
+              <input type="password" class="form-control" id="dueno_contrasena" minlength="8">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
-</div>
+
+  <div class="modal fade" id="modalMascota" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content modal-content-veterinaria bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalMascotaTitulo">Agregar mascota</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="formMascota">
+          <div class="modal-body">
+            <input type="hidden" id="mascota_id">
+            <div class="mb-3">
+              <label class="form-label">Dueño</label>
+              <select required class="form-select" id="mascota_dueno_id"></select>
+            </div>
+            <div class="mb-3"><label class="form-label">Nombre</label><input required class="form-control" id="mascota_nombre" minlength="2" maxlength="100"></div>
+            <div class="mb-3">
+              <label class="form-label">Especie</label>
+              <select required class="form-select" id="mascota_especie">
+                <option value="">Selecciona una especie</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Raza</label>
+              <select required class="form-select" id="mascota_raza">
+                <option value="">Selecciona primero una especie</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Sexo</label>
+              <select required class="form-select" id="mascota_sexo">
+                <option value="macho">Macho</option>
+                <option value="hembra">Hembra</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Fecha de nacimiento</label>
+              <input required type="date" class="form-control" id="mascota_fecha_nacimiento"
+                max="{{ now()->subDay()->format('Y-m-d') }}" min="{{ now()->subYears(30)->format('Y-m-d') }}">
+              <div class="form-text">No puede ser hoy, una fecha futura, ni de hace más de 30 años.</div>
+            </div>
+            <div class="mb-3"><label class="form-label">Color</label><input required class="form-control" id="mascota_color" maxlength="50"></div>
+            <div class="mb-3">
+              <label class="form-label">Foto</label>
+              <input type="file" accept="image/*" class="form-control" id="mascota_foto_archivo">
+              <img id="mascota_foto_preview" class="mt-2 rounded border" style="max-width:120px; max-height:120px; display:none;" alt="Vista previa de la foto">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalCita" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content modal-content-veterinaria bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title">Agendar cita</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="formCita">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Buscar mascota (nombre, especie o expediente)</label>
+              <div class="d-flex gap-2">
+                <input type="text" id="cita_buscar_mascota" class="form-control">
+                <button type="button" class="btn btn-outline-light" id="btnBuscarMascotaCita">Buscar</button>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Mascota</label>
+              <select required class="form-select" id="cita_mascota_id"></select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Veterinario</label>
+              <select required class="form-select" id="cita_veterinario_id"></select>
+            </div>
+            <div class="mb-3"><label class="form-label">Motivo de consulta</label><input required class="form-control" id="cita_motivo" maxlength="255"></div>
+            <div class="mb-3"><label class="form-label">Fecha</label><input required type="date" class="form-control" id="cita_fecha"></div>
+            <div class="mb-3"><label class="form-label">Hora</label><input required type="time" class="form-control" id="cita_hora"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Agendar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalReprogramar" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content modal-content-veterinaria bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title">Reprogramar cita</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="formReprogramar">
+          <div class="modal-body">
+            <input type="hidden" id="reprogramar_cita_id">
+            <div class="mb-3">
+              <label class="form-label">Veterinario</label>
+              <select required class="form-select" id="reprogramar_veterinario_id"></select>
+            </div>
+            <div class="mb-3"><label class="form-label">Fecha</label><input required type="date" class="form-control" id="reprogramar_fecha"></div>
+            <div class="mb-3"><label class="form-label">Hora</label><input required type="time" class="form-control" id="reprogramar_hora"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Reprogramar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalCancelar" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content modal-content-veterinaria bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title">Cancelar cita</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="formCancelar">
+          <div class="modal-body">
+            <input type="hidden" id="cancelar_cita_id">
+            <div class="mb-3">
+              <label class="form-label">Motivo de la cancelación</label>
+              <textarea required class="form-control" id="cancelar_motivo" maxlength="255"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-danger">Cancelar cita</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-   const token = localStorage.getItem('token_veterinaria');
+ <script>
+    const token = localStorage.getItem('token_veterinaria');
     if (!token) {
       window.location.href = '/';
     }
@@ -264,9 +559,27 @@
       return div.innerHTML;
     }
 
+    // Activa una pestaña por el id de su botón (usado al saltar entre secciones)
+    function activarTab(idBoton) {
+      const boton = document.getElementById(idBoton);
+      if (boton) bootstrap.Tab.getOrCreateInstance(boton).show();
+    }
+
+    // Devuelve solo la parte de fecha (YYYY-MM-DD) de un valor de fecha/fecha-hora
+    function soloFecha(valor) {
+      if (!valor) return '';
+      return String(valor).slice(0, 10);
+    }
+
+    // Devuelve solo horas y minutos (HH:MM) de un valor de hora
+    function soloHora(valor) {
+      if (!valor) return '';
+      return String(valor).slice(0, 5);
+    }
+
     async function apiFetch(path, options = {}) {
       const headers = Object.assign({ Accept: 'application/json' }, options.headers || {});
-      if (options.body) headers['Content-Type'] = 'application/json';
+      if (options.body && !(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
       headers['Authorization'] = `Bearer ${token}`;
 
       const res = await fetch(`/api${path}`, Object.assign({}, options, { headers }));
@@ -305,9 +618,9 @@
       setTimeout(() => div.remove(), 6000);
     }
 
+    // ============ EMPLEADOS / USUARIOS ============
     let usuariosCache = {};
 
-    // 1. OBTENER EMPLEADOS / USUARIOS
     async function fetchEmpleados() {
       try {
         const res = await apiFetch('/usuarios');
@@ -318,11 +631,10 @@
       }
     }
 
-    // 2. RENDERIZAR TABLA CON BOTÓN DINÁMICO (Baja / Reactivar)
     function renderEmpleados(empleados) {
       usuariosCache = {};
-      const tbody = document.getElementById('tablaUsuarios'); // Mantenemos tu id real de HTML
-      
+      const tbody = document.getElementById('tablaUsuarios');
+
       if (!empleados || empleados.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5" class="text-center">No se encontraron empleados.</td></tr>`;
         return;
@@ -332,7 +644,7 @@
         usuariosCache[u.id] = u;
         const esActivo = Boolean(u.activo);
 
-        const botonEstado = esActivo 
+        const botonEstado = esActivo
           ? `<button class="btn btn-danger btn-sm mb-1" data-accion="baja" data-id="${u.id}">Dar de baja</button>`
           : `<button class="btn btn-success btn-sm mb-1" data-accion="reactivar" data-id="${u.id}">Reactivar</button>`;
 
@@ -352,18 +664,6 @@
       }).join('');
     }
 
-    // EVENTOS DE CARGA Y LOGOUT
-    document.addEventListener('DOMContentLoaded', () => {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        document.getElementById('nombre-usuario').innerText = payload.nombre_completo || 'Usuario';
-      } catch (e) {
-        document.getElementById('nombre-usuario').innerText = 'Usuario';
-      }
-
-      fetchEmpleados();
-    });
-
     document.getElementById('btnLogout').addEventListener('click', async () => {
       try {
         await apiFetch('/auth/usuarios/logout', { method: 'POST' });
@@ -373,7 +673,6 @@
       window.location.href = '/';
     });
 
-    // BUSCADOR LOCAL O POR API
     document.getElementById('btnBuscarEmpleado').addEventListener('click', async () => {
       const correo = document.getElementById('buscarEmpleado').value.trim();
 
@@ -391,7 +690,7 @@
         const usuarioEncontrado = res.usuario ? res.usuario.data : res.data;
 
         if (usuarioEncontrado) {
-          renderEmpleados([usuarioEncontrado]); 
+          renderEmpleados([usuarioEncontrado]);
         } else {
           mostrarAlerta('No se encontró ningún usuario con ese correo', 'info');
         }
@@ -402,10 +701,9 @@
 
     document.getElementById('btnLimpiarBusquedaEmpleado').addEventListener('click', () => {
       document.getElementById('buscarEmpleado').value = '';
-      fetchEmpleados(); 
+      fetchEmpleados();
     });
 
-    // CAPTURA DE EVENTOS DE TABLA (VER, EDITAR, BAJA Y REACTIVAR)
     document.getElementById('tablaUsuarios').addEventListener('click', (e) => {
       const boton = e.target.closest('button[data-accion]');
       if (!boton) return;
@@ -436,9 +734,9 @@
       if (accion === 'baja' && usuario) {
         if (confirm(`¿Dar de baja a ${usuario.nombre_completo}?`)) {
           apiFetch(`/usuarios/${id}`, { method: 'DELETE' })
-            .then(() => { 
-              mostrarAlerta('Empleado dado de baja correctamente'); 
-              fetchEmpleados(); 
+            .then(() => {
+              mostrarAlerta('Empleado dado de baja correctamente');
+              fetchEmpleados();
             })
             .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
         }
@@ -449,14 +747,13 @@
           apiFetch(`/usuarios/${id}/reactivar`, { method: 'PUT' })
             .then(() => {
               mostrarAlerta('Empleado reactivado con éxito');
-              fetchEmpleados(); 
+              fetchEmpleados();
             })
             .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
         }
       }
     });
 
-    // CREAR Y EDITAR FORMULARIO
     document.getElementById('formUsuario').addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('usuario_id').value;
@@ -489,6 +786,702 @@
       document.getElementById('modalUsuarioTitulo').innerText = 'Agregar empleado';
       document.getElementById('usuario_contrasena_label').innerText = 'Contraseña';
       document.getElementById('usuario_contrasena').required = true;
+    });
+
+    // ============ DUEÑOS ============
+    let duenosCache = {};
+
+    async function cargarDuenosCache() {
+      try {
+        const res = await apiFetch('/duenos');
+        duenosCache = {};
+        res.data.forEach((d) => { duenosCache[d.id] = d; });
+
+        const selectMascota = document.getElementById('mascota_dueno_id');
+        const selectFiltro = document.getElementById('filtroDuenoMascota');
+        selectMascota.innerHTML = '';
+        selectFiltro.innerHTML = '<option value="">Todos los dueños</option>';
+
+        res.data.forEach((d) => {
+          selectMascota.innerHTML += `<option value="${d.id}">${esc(d.nombre_completo)}</option>`;
+          selectFiltro.innerHTML += `<option value="${d.id}">${esc(d.nombre_completo)}</option>`;
+        });
+      } catch (e) {
+        mostrarAlerta(mensajeError(e), 'danger');
+      }
+    }
+
+    async function fetchDuenos() {
+      const buscar = document.getElementById('buscarDueno').value.trim();
+      try {
+        const params = buscar ? `?buscar=${encodeURIComponent(buscar)}` : '';
+        const res = await apiFetch(`/duenos${params}`);
+        renderDuenos(res.data);
+      } catch (e) {
+        mostrarAlerta(mensajeError(e), 'danger');
+      }
+    }
+
+    function renderDuenos(duenos) {
+      duenos.forEach((d) => { duenosCache[d.id] = d; });
+      const tbody = document.getElementById('tablaDuenos');
+
+      if (!duenos || duenos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center">No se encontraron dueños.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = duenos.map((d) => {
+        const esActivo = Boolean(d.activo);
+        const botonEstado = esActivo
+          ? `<button class="btn btn-sm btn-danger mb-1" data-accion="baja" data-id="${d.id}">Baja</button>`
+          : `<button class="btn btn-sm btn-success mb-1" data-accion="reactivar" data-id="${d.id}">Reactivar</button>`;
+
+        return `
+          <tr>
+            <td>${d.id}</td>
+            <td>${esc(d.nombre_completo)}</td>
+            <td>${esc(d.telefono)}</td>
+            <td>${esc(d.correo)}</td>
+            <td>${esc(d.direccion || '')}</td>
+            <td><span class="badge ${esActivo ? 'bg-success' : 'bg-secondary'}">${esActivo ? 'Activo' : 'Inactivo'}</span></td>
+            <td>
+              <button class="btn btn-sm btn-outline-light mb-1" data-accion="ver-mascotas" data-id="${d.id}">Mascotas</button>
+              <button class="btn btn-sm btn-warning mb-1" data-accion="editar" data-id="${d.id}">Editar</button>
+              ${botonEstado}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('btnBuscarDuenoCorreo').addEventListener('click', async () => {
+      const correo = document.getElementById('buscarDuenoCorreo').value.trim();
+      if (!correo) {
+        mostrarAlerta('Ingresa un correo para buscar', 'warning');
+        return;
+      }
+      try {
+        const res = await apiFetch('/duenos/buscar-correo', {
+          method: 'POST',
+          body: JSON.stringify({ correo }),
+        });
+        if (res.data) {
+          renderDuenos([res.data]);
+        } else {
+          mostrarAlerta('No se encontró ningún dueño con ese correo', 'info');
+        }
+      } catch (err) {
+        mostrarAlerta(mensajeError(err), 'danger');
+      }
+    });
+
+    document.getElementById('btnBuscarDueno').addEventListener('click', fetchDuenos);
+    document.getElementById('buscarDueno').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); fetchDuenos(); } });
+    document.getElementById('btnLimpiarBusquedaDueno').addEventListener('click', () => {
+      document.getElementById('buscarDueno').value = '';
+      fetchDuenos();
+    });
+
+    document.getElementById('btnLimpiarBusquedaDuenoCorreo').addEventListener('click', () => {
+      document.getElementById('buscarDuenoCorreo').value = '';
+      fetchDuenos();
+    });
+
+    document.getElementById('btnAgregarDueno').addEventListener('click', () => {
+      document.getElementById('formDueno').reset();
+      document.getElementById('dueno_id').value = '';
+      document.getElementById('modalDuenoTitulo').innerText = 'Agregar dueño';
+      document.getElementById('dueno_contrasena_label').innerText = 'Contraseña';
+      document.getElementById('dueno_contrasena').required = true;
+    });
+
+    document.getElementById('tablaDuenos').addEventListener('click', (e) => {
+      const boton = e.target.closest('button[data-accion]');
+      if (!boton) return;
+      const id = boton.dataset.id;
+      const dueno = duenosCache[id];
+
+      if (boton.dataset.accion === 'editar') {
+        document.getElementById('formDueno').reset();
+        document.getElementById('dueno_id').value = dueno.id;
+        document.getElementById('dueno_nombre').value = dueno.nombre_completo;
+        document.getElementById('dueno_telefono').value = dueno.telefono;
+        document.getElementById('dueno_correo').value = dueno.correo;
+        document.getElementById('dueno_direccion').value = dueno.direccion || '';
+        document.getElementById('modalDuenoTitulo').innerText = 'Editar dueño';
+        document.getElementById('dueno_contrasena_label').innerText = 'Nueva contraseña (dejar en blanco para no cambiar)';
+        document.getElementById('dueno_contrasena').required = false;
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDueno')).show();
+      }
+
+      if (boton.dataset.accion === 'baja') {
+        if (confirm(`¿Dar de baja a ${dueno.nombre_completo}? Esto también dará de baja a todas sus mascotas (su historial clínico se conservará).`)) {
+          apiFetch(`/duenos/${id}`, { method: 'DELETE' })
+            .then((res) => { mostrarAlerta(res.mensaje || 'Dueño dado de baja'); fetchDuenos(); cargarDuenosCache(); fetchMascotas(); })
+            .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
+        }
+      }
+
+      if (boton.dataset.accion === 'reactivar') {
+        if (confirm(`¿Deseas reactivar a ${dueno.nombre_completo}? Esto también reactivará todas sus mascotas.`)) {
+          apiFetch(`/duenos/${id}/reactivar`, { method: 'PUT' })
+            .then((res) => { mostrarAlerta(res.mensaje || 'Dueño reactivado'); fetchDuenos(); cargarDuenosCache(); fetchMascotas(); })
+            .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
+        }
+      }
+
+      if (boton.dataset.accion === 'ver-mascotas') {
+        activarTab('tabBtnMascotas');
+        document.getElementById('filtroDuenoMascota').value = id;
+        fetchMascotas();
+      }
+    });
+
+    document.getElementById('formDueno').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('dueno_id').value;
+      const payload = {
+        nombre_completo: document.getElementById('dueno_nombre').value,
+        telefono: document.getElementById('dueno_telefono').value,
+        correo: document.getElementById('dueno_correo').value,
+        direccion: document.getElementById('dueno_direccion').value,
+      };
+      const contrasena = document.getElementById('dueno_contrasena').value;
+      if (contrasena) payload.contrasena = contrasena;
+
+      try {
+        if (id) {
+          await apiFetch(`/duenos/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+          mostrarAlerta('Dueño actualizado');
+        } else {
+          await apiFetch('/duenos', { method: 'POST', body: JSON.stringify(payload) });
+          mostrarAlerta('Dueño registrado');
+        }
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDueno')).hide();
+        fetchDuenos();
+        cargarDuenosCache();
+      } catch (err) {
+        mostrarAlerta(mensajeError(err), 'danger');
+      }
+    });
+
+    // ============ MASCOTAS ============
+    let mascotasCache = {};
+    let mascotaFotoArchivo = null;
+
+    const ESPECIES = {
+      perro: 'Perro',
+      gato: 'Gato',
+      ave: 'Ave',
+      conejo: 'Conejo',
+      hamster: 'Hámster',
+      cuy: 'Cuy (cobaya)',
+      tortuga: 'Tortuga',
+      pez: 'Pez',
+      huron: 'Hurón',
+    };
+
+    const RAZAS = {
+      perro: ['Labrador Retriever', 'Golden Retriever', 'Pastor Alemán', 'Bulldog Francés', 'Bulldog Inglés', 'Chihuahua', 'Poodle (Caniche)', 'Beagle', 'Boxer', 'Schnauzer', 'Pug', 'Husky Siberiano', 'Rottweiler', 'Doberman', 'Shih Tzu', 'Yorkshire Terrier', 'Cocker Spaniel', 'Salchicha (Dachshund)', 'Border Collie', 'Gran Danés', 'Criollo/Mestizo'],
+      gato: ['Común Europeo (Mestizo)', 'Persa', 'Siamés', 'Maine Coon', 'Bengalí', 'Ragdoll', 'Sphynx', 'Británico de Pelo Corto', 'Angora', 'Himalayo'],
+      ave: ['Periquito', 'Canario', 'Cacatúa', 'Loro', 'Agapornis', 'Ninfa (Cockatiel)', 'Guacamayo'],
+      conejo: ['Holandés', 'Cabeza de León', 'Angora', 'Rex', 'Mini Lop', 'Mestizo'],
+      hamster: ['Sirio', 'Ruso', 'Chino', 'Roborovski'],
+      cuy: ['Americano', 'Peruano', 'Abisinio', 'Mestizo'],
+      tortuga: ['Terrestre', 'Acuática', 'Orejas Rojas'],
+      pez: ['Betta', 'Pez Dorado (Goldfish)', 'Guppy', 'Disco', 'Koi'],
+      huron: ['Estándar', 'Angora'],
+    };
+
+    function poblarEspecies() {
+      const select = document.getElementById('mascota_especie');
+      select.innerHTML = '<option value="">Selecciona una especie</option>' +
+        Object.entries(ESPECIES).map(([valor, etiqueta]) => `<option value="${valor}">${esc(etiqueta)}</option>`).join('');
+    }
+
+    function poblarRazas(especie, razaSeleccionada = '') {
+      const select = document.getElementById('mascota_raza');
+      const razas = RAZAS[especie] || [];
+      if (!especie) {
+        select.innerHTML = '<option value="">Selecciona primero una especie</option>';
+        return;
+      }
+      select.innerHTML = '<option value="">Selecciona una raza</option>' +
+        razas.map((raza) => `<option value="${esc(raza)}">${esc(raza)}</option>`).join('');
+      if (razaSeleccionada) select.value = razaSeleccionada;
+    }
+
+    document.getElementById('mascota_especie').addEventListener('change', (e) => poblarRazas(e.target.value));
+
+    function mostrarFotoPreview(url) {
+      const preview = document.getElementById('mascota_foto_preview');
+      if (url) {
+        preview.src = url;
+        preview.style.display = 'block';
+      } else {
+        preview.removeAttribute('src');
+        preview.style.display = 'none';
+      }
+    }
+
+    document.getElementById('mascota_foto_archivo').addEventListener('change', (e) => {
+      const archivo = e.target.files[0] || null;
+      mascotaFotoArchivo = archivo;
+      if (archivo) {
+        mostrarFotoPreview(URL.createObjectURL(archivo));
+      }
+    });
+
+    async function fetchMascotas() {
+      const buscar = document.getElementById('buscarMascota').value.trim();
+      const duenoId = document.getElementById('filtroDuenoMascota').value;
+      const params = new URLSearchParams();
+      if (buscar) params.set('buscar', buscar);
+      if (duenoId) params.set('dueno_id', duenoId);
+
+      try {
+        const res = await apiFetch(`/mascotas?${params.toString()}`);
+        renderMascotas(res.data);
+      } catch (e) {
+        mostrarAlerta(mensajeError(e), 'danger');
+      }
+    }
+
+    function renderMascotas(mascotas) {
+      mascotasCache = {};
+      mascotas.forEach((m) => { mascotasCache[m.id] = m; });
+      const tbody = document.getElementById('tablaMascotas');
+
+      if (!mascotas || mascotas.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="text-center">No se encontraron mascotas.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = mascotas.map((m) => {
+        const dueno = duenosCache[m.dueno_id];
+        const fotoHtml = m.foto_url
+          ? `<img src="${esc(m.foto_url)}" alt="Foto de ${esc(m.nombre)}" class="rounded" style="width:40px; height:40px; object-fit:cover;">`
+          : '<span class="text-secondary">—</span>';
+        return `
+        <tr>
+          <td>${fotoHtml}</td>
+          <td>${esc(m.numero_expediente)}</td>
+          <td>${esc(m.nombre)}</td>
+          <td>${esc(m.especie)}</td>
+          <td>${esc(m.raza || '')}</td>
+          <td>${esc(m.sexo)}</td>
+          <td>${soloFecha(m.fecha_nacimiento)}</td>
+          <td>${esc(m.color || '')}</td>
+          <td>${esc(dueno ? dueno.nombre_completo : m.dueno_id)}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-light mb-1" data-accion="historial" data-id="${m.id}">Historial</button>
+            <button class="btn btn-sm btn-warning mb-1" data-accion="editar" data-id="${m.id}">Editar</button>
+            <button class="btn btn-sm btn-danger mb-1" data-accion="baja" data-id="${m.id}">Baja</button>
+          </td>
+        </tr>
+      `;
+      }).join('');
+    }
+
+    document.getElementById('btnBuscarMascota').addEventListener('click', fetchMascotas);
+    document.getElementById('buscarMascota').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); fetchMascotas(); } });
+    document.getElementById('filtroDuenoMascota').addEventListener('change', fetchMascotas);
+    document.getElementById('btnLimpiarBusquedaMascota').addEventListener('click', () => {
+      document.getElementById('buscarMascota').value = '';
+      document.getElementById('filtroDuenoMascota').value = '';
+      fetchMascotas();
+    });
+
+    document.getElementById('btnAgregarMascota').addEventListener('click', () => {
+      document.getElementById('formMascota').reset();
+      document.getElementById('mascota_id').value = '';
+      document.getElementById('mascota_dueno_id').disabled = false;
+      document.getElementById('mascota_especie').disabled = false;
+      document.getElementById('mascota_raza').disabled = false;
+      poblarEspecies();
+      poblarRazas('');
+      mascotaFotoArchivo = null;
+      mostrarFotoPreview(null);
+      document.getElementById('modalMascotaTitulo').innerText = 'Agregar mascota';
+    });
+
+    document.getElementById('tablaMascotas').addEventListener('click', (e) => {
+      const boton = e.target.closest('button[data-accion]');
+      if (!boton) return;
+      const id = boton.dataset.id;
+      const mascota = mascotasCache[id];
+
+      if (boton.dataset.accion === 'editar') {
+        document.getElementById('formMascota').reset();
+        poblarEspecies();
+        document.getElementById('mascota_id').value = mascota.id;
+        document.getElementById('mascota_dueno_id').value = mascota.dueno_id;
+        document.getElementById('mascota_nombre').value = mascota.nombre;
+        document.getElementById('mascota_especie').value = mascota.especie;
+        poblarRazas(mascota.especie, mascota.raza || '');
+        document.getElementById('mascota_sexo').value = mascota.sexo;
+        document.getElementById('mascota_fecha_nacimiento').value = soloFecha(mascota.fecha_nacimiento);
+        document.getElementById('mascota_color').value = mascota.color || '';
+        // El dueño, la especie y la raza no se pueden modificar una vez creada la mascota.
+        document.getElementById('mascota_dueno_id').disabled = true;
+        document.getElementById('mascota_especie').disabled = true;
+        document.getElementById('mascota_raza').disabled = true;
+        mascotaFotoArchivo = null;
+        mostrarFotoPreview(mascota.foto_url || null);
+        document.getElementById('modalMascotaTitulo').innerText = `Editar mascota — ${mascota.numero_expediente}`;
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalMascota')).show();
+      }
+
+      if (boton.dataset.accion === 'baja') {
+        if (confirm(`¿Dar de baja a ${mascota.nombre}?`)) {
+          apiFetch(`/mascotas/${id}`, { method: 'DELETE' })
+            .then(() => { mostrarAlerta('Mascota dada de baja'); fetchMascotas(); })
+            .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
+        }
+      }
+
+      if (boton.dataset.accion === 'historial') {
+        irAHistorialMascota(mascota.id, mascota.nombre);
+      }
+    });
+
+    document.getElementById('formMascota').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('mascota_id').value;
+      const fechaNacimiento = document.getElementById('mascota_fecha_nacimiento').value;
+      const hoyIso = new Date().toISOString().slice(0, 10);
+      if (fechaNacimiento && fechaNacimiento >= hoyIso) {
+        mostrarAlerta('La fecha de nacimiento no puede ser hoy ni una fecha futura', 'danger');
+        return;
+      }
+      const haceTreintaAnios = new Date();
+      haceTreintaAnios.setFullYear(haceTreintaAnios.getFullYear() - 30);
+      if (fechaNacimiento && fechaNacimiento < haceTreintaAnios.toISOString().slice(0, 10)) {
+        mostrarAlerta('La fecha de nacimiento no puede ser de hace más de 30 años', 'danger');
+        return;
+      }
+      const formData = new FormData();
+      formData.append('nombre', document.getElementById('mascota_nombre').value);
+      formData.append('sexo', document.getElementById('mascota_sexo').value);
+      formData.append('fecha_nacimiento', fechaNacimiento);
+      formData.append('color', document.getElementById('mascota_color').value);
+      if (mascotaFotoArchivo) {
+        formData.append('foto', mascotaFotoArchivo);
+      }
+
+      try {
+        if (id) {
+          // Dueño, especie y raza son inmutables una vez registrada la mascota; no se envían al editar.
+          formData.append('_method', 'PUT');
+          await apiFetch(`/mascotas/${id}`, { method: 'POST', body: formData });
+          mostrarAlerta('Mascota actualizada');
+        } else {
+          formData.append('dueno_id', document.getElementById('mascota_dueno_id').value);
+          formData.append('especie', document.getElementById('mascota_especie').value);
+          formData.append('raza', document.getElementById('mascota_raza').value);
+          await apiFetch('/mascotas', { method: 'POST', body: formData });
+          mostrarAlerta('Mascota registrada');
+        }
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalMascota')).hide();
+        fetchMascotas();
+      } catch (err) {
+        mostrarAlerta(mensajeError(err), 'danger');
+      }
+    });
+
+    // ============ CITAS ============
+    let citasCache = {};
+    let mascotaHistorialId = null;
+
+    async function cargarVeterinarios() {
+      try {
+        const res = await apiFetch('/veterinarios');
+        const selects = ['filtroVeterinario', 'cita_veterinario_id', 'reprogramar_veterinario_id'];
+        selects.forEach((idSelect) => {
+          const select = document.getElementById(idSelect);
+          const placeholder = idSelect === 'filtroVeterinario' ? '<option value="">Todos</option>' : '<option value="">Selecciona un veterinario</option>';
+          select.innerHTML = placeholder;
+          res.data.forEach((v) => {
+            select.innerHTML += `<option value="${v.id}">${esc(v.nombre_completo)}</option>`;
+          });
+        });
+      } catch (e) {
+        mostrarAlerta(mensajeError(e), 'danger');
+      }
+    }
+
+    function rangoSemana(fechaStr) {
+      const d = new Date(`${fechaStr}T00:00:00`);
+      const dia = d.getDay();
+      const diffLunes = dia === 0 ? -6 : 1 - dia;
+      const lunes = new Date(d);
+      lunes.setDate(d.getDate() + diffLunes);
+      const domingo = new Date(lunes);
+      domingo.setDate(lunes.getDate() + 6);
+      const formatear = (dt) => dt.toISOString().slice(0, 10);
+      return [formatear(lunes), formatear(domingo)];
+    }
+
+    function irAHistorialMascota(mascotaId, mascotaNombre) {
+      mascotaHistorialId = mascotaId;
+      document.getElementById('filtroMascotaInfo').innerHTML = `
+        <span class="badge bg-info text-dark">Historial de ${esc(mascotaNombre)}</span>
+        <button class="btn btn-sm btn-link" id="btnQuitarFiltroMascota">Quitar filtro</button>
+      `;
+      document.getElementById('btnQuitarFiltroMascota').addEventListener('click', () => {
+        mascotaHistorialId = null;
+        document.getElementById('filtroMascotaInfo').innerHTML = '';
+        fetchCitas();
+      });
+      activarTab('tabBtnCitas');
+      fetchCitas();
+    }
+
+    function irAMascotaDesdeCita(mascotaId, mascotaNombre) {
+      activarTab('tabBtnMascotas');
+      document.getElementById('filtroDuenoMascota').value = '';
+      document.getElementById('buscarMascota').value = mascotaNombre || '';
+      fetchMascotas();
+    }
+
+    function mostrarFechaEnCalendario(fecha) {
+      mascotaHistorialId = null;
+      document.getElementById('filtroMascotaInfo').innerHTML = '';
+      document.getElementById('filtroEstado').value = '';
+      document.getElementById('filtroRango').value = 'dia';
+      document.getElementById('filtroFecha').value = fecha;
+      fetchCitas();
+    }
+
+    async function fetchCitas() {
+      const estado = document.getElementById('filtroEstado').value;
+      const veterinarioId = document.getElementById('filtroVeterinario').value;
+      const rango = document.getElementById('filtroRango').value;
+      const fecha = document.getElementById('filtroFecha').value;
+
+      const params = new URLSearchParams();
+      if (estado) params.set('estado', estado);
+      if (veterinarioId) params.set('veterinario_id', veterinarioId);
+      if (mascotaHistorialId) params.set('mascota_id', mascotaHistorialId);
+
+      if (rango !== 'todas' && fecha) {
+        if (rango === 'dia') {
+          params.set('fecha_inicio', fecha);
+          params.set('fecha_fin', fecha);
+        } else {
+          const [inicio, fin] = rangoSemana(fecha);
+          params.set('fecha_inicio', inicio);
+          params.set('fecha_fin', fin);
+        }
+      }
+
+      try {
+        const res = await apiFetch(`/citas?${params.toString()}`);
+        renderCitas(res.data);
+      } catch (e) {
+        mostrarAlerta(mensajeError(e), 'danger');
+      }
+    }
+
+    function badgeEstado(estado) {
+      const etiquetas = {
+        agendada: 'Agendada',
+        confirmada: 'Confirmada',
+        en_consulta: 'En consulta',
+        completada: 'Completada',
+        cancelada: 'Cancelada',
+        vencida: 'Vencida',
+      };
+      return `<span class="badge badge-estado-${estado}">${etiquetas[estado] || estado}</span>`;
+    }
+
+    function renderCitas(citas) {
+      citasCache = {};
+      citas.forEach((c) => { citasCache[c.id] = c; });
+      const tbody = document.getElementById('tablaCitas');
+
+      if (!citas || citas.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center">No se encontraron citas.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = citas.map((c) => {
+        const mascotaNombre = c.mascota ? c.mascota.nombre : `#${c.mascota_id}`;
+        const vetNombre = c.veterinario ? c.veterinario.nombre_completo : `#${c.veterinario_id}`;
+        let acciones = '';
+
+        if (c.estado === 'agendada' || c.estado === 'confirmada') {
+          if (c.estado === 'agendada') {
+            acciones += `<button class="btn btn-sm btn-info text-white mb-1" data-accion="confirmar" data-id="${c.id}">Confirmar</button> `;
+          }
+          if (!c.hora_llegada) {
+            acciones += `<button class="btn btn-sm btn-secondary mb-1" data-accion="checkin" data-id="${c.id}">Check-in</button> `;
+          }
+          acciones += `<button class="btn btn-sm btn-primary mb-1" data-accion="iniciar" data-id="${c.id}">Iniciar consulta</button> `;
+          acciones += `<button class="btn btn-sm btn-warning mb-1" data-accion="reprogramar" data-id="${c.id}">Reprogramar</button> `;
+          acciones += `<button class="btn btn-sm btn-danger mb-1" data-accion="cancelar" data-id="${c.id}">Cancelar</button> `;
+        } else if (c.estado === 'en_consulta') {
+          acciones += `<button class="btn btn-sm btn-success mb-1" data-accion="completar" data-id="${c.id}">Completar</button> `;
+        }
+
+        acciones += `<button class="btn btn-sm btn-outline-light mb-1" data-accion="ver-mascota" data-id="${c.id}">Ver mascota</button>`;
+
+        return `
+        <tr>
+          <td>${esc(c.numero_folio)}</td>
+          <td>${soloFecha(c.fecha)}</td>
+          <td>${soloHora(c.hora)}</td>
+          <td>${esc(mascotaNombre)}</td>
+          <td>${esc(vetNombre)}</td>
+          <td>${esc(c.motivo)}</td>
+          <td>${badgeEstado(c.estado)}</td>
+          <td>${c.hora_llegada ? 'Sí' : 'No'}</td>
+          <td>${acciones}</td>
+        </tr>
+      `;
+      }).join('');
+    }
+
+    document.getElementById('btnFiltrarCitas').addEventListener('click', fetchCitas);
+
+    document.getElementById('tablaCitas').addEventListener('click', (e) => {
+      const boton = e.target.closest('button[data-accion]');
+      if (!boton) return;
+      const id = boton.dataset.id;
+      const cita = citasCache[id];
+      const accion = boton.dataset.accion;
+
+      const acciones = {
+        confirmar: () => apiFetch(`/citas/${id}/confirmar`, { method: 'PUT' }).then(() => mostrarAlerta('Cita confirmada')),
+        checkin: () => apiFetch(`/citas/${id}/check-in`, { method: 'PUT' }).then(() => mostrarAlerta('Llegada registrada')),
+        iniciar: () => apiFetch(`/citas/${id}/iniciar-consulta`, { method: 'PUT' }).then(() => mostrarAlerta('Consulta iniciada')),
+        completar: () => apiFetch(`/citas/${id}/completar`, { method: 'PUT' }).then(() => mostrarAlerta('Cita completada')),
+      };
+
+      if (accion in acciones) {
+        acciones[accion]()
+          .then(fetchCitas)
+          .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
+        return;
+      }
+
+      if (accion === 'reprogramar') {
+        document.getElementById('reprogramar_cita_id').value = cita.id;
+        document.getElementById('reprogramar_veterinario_id').value = cita.veterinario_id;
+        document.getElementById('reprogramar_fecha').value = soloFecha(cita.fecha);
+        document.getElementById('reprogramar_hora').value = soloHora(cita.hora);
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalReprogramar')).show();
+      }
+
+      if (accion === 'cancelar') {
+        document.getElementById('formCancelar').reset();
+        document.getElementById('cancelar_cita_id').value = cita.id;
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCancelar')).show();
+      }
+
+      if (accion === 'ver-mascota') {
+        irAMascotaDesdeCita(cita.mascota_id, cita.mascota ? cita.mascota.nombre : cita.mascota_id);
+      }
+    });
+
+    document.getElementById('btnAgendarCita').addEventListener('click', () => {
+      document.getElementById('formCita').reset();
+      document.getElementById('cita_mascota_id').innerHTML = '<option value="">Busca una mascota primero</option>';
+    });
+
+    document.getElementById('btnBuscarMascotaCita').addEventListener('click', async () => {
+      const buscar = document.getElementById('cita_buscar_mascota').value.trim();
+      if (!buscar) return;
+      try {
+        const res = await apiFetch(`/mascotas?buscar=${encodeURIComponent(buscar)}`);
+        const select = document.getElementById('cita_mascota_id');
+        if (res.data.length === 0) {
+          select.innerHTML = '<option value="">Sin resultados</option>';
+          return;
+        }
+        select.innerHTML = res.data.map((m) => {
+          const dueno = duenosCache[m.dueno_id];
+          const duenoNombre = dueno ? dueno.nombre_completo : m.dueno_id;
+          return `<option value="${m.id}">${esc(m.nombre)} (${esc(m.numero_expediente)}) — ${esc(duenoNombre)}</option>`;
+        }).join('');
+      } catch (e) {
+        mostrarAlerta(mensajeError(e), 'danger');
+      }
+    });
+
+    document.getElementById('formCita').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        mascota_id: document.getElementById('cita_mascota_id').value,
+        veterinario_id: document.getElementById('cita_veterinario_id').value,
+        motivo: document.getElementById('cita_motivo').value,
+        fecha: document.getElementById('cita_fecha').value,
+        hora: document.getElementById('cita_hora').value,
+      };
+
+      try {
+        await apiFetch('/citas', { method: 'POST', body: JSON.stringify(payload) });
+        mostrarAlerta('Cita agendada');
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCita')).hide();
+        mostrarFechaEnCalendario(payload.fecha);
+      } catch (err) {
+        mostrarAlerta(mensajeError(err), 'danger');
+      }
+    });
+
+    document.getElementById('formReprogramar').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('reprogramar_cita_id').value;
+      const payload = {
+        veterinario_id: document.getElementById('reprogramar_veterinario_id').value,
+        fecha: document.getElementById('reprogramar_fecha').value,
+        hora: document.getElementById('reprogramar_hora').value,
+      };
+
+      try {
+        await apiFetch(`/citas/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+        mostrarAlerta('Cita reprogramada');
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalReprogramar')).hide();
+        mostrarFechaEnCalendario(payload.fecha);
+      } catch (err) {
+        mostrarAlerta(mensajeError(err), 'danger');
+      }
+    });
+
+    document.getElementById('formCancelar').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('cancelar_cita_id').value;
+      const payload = { motivo_cancelacion: document.getElementById('cancelar_motivo').value };
+
+      try {
+        await apiFetch(`/citas/${id}/cancelar`, { method: 'PUT', body: JSON.stringify(payload) });
+        mostrarAlerta('Cita cancelada');
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCancelar')).hide();
+        fetchCitas();
+      } catch (err) {
+        mostrarAlerta(mensajeError(err), 'danger');
+      }
+    });
+
+    document.getElementById('tabBtnCitas').addEventListener('click', () => { if (Object.keys(citasCache).length === 0) fetchCitas(); });
+    document.getElementById('tabBtnMascotas').addEventListener('click', () => { if (Object.keys(mascotasCache).length === 0) fetchMascotas(); });
+
+    // ============ CARGA INICIAL ============
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        document.getElementById('nombre-usuario').innerText = payload.nombre_completo || 'Usuario';
+      } catch (e) {
+        document.getElementById('nombre-usuario').innerText = 'Usuario';
+      }
+
+      fetchEmpleados();
+      cargarDuenosCache();
+      cargarVeterinarios();
+      fetchDuenos();
+      poblarEspecies();
+      document.getElementById('filtroFecha').value = new Date().toISOString().slice(0, 10);
     });
   </script>
 </body>

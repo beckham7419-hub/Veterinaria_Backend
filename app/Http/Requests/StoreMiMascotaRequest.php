@@ -20,9 +20,9 @@ class StoreMiMascotaRequest extends FormRequest
             'especie' => 'required|string|max:50',
             'raza' => 'nullable|string|max:50',
             'sexo' => 'required|string|in:macho,hembra',
-            'fecha_nacimiento' => 'nullable|date',
+            'fecha_nacimiento' => 'nullable|date|before_or_equal:today',
             'color' => 'nullable|string|max:50',
-            'foto_url' => 'nullable|string|max:255'
+            'foto' => 'nullable|file|mimes:jpg,jpeg,png|max:5120'
         ];
     }
 
@@ -32,7 +32,10 @@ class StoreMiMascotaRequest extends FormRequest
             'nombre.required' => 'El nombre de la mascota es obligatorio.',
             'especie.required' => 'La especie es obligatoria.',
             'sexo.required' => 'El sexo es obligatorio.',
-            'sexo.in' => 'El sexo debe ser macho o hembra.'
+            'sexo.in' => 'El sexo debe ser macho o hembra.',
+            'fecha_nacimiento.before_or_equal' => 'La fecha de nacimiento no puede ser una fecha futura.',
+            'foto.mimes' => 'La foto debe ser una imagen jpg, jpeg o png.',
+            'foto.max' => 'La foto no debe pesar mas de 5MB.'
         ];
     }
 

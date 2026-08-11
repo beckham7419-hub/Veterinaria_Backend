@@ -15,6 +15,7 @@ class Consulta extends Model
         'cita_id',
         'diagnostico',
         'tratamiento',
+        'medicamentos_recetados',
         'observaciones',
         'peso',
         'temperatura'

@@ -104,7 +104,14 @@
 
     .form-label { color: #cccccc; }
 
-    /* ---------- Botones ---------- */
+    /* ---------- Inputs de fecha ---------- */
+    input[type="date"] {
+      zoom: 2.1;
+      cursor: pointer;
+      font-size: calc(1rem / 2.1); 
+    }
+
+    /* ---------- Bot ones ---------- */
     .btn-primary {
       background-color: #ff4d4d;
       border-color: #ff4d4d;
@@ -140,6 +147,7 @@
     .badge-estado-en_consulta { background-color: #fd7e14; }
     .badge-estado-completada { background-color: #198754; }
     .badge-estado-cancelada { background-color: #dc3545; }
+    .badge-estado-vencida { background-color: #6c757d; }
   </style>
 </head>
 <body>
@@ -196,7 +204,7 @@
         <div class="table-responsive">
           <table class="table table-striped table-hover align-middle">
             <thead class="table-dark">
-              <tr><th>Expediente</th><th>Nombre</th><th>Especie</th><th>Raza</th><th>Sexo</th><th>Nacimiento</th><th>Color</th><th>Dueño</th><th>Acciones</th></tr>
+              <tr><th>Foto</th><th>Expediente</th><th>Nombre</th><th>Especie</th><th>Raza</th><th>Sexo</th><th>Nacimiento</th><th>Color</th><th>Dueño</th><th>Acciones</th></tr>
             </thead>
             <tbody id="tablaMascotas"></tbody>
           </table>
@@ -214,6 +222,7 @@
               <option value="en_consulta">En consulta</option>
               <option value="completada">Completada</option>
               <option value="cancelada">Cancelada</option>
+              <option value="vencida">Vencida</option>
             </select>
           </div>
           <div class="col-auto">
@@ -265,10 +274,22 @@
         <form id="formDueno">
           <div class="modal-body">
             <input type="hidden" id="dueno_id">
-            <div class="mb-3"><label class="form-label">Nombre completo</label><input required class="form-control" id="dueno_nombre" maxlength="150"></div>
+            <div class="mb-3">
+              <label class="form-label">Nombre completo</label>
+              <input required class="form-control" id="dueno_nombre" maxlength="160"
+                pattern="[A-Za-zÀ-ÿÑñ]{3,50}(\s[A-Za-zÀ-ÿÑñ]{3,50}){2,}"
+                title="Debe incluir nombre, apellido paterno y apellido materno, cada uno con 3 a 50 letras."
+                placeholder="Nombre Apellido paterno Apellido materno">
+              <div class="form-text">Nombre, apellido paterno y apellido materno (mínimo 3 letras cada uno).</div>
+            </div>
             <div class="mb-3"><label class="form-label">Teléfono</label><input required class="form-control" id="dueno_telefono" maxlength="10" pattern="\d{10}" inputmode="numeric"></div>
             <div class="mb-3"><label class="form-label">Correo</label><input required type="email" class="form-control" id="dueno_correo" maxlength="150"></div>
-            <div class="mb-3"><label class="form-label">Dirección</label><input class="form-control" id="dueno_direccion" maxlength="255"></div>
+            <div class="mb-3">
+              <label class="form-label">Dirección</label>
+              <input required class="form-control" id="dueno_direccion" maxlength="255"
+                placeholder="Ciudad, Colonia, Calle, Número (ej: Tijuana, Centro, Av. Insurgentes, 123)">
+              <div class="form-text">Debe incluir ciudad, colonia, calle y número de casa, separados por comas.</div>
+            </div>
             <div class="mb-3">
               <label class="form-label" id="dueno_contrasena_label">Contraseña</label>
               <input type="password" class="form-control" id="dueno_contrasena" minlength="8">
@@ -297,9 +318,19 @@
               <label class="form-label">Dueño</label>
               <select required class="form-select" id="mascota_dueno_id"></select>
             </div>
-            <div class="mb-3"><label class="form-label">Nombre</label><input required class="form-control" id="mascota_nombre" maxlength="100"></div>
-            <div class="mb-3"><label class="form-label">Especie</label><input required class="form-control" id="mascota_especie" maxlength="50" placeholder="Perro, gato, ave..."></div>
-            <div class="mb-3"><label class="form-label">Raza</label><input class="form-control" id="mascota_raza" maxlength="50"></div>
+            <div class="mb-3"><label class="form-label">Nombre</label><input required class="form-control" id="mascota_nombre" minlength="2" maxlength="100"></div>
+            <div class="mb-3">
+              <label class="form-label">Especie</label>
+              <select required class="form-select" id="mascota_especie">
+                <option value="">Selecciona una especie</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Raza</label>
+              <select required class="form-select" id="mascota_raza">
+                <option value="">Selecciona primero una especie</option>
+              </select>
+            </div>
             <div class="mb-3">
               <label class="form-label">Sexo</label>
               <select required class="form-select" id="mascota_sexo">
@@ -307,9 +338,18 @@
                 <option value="hembra">Hembra</option>
               </select>
             </div>
-            <div class="mb-3"><label class="form-label">Fecha de nacimiento</label><input type="date" class="form-control" id="mascota_fecha_nacimiento"></div>
-            <div class="mb-3"><label class="form-label">Color</label><input class="form-control" id="mascota_color" maxlength="50"></div>
-            <div class="mb-3"><label class="form-label">URL de la foto</label><input class="form-control" id="mascota_foto_url" maxlength="255" placeholder="https://..."></div>
+            <div class="mb-3">
+              <label class="form-label">Fecha de nacimiento</label>
+              <input required type="date" class="form-control" id="mascota_fecha_nacimiento"
+                max="{{ now()->subDay()->format('Y-m-d') }}" min="{{ now()->subYears(30)->format('Y-m-d') }}">
+              <div class="form-text">No puede ser hoy, una fecha futura, ni de hace más de 30 años.</div>
+            </div>
+            <div class="mb-3"><label class="form-label">Color</label><input required class="form-control" id="mascota_color" maxlength="50"></div>
+            <div class="mb-3">
+              <label class="form-label">Foto</label>
+              <input type="file" accept="image/*" class="form-control" id="mascota_foto_archivo">
+              <img id="mascota_foto_preview" class="mt-2 rounded border" style="max-width:120px; max-height:120px; display:none;" alt="Vista previa de la foto">
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -431,7 +471,7 @@
 
     async function apiFetch(path, options = {}) {
       const headers = Object.assign({ Accept: 'application/json' }, options.headers || {});
-      if (options.body) headers['Content-Type'] = 'application/json';
+      if (options.body && !(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
       headers['Authorization'] = `Bearer ${token}`;
 
       const res = await fetch(`/api${path}`, Object.assign({}, options, { headers }));
@@ -485,6 +525,7 @@
       cargarDuenosCache();
       cargarVeterinarios();
       fetchDuenos();
+      poblarEspecies();
 
       document.getElementById('filtroFecha').value = new Date().toISOString().slice(0, 10);
     });
@@ -588,9 +629,9 @@
       }
 
       if (boton.dataset.accion === 'baja') {
-        if (confirm(`¿Dar de baja a ${dueno.nombre_completo}?`)) {
+        if (confirm(`¿Dar de baja a ${dueno.nombre_completo}? Esto también dará de baja a todas sus mascotas (su historial clínico se conservará).`)) {
           apiFetch(`/duenos/${id}`, { method: 'DELETE' })
-            .then(() => { mostrarAlerta('Dueño dado de baja'); fetchDuenos(); cargarDuenosCache(); })
+            .then((res) => { mostrarAlerta(res.mensaje || 'Dueño dado de baja'); fetchDuenos(); cargarDuenosCache(); fetchMascotas(); })
             .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
         }
       }
@@ -632,6 +673,70 @@
 
     // ---------- MASCOTAS ----------
     let mascotasCache = {};
+    let mascotaFotoArchivo = null;
+
+    const ESPECIES = {
+      perro: 'Perro',
+      gato: 'Gato',
+      ave: 'Ave',
+      conejo: 'Conejo',
+      hamster: 'Hámster',
+      cuy: 'Cuy (cobaya)',
+      tortuga: 'Tortuga',
+      pez: 'Pez',
+      huron: 'Hurón',
+    };
+
+    const RAZAS = {
+      perro: ['Labrador Retriever', 'Golden Retriever', 'Pastor Alemán', 'Bulldog Francés', 'Bulldog Inglés', 'Chihuahua', 'Poodle (Caniche)', 'Beagle', 'Boxer', 'Schnauzer', 'Pug', 'Husky Siberiano', 'Rottweiler', 'Doberman', 'Shih Tzu', 'Yorkshire Terrier', 'Cocker Spaniel', 'Salchicha (Dachshund)', 'Border Collie', 'Gran Danés', 'Criollo/Mestizo'],
+      gato: ['Común Europeo (Mestizo)', 'Persa', 'Siamés', 'Maine Coon', 'Bengalí', 'Ragdoll', 'Sphynx', 'Británico de Pelo Corto', 'Angora', 'Himalayo'],
+      ave: ['Periquito', 'Canario', 'Cacatúa', 'Loro', 'Agapornis', 'Ninfa (Cockatiel)', 'Guacamayo'],
+      conejo: ['Holandés', 'Cabeza de León', 'Angora', 'Rex', 'Mini Lop', 'Mestizo'],
+      hamster: ['Sirio', 'Ruso', 'Chino', 'Roborovski'],
+      cuy: ['Americano', 'Peruano', 'Abisinio', 'Mestizo'],
+      tortuga: ['Terrestre', 'Acuática', 'Orejas Rojas'],
+      pez: ['Betta', 'Pez Dorado (Goldfish)', 'Guppy', 'Disco', 'Koi'],
+      huron: ['Estándar', 'Angora'],
+    };
+
+    function poblarEspecies() {
+      const select = document.getElementById('mascota_especie');
+      select.innerHTML = '<option value="">Selecciona una especie</option>' +
+        Object.entries(ESPECIES).map(([valor, etiqueta]) => `<option value="${valor}">${esc(etiqueta)}</option>`).join('');
+    }
+
+    function poblarRazas(especie, razaSeleccionada = '') {
+      const select = document.getElementById('mascota_raza');
+      const razas = RAZAS[especie] || [];
+      if (!especie) {
+        select.innerHTML = '<option value="">Selecciona primero una especie</option>';
+        return;
+      }
+      select.innerHTML = '<option value="">Selecciona una raza</option>' +
+        razas.map((raza) => `<option value="${esc(raza)}">${esc(raza)}</option>`).join('');
+      if (razaSeleccionada) select.value = razaSeleccionada;
+    }
+
+    document.getElementById('mascota_especie').addEventListener('change', (e) => poblarRazas(e.target.value));
+
+    function mostrarFotoPreview(url) {
+      const preview = document.getElementById('mascota_foto_preview');
+      if (url) {
+        preview.src = url;
+        preview.style.display = 'block';
+      } else {
+        preview.removeAttribute('src');
+        preview.style.display = 'none';
+      }
+    }
+
+    document.getElementById('mascota_foto_archivo').addEventListener('change', (e) => {
+      const archivo = e.target.files[0] || null;
+      mascotaFotoArchivo = archivo;
+      if (archivo) {
+        mostrarFotoPreview(URL.createObjectURL(archivo));
+      }
+    });
 
     async function fetchMascotas() {
       const buscar = document.getElementById('buscarMascota').value.trim();
@@ -654,8 +759,12 @@
       const tbody = document.getElementById('tablaMascotas');
       tbody.innerHTML = mascotas.map((m) => {
         const dueno = duenosCache[m.dueno_id];
+        const fotoHtml = m.foto_url
+          ? `<img src="${esc(m.foto_url)}" alt="Foto de ${esc(m.nombre)}" class="rounded" style="width:40px; height:40px; object-fit:cover;">`
+          : '<span class="text-secondary">—</span>';
         return `
         <tr>
+          <td>${fotoHtml}</td>
           <td>${esc(m.numero_expediente)}</td>
           <td>${esc(m.nombre)}</td>
           <td>${esc(m.especie)}</td>
@@ -686,6 +795,13 @@
     document.getElementById('btnAgregarMascota').addEventListener('click', () => {
       document.getElementById('formMascota').reset();
       document.getElementById('mascota_id').value = '';
+      document.getElementById('mascota_dueno_id').disabled = false;
+      document.getElementById('mascota_especie').disabled = false;
+      document.getElementById('mascota_raza').disabled = false;
+      poblarEspecies();
+      poblarRazas('');
+      mascotaFotoArchivo = null;
+      mostrarFotoPreview(null);
       document.getElementById('modalMascotaTitulo').innerText = 'Agregar mascota';
     });
 
@@ -697,15 +813,21 @@
 
       if (boton.dataset.accion === 'editar') {
         document.getElementById('formMascota').reset();
+        poblarEspecies();
         document.getElementById('mascota_id').value = mascota.id;
         document.getElementById('mascota_dueno_id').value = mascota.dueno_id;
         document.getElementById('mascota_nombre').value = mascota.nombre;
         document.getElementById('mascota_especie').value = mascota.especie;
-        document.getElementById('mascota_raza').value = mascota.raza || '';
+        poblarRazas(mascota.especie, mascota.raza || '');
         document.getElementById('mascota_sexo').value = mascota.sexo;
         document.getElementById('mascota_fecha_nacimiento').value = soloFecha(mascota.fecha_nacimiento);
         document.getElementById('mascota_color').value = mascota.color || '';
-        document.getElementById('mascota_foto_url').value = mascota.foto_url || '';
+        // El dueño, la especie y la raza no se pueden modificar una vez creada la mascota.
+        document.getElementById('mascota_dueno_id').disabled = true;
+        document.getElementById('mascota_especie').disabled = true;
+        document.getElementById('mascota_raza').disabled = true;
+        mascotaFotoArchivo = null;
+        mostrarFotoPreview(mascota.foto_url || null);
         document.getElementById('modalMascotaTitulo').innerText = `Editar mascota — ${mascota.numero_expediente}`;
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalMascota')).show();
       }
@@ -726,23 +848,38 @@
     document.getElementById('formMascota').addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('mascota_id').value;
-      const payload = {
-        dueno_id: document.getElementById('mascota_dueno_id').value,
-        nombre: document.getElementById('mascota_nombre').value,
-        especie: document.getElementById('mascota_especie').value,
-        raza: document.getElementById('mascota_raza').value,
-        sexo: document.getElementById('mascota_sexo').value,
-        fecha_nacimiento: document.getElementById('mascota_fecha_nacimiento').value || null,
-        color: document.getElementById('mascota_color').value,
-        foto_url: document.getElementById('mascota_foto_url').value,
-      };
+      const fechaNacimiento = document.getElementById('mascota_fecha_nacimiento').value;
+      const hoyIso = new Date().toISOString().slice(0, 10);
+      if (fechaNacimiento && fechaNacimiento >= hoyIso) {
+        mostrarAlerta('La fecha de nacimiento no puede ser hoy ni una fecha futura', 'danger');
+        return;
+      }
+      const haceTreintaAnios = new Date();
+      haceTreintaAnios.setFullYear(haceTreintaAnios.getFullYear() - 30);
+      if (fechaNacimiento && fechaNacimiento < haceTreintaAnios.toISOString().slice(0, 10)) {
+        mostrarAlerta('La fecha de nacimiento no puede ser de hace más de 30 años', 'danger');
+        return;
+      }
+      const formData = new FormData();
+      formData.append('nombre', document.getElementById('mascota_nombre').value);
+      formData.append('sexo', document.getElementById('mascota_sexo').value);
+      formData.append('fecha_nacimiento', fechaNacimiento);
+      formData.append('color', document.getElementById('mascota_color').value);
+      if (mascotaFotoArchivo) {
+        formData.append('foto', mascotaFotoArchivo);
+      }
 
       try {
         if (id) {
-          await apiFetch(`/mascotas/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+          // Dueño, especie y raza son inmutables una vez registrada la mascota; no se envían al editar.
+          formData.append('_method', 'PUT');
+          await apiFetch(`/mascotas/${id}`, { method: 'POST', body: formData });
           mostrarAlerta('Mascota actualizada');
         } else {
-          await apiFetch('/mascotas', { method: 'POST', body: JSON.stringify(payload) });
+          formData.append('dueno_id', document.getElementById('mascota_dueno_id').value);
+          formData.append('especie', document.getElementById('mascota_especie').value);
+          formData.append('raza', document.getElementById('mascota_raza').value);
+          await apiFetch('/mascotas', { method: 'POST', body: formData });
           mostrarAlerta('Mascota registrada');
         }
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalMascota')).hide();
@@ -800,6 +937,13 @@
       fetchCitas();
     }
 
+    function irAMascotaDesdeCita(mascotaId, mascotaNombre) {
+      activarTab('tabBtnMascotas');
+      document.getElementById('filtroDuenoMascota').value = '';
+      document.getElementById('buscarMascota').value = mascotaNombre || '';
+      fetchMascotas();
+    }
+
     function mostrarFechaEnCalendario(fecha) {
       mascotaHistorialId = null;
       document.getElementById('filtroMascotaInfo').innerHTML = '';
@@ -846,6 +990,7 @@
         en_consulta: 'En consulta',
         completada: 'Completada',
         cancelada: 'Cancelada',
+        vencida: 'Vencida',
       };
       return `<span class="badge badge-estado-${estado}">${etiquetas[estado] || estado}</span>`;
     }
@@ -873,7 +1018,7 @@
           acciones += `<button class="btn btn-sm btn-success mb-1" data-accion="completar" data-id="${c.id}">Completar</button> `;
         }
 
-        acciones += `<button class="btn btn-sm btn-outline-light mb-1" data-accion="historial" data-id="${c.id}">Historial mascota</button>`;
+        acciones += `<button class="btn btn-sm btn-outline-light mb-1" data-accion="ver-mascota" data-id="${c.id}">Ver mascota</button>`;
 
         return `
         <tr>
@@ -928,8 +1073,8 @@
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCancelar')).show();
       }
 
-      if (accion === 'historial') {
-        irAHistorialMascota(cita.mascota_id, cita.mascota ? cita.mascota.nombre : cita.mascota_id);
+      if (accion === 'ver-mascota') {
+        irAMascotaDesdeCita(cita.mascota_id, cita.mascota ? cita.mascota.nombre : cita.mascota_id);
       }
     });
 

@@ -17,3 +17,7 @@ Route::get('/panel/admin', function () {
 Route::get('/panel/veterinario', function () {
     return view('panel.veterinario');
 });
+
+Route::get('/restablecer-contrasena', function () {
+    return view('restablecer-contrasena');
+});

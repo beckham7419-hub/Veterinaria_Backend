@@ -62,11 +62,34 @@ class DuenoController extends Controller
     public function destroy(Dueno $dueno)
     {
         try {
-            $this->duenoRepository->eliminarDueno($dueno);
+            $resultado = $this->duenoRepository->eliminarDueno($dueno);
 
-            return response()->json(['mensaje' => 'Dueno dado de baja'], 200);
+            return response()->json($resultado, 200);
         } catch (\Exception $e) {
             return response()->json(['mensaje' => $e->getMessage()], 404);
+        }
+    }
+
+    public function reactivar($id)
+    {
+        try {
+            $resultado = $this->duenoRepository->reactivarDueno($id);
+
+            return response()->json($resultado, 200);
+        } catch (\Exception $e) {
+            return response()->json(['mensaje' => $e->getMessage()], 500);
+        }
+    }
+
+    public function buscarCorreo(Request $request)
+    {
+        try {
+            $request->validate(['correo' => 'required|email']);
+            $dueno = $this->duenoRepository->buscarPorCorreo($request->correo);
+
+            return response()->json(['mensaje' => 'Busqueda realizada', 'data' => $dueno], 200);
+        } catch (\Exception $e) {
+            return response()->json(['mensaje' => $e->getMessage()], 500);
         }
     }
 }
