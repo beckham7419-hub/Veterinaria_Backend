@@ -93,4 +93,14 @@ class MascotaController extends Controller
             return response()->json(['mensaje' => $e->getMessage()], 500);
         }
     }
+
+    public function historial(Mascota $mascota)
+{
+    try {
+        $resultado = $this->mascotaRepository->obtenerHistorialCompleto($mascota);
+        return response()->json($resultado, 200);
+    } catch (\Exception $e) {
+        return response()->json(['mensaje' => $e->getMessage()], 500);
+    }
+}
 }
