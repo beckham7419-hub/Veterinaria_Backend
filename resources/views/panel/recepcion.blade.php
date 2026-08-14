@@ -385,7 +385,8 @@
               <select required class="form-select" id="cita_veterinario_id"></select>
             </div>
             <div class="mb-3"><label class="form-label">Motivo de consulta</label><input required class="form-control" id="cita_motivo" maxlength="255"></div>
-            <div class="mb-3"><label class="form-label">Fecha</label><input required type="date" class="form-control" id="cita_fecha"></div>
+            <div class="mb-3"><label class="form-label">Fecha</label><input required type="date" class="form-control"
+            min="{{ now()->format('Y-m-d') }}" max="{{ now()->addYear()->format('Y-m-d') }}" id="cita_fecha"></div>
             <div class="mb-3"><label class="form-label">Hora</label><input required type="time" class="form-control" id="cita_hora" min="07:00" max="21:00"></div>
           </div>
           <div class="modal-footer">
@@ -411,7 +412,8 @@
               <label class="form-label">Veterinario</label>
               <select required class="form-select" id="reprogramar_veterinario_id"></select>
             </div>
-            <div class="mb-3"><label class="form-label">Fecha</label><input required type="date" class="form-control" id="reprogramar_fecha"></div>
+            <div class="mb-3"><label class="form-label">Fecha</label><input required type="date" class="form-control"
+            min="{{ now()->format('Y-m-d') }}" max="{{ now()->addYear()->format('Y-m-d') }}" id="cita_fecha"></div>
             <div class="mb-3"><label class="form-label">Hora</label><input required type="time" class="form-control" id="reprogramar_hora" min="07:00" max="21:00"></div>
           </div>
           <div class="modal-footer">
@@ -1046,7 +1048,6 @@
       const id = boton.dataset.id;
       const cita = citasCache[id];
       const accion = boton.dataset.accion;
-
       const acciones = {
         confirmar: () => apiFetch(`/citas/${id}/confirmar`, { method: 'PUT' }).then(() => mostrarAlerta('Cita confirmada')),
         checkin: () => apiFetch(`/citas/${id}/check-in`, { method: 'PUT' }).then(() => mostrarAlerta('Llegada registrada')),
@@ -1069,7 +1070,11 @@
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalReprogramar')).show();
       }
 
-      if (accion === 'cancelar') {
+        if (accion === 'cancelar') {
+        if (!citaCancelable(cita)) {
+        mostrarAlerta('Solo se puede cancelar una cita hasta 2 horas antes de la hora agendada', 'danger');
+        return;
+        }
         document.getElementById('formCancelar').reset();
         document.getElementById('cancelar_cita_id').value = cita.id;
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCancelar')).show();
@@ -1107,6 +1112,11 @@
 
     document.getElementById('formCita').addEventListener('submit', async (e) => {
       e.preventDefault();
+       const fecha = document.getElementById('cita_fecha').value;
+       if (!fechaDentroDeRango(fecha)) {
+    mostrarAlerta('Solo se pueden agendar citas entre hoy y un año a partir de hoy', 'danger');
+    return;
+  }
       const hora = document.getElementById('cita_hora').value;
       if (!horaValida(hora)) {
       mostrarAlerta('Las citas solo se pueden agendar entre las 7:00 y las 22:00 horas', 'danger');
@@ -1132,6 +1142,11 @@
 
     document.getElementById('formReprogramar').addEventListener('submit', async (e) => {
       e.preventDefault();
+      const fecha = document.getElementById('reprogramar_fecha').value;
+      if (!fechaDentroDeRango(fecha)) {
+    mostrarAlerta('Solo se pueden reprogramar citas entre hoy y un año a partir de hoy', 'danger');
+    return;
+  }
       const hora = document.getElementById('cita_hora').value;
       if (!horaValida(hora)) {
       mostrarAlerta('Las citas solo se pueden agendar entre las 7:00 y las 22:00 horas', 'danger');
@@ -1172,10 +1187,25 @@
     function citaVencida(c) {
     return new Date(`${soloFecha(c.fecha)}T${soloHora(c.hora)}`) < new Date();
     }
+
+    function citaCancelable(c) {
+  const fechaHoraCita = new Date(`${soloFecha(c.fecha)}T${soloHora(c.hora)}`);
+  const ahora = new Date();
+  const diferenciaHoras = (fechaHoraCita - ahora) / (1000 * 60 * 60);
+  return diferenciaHoras >= 2;
+}
     
     function horaValida(hora) {
   const [h] = hora.split(':').map(Number);
   return h >= 7 && h < 22;
+}
+
+function fechaDentroDeRango(fecha) {
+  const hoy = new Date().toISOString().slice(0, 10);
+  const enUnAnio = new Date();
+  enUnAnio.setFullYear(enUnAnio.getFullYear() + 1);
+  const maxFecha = enUnAnio.toISOString().slice(0, 10);
+  return fecha >= hoy && fecha <= maxFecha;
 }
     document.getElementById('tabBtnCitas').addEventListener('click', () => { if (Object.keys(citasCache).length === 0) fetchCitas(); });
     document.getElementById('tabBtnMascotas').addEventListener('click', () => { if (Object.keys(mascotasCache).length === 0) fetchMascotas(); });

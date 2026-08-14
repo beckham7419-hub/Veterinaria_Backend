@@ -17,26 +17,6 @@ use App\Http\Controllers\MedicamentoController;
 use App\Http\Controllers\MovimientoInventarioController;
 use App\Http\Controllers\ReporteController;
 
-Route::get('/login-prueba', function () {
-    return view('login');
-});
-
-Route::get('/panel/recepcion', function () {
-    return view('panel.recepcion');
-});
-
-Route::get('/panel/consultas', function () {
-    return view('panel.consultas');
-});
-
-Route::get('/panel/admin', function () {
-    return view('panel.admin');
-});
-
-Route::get('/panel/veterinario', function () {
-    return view('panel.veterinario');
-});
-
 Route::apiResource('usuarios', UsuarioController::class)->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 Route::get('veterinarios', [UsuarioController::class, 'veterinarios'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista,administrador']);
 Route::post('usuarios/buscar-correo', [UsuarioController::class, 'readOne'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
@@ -104,5 +84,8 @@ Route::get('reportes/resumen-del-dia/excel', [ReporteController::class, 'resumen
 Route::get('reportes/motivos-frecuentes/excel', [ReporteController::class, 'motivosFrecuentesExcel'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 Route::get('reportes/vacunas-por-vencer/excel', [ReporteController::class, 'vacunasPorVencerExcel'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 Route::get('reportes/consultas-por-periodo/excel', [ReporteController::class, 'consultasPorPeriodoExcel'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
-
-Route::get('mascotas/{mascota}/historial-clinico', [MascotaController::class, 'historial'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista,administrador']);
+Route::post('auth/usuarios/olvide-contrasena', [AuthUsuarioController::class, 'olvideContrasena']);
+Route::post('auth/usuarios/restablecer-contrasena', [AuthUsuarioController::class, 'restablecerContrasena']);
+Route::post('auth/duenos/olvide-contrasena', [AuthDuenoController::class, 'olvideContrasena']);
+Route::post('auth/duenos/restablecer-contrasena', [AuthDuenoController::class, 'restablecerContrasena']);
+Route::get('mascotas/{mascota}/historial', [MascotaController::class, 'historial'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista,administrador']);

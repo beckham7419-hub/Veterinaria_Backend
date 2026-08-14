@@ -190,100 +190,17 @@
             </table>
           </div>
         </div>
-
-        <!-- ===================== DUEÑOS ===================== -->
+          <!-- =====================Duenos===================== -->
         <div class="tab-pane fade" id="tab-gestionar-duenos">
-  <div class="d-flex gap-2 mb-3 flex-wrap">
-    <input type="text" id="buscarDueno" class="form-control" style="max-width:320px" placeholder="Buscar por nombre, correo o teléfono">
-    <button class="btn btn-outline-light" id="btnBuscarDueno">Buscar</button>
-    <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaDueno">Limpiar</button>
-
-    <input type="text" id="buscarDuenoCorreo" class="form-control" style="max-width:420px" placeholder="Buscar dueño por correo para restaurarlo">
-    <button class="btn btn-outline-light" id="btnBuscarDuenoCorreo">Buscar por correo</button>
-    <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaDuenoCorreo">Limpiar</button>
-
-    <button class="btn btn-primary ms-auto" id="btnAgregarDueno" data-bs-toggle="modal" data-bs-target="#modalDueno">Agregar dueño</button>
-  </div>
-          <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
-              <thead class="table-dark">
-               <tr><th>Id</th><th>Nombre</th><th>Teléfono</th><th>Correo</th><th>Dirección</th><th>Estado</th><th>Acciones</th></tr>
-              </thead>
-              <tbody id="tablaDuenos"></tbody>
-            </table>
-          </div>
+          <p class="text-secondary">Sección en construcción.</p>
         </div>
-
-        <!-- ===================== MASCOTAS ===================== -->
+          <!-- =====================Mascotas===================== -->
         <div class="tab-pane fade" id="tab-gestionar-mascotas">
-          <div class="d-flex gap-2 mb-3 flex-wrap">
-            <input type="text" id="buscarMascota" class="form-control" style="max-width:320px" placeholder="Buscar por nombre, especie o expediente">
-            <button class="btn btn-outline-light" id="btnBuscarMascota">Buscar</button>
-            <select id="filtroDuenoMascota" class="form-select" style="max-width:280px">
-              <option value="">Todos los dueños</option>
-            </select>
-            <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaMascota">Limpiar</button>
-            <button class="btn btn-primary ms-auto" id="btnAgregarMascota" data-bs-toggle="modal" data-bs-target="#modalMascota">Agregar mascota</button>
-          </div>
-          <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
-              <thead class="table-dark">
-                <tr><th>Foto</th><th>Expediente</th><th>Nombre</th><th>Especie</th><th>Raza</th><th>Sexo</th><th>Nacimiento</th><th>Color</th><th>Dueño</th><th>Acciones</th></tr>
-              </thead>
-              <tbody id="tablaMascotas"></tbody>
-            </table>
-          </div>
+          <p class="text-secondary">Sección en construcción.</p>
         </div>
-
-        <!-- ===================== CITAS ===================== -->
+          <!-- =====================Citas===================== -->
         <div class="tab-pane fade" id="tab-gestionar-citas">
-          <div class="row g-2 mb-2 align-items-end">
-            <div class="col-auto">
-              <label class="form-label small mb-0">Estado</label>
-              <select id="filtroEstado" class="form-select">
-                <option value="">Todos</option>
-                <option value="agendada">Agendada</option>
-                <option value="confirmada">Confirmada</option>
-                <option value="en_consulta">En consulta</option>
-                <option value="completada">Completada</option>
-                <option value="cancelada">Cancelada</option>
-                <option value="vencida">Vencida</option>
-              </select>
-            </div>
-            <div class="col-auto">
-              <label class="form-label small mb-0">Veterinario</label>
-              <select id="filtroVeterinario" class="form-select">
-                <option value="">Todos</option>
-              </select>
-            </div>
-            <div class="col-auto">
-              <label class="form-label small mb-0">Rango</label>
-              <select id="filtroRango" class="form-select">
-                <option value="dia">Día</option>
-                <option value="semana">Semana</option>
-                <option value="todas">Sin filtro de fecha</option>
-              </select>
-            </div>
-            <div class="col-auto">
-              <label class="form-label small mb-0">Fecha</label>
-              <input type="date" id="filtroFecha" class="form-control">
-            </div>
-            <div class="col-auto">
-              <button class="btn btn-outline-light" id="btnFiltrarCitas">Filtrar</button>
-            </div>
-            <div class="col-auto ms-auto">
-              <button class="btn btn-primary" id="btnAgendarCita" data-bs-toggle="modal" data-bs-target="#modalCita">Agendar cita</button>
-            </div>
-          </div>
-          <div id="filtroMascotaInfo" class="mb-2"></div>
-          <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
-              <thead class="table-dark">
-                <tr><th>Folio</th><th>Fecha</th><th>Hora</th><th>Mascota</th><th>Veterinario</th><th>Motivo</th><th>Estado</th><th>Llegada</th><th>Acciones</th></tr>
-              </thead>
-              <tbody id="tablaCitas"></tbody>
-            </table>
-          </div>
+          <p class="text-secondary">Sección en construcción.</p>
         </div>
 
         <!-- ===================== INVENTARIO (pendiente) ===================== -->
@@ -301,7 +218,7 @@
   </div><!-- /container-fluid -->
 
   <!-- ===================== MODALES ===================== -->
-
+  <!-- ===================== MODALES DE USUARIO===================== -->
   <div class="modal fade" id="modalUsuario" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content modal-content-veterinaria">
