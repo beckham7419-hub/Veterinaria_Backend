@@ -386,7 +386,7 @@
             </div>
             <div class="mb-3"><label class="form-label">Motivo de consulta</label><input required class="form-control" id="cita_motivo" maxlength="255"></div>
             <div class="mb-3"><label class="form-label">Fecha</label><input required type="date" class="form-control"
-            min="{{ now()->format('Y-m-d') }}" max="{{ now()->addYear()->format('Y-m-d') }}" id="cita_fecha"></div>
+          min="{{ date('Y-m-d') }}" max="{{ date('Y-m-d', strtotime('+3 months')) }}" id="cita_fecha" required></div>
             <div class="mb-3"><label class="form-label">Hora</label><input required type="time" class="form-control" id="cita_hora" min="07:00" max="21:00"></div>
           </div>
           <div class="modal-footer">
@@ -413,7 +413,7 @@
               <select required class="form-select" id="reprogramar_veterinario_id"></select>
             </div>
             <div class="mb-3"><label class="form-label">Fecha</label><input required type="date" class="form-control"
-            min="{{ now()->format('Y-m-d') }}" max="{{ now()->addYear()->format('Y-m-d') }}" id="cita_fecha"></div>
+           min="{{ date('Y-m-d') }}" max="{{ date('Y-m-d', strtotime('+3 months')) }}" id="reprogramar_fecha" required></div>
             <div class="mb-3"><label class="form-label">Hora</label><input required type="time" class="form-control" id="reprogramar_hora" min="07:00" max="21:00"></div>
           </div>
           <div class="modal-footer">
@@ -1147,7 +1147,7 @@
     mostrarAlerta('Solo se pueden reprogramar citas entre hoy y un año a partir de hoy', 'danger');
     return;
   }
-      const hora = document.getElementById('cita_hora').value;
+      const hora = document.getElementById('reprogramar_hora').value;
       if (!horaValida(hora)) {
       mostrarAlerta('Las citas solo se pueden agendar entre las 7:00 y las 22:00 horas', 'danger');
       return;
@@ -1202,9 +1202,9 @@
 
 function fechaDentroDeRango(fecha) {
   const hoy = new Date().toISOString().slice(0, 10);
-  const enUnAnio = new Date();
-  enUnAnio.setFullYear(enUnAnio.getFullYear() + 1);
-  const maxFecha = enUnAnio.toISOString().slice(0, 10);
+  const en3Meses = new Date();
+  en3Meses.setMonth(en3Meses.getMonth() + 3);
+  const maxFecha = en3Meses.toISOString().slice(0, 10);
   return fecha >= hoy && fecha <= maxFecha;
 }
     document.getElementById('tabBtnCitas').addEventListener('click', () => { if (Object.keys(citasCache).length === 0) fetchCitas(); });

@@ -190,17 +190,100 @@
             </table>
           </div>
         </div>
-          <!-- =====================Duenos===================== -->
+
+        <!-- ===================== DUEÑOS ===================== -->
         <div class="tab-pane fade" id="tab-gestionar-duenos">
-          <p class="text-secondary">Sección en construcción.</p>
+  <div class="d-flex gap-2 mb-3 flex-wrap">
+    <input type="text" id="buscarDueno" class="form-control" style="max-width:320px" placeholder="Buscar por nombre, correo o teléfono">
+    <button class="btn btn-outline-light" id="btnBuscarDueno">Buscar</button>
+    <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaDueno">Limpiar</button>
+
+    <input type="text" id="buscarDuenoCorreo" class="form-control" style="max-width:420px" placeholder="Buscar dueño por correo para restaurarlo">
+    <button class="btn btn-outline-light" id="btnBuscarDuenoCorreo">Buscar por correo</button>
+    <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaDuenoCorreo">Limpiar</button>
+
+    <button class="btn btn-primary ms-auto" id="btnAgregarDueno" data-bs-toggle="modal" data-bs-target="#modalDueno">Agregar dueño</button>
+  </div>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+              <thead class="table-dark">
+               <tr><th>Id</th><th>Nombre</th><th>Teléfono</th><th>Correo</th><th>Dirección</th><th>Estado</th><th>Acciones</th></tr>
+              </thead>
+              <tbody id="tablaDuenos"></tbody>
+            </table>
+          </div>
         </div>
-          <!-- =====================Mascotas===================== -->
+
+        <!-- ===================== MASCOTAS ===================== -->
         <div class="tab-pane fade" id="tab-gestionar-mascotas">
-          <p class="text-secondary">Sección en construcción.</p>
+          <div class="d-flex gap-2 mb-3 flex-wrap">
+            <input type="text" id="buscarMascota" class="form-control" style="max-width:320px" placeholder="Buscar por nombre, especie o expediente">
+            <button class="btn btn-outline-light" id="btnBuscarMascota">Buscar</button>
+            <select id="filtroDuenoMascota" class="form-select" style="max-width:280px">
+              <option value="">Todos los dueños</option>
+            </select>
+            <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaMascota">Limpiar</button>
+            <button class="btn btn-primary ms-auto" id="btnAgregarMascota" data-bs-toggle="modal" data-bs-target="#modalMascota">Agregar mascota</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+              <thead class="table-dark">
+                <tr><th>Foto</th><th>Expediente</th><th>Nombre</th><th>Especie</th><th>Raza</th><th>Sexo</th><th>Nacimiento</th><th>Color</th><th>Dueño</th><th>Acciones</th></tr>
+              </thead>
+              <tbody id="tablaMascotas"></tbody>
+            </table>
+          </div>
         </div>
-          <!-- =====================Citas===================== -->
+
+        <!-- ===================== CITAS ===================== -->
         <div class="tab-pane fade" id="tab-gestionar-citas">
-          <p class="text-secondary">Sección en construcción.</p>
+          <div class="row g-2 mb-2 align-items-end">
+            <div class="col-auto">
+              <label class="form-label small mb-0">Estado</label>
+              <select id="filtroEstado" class="form-select">
+                <option value="">Todos</option>
+                <option value="agendada">Agendada</option>
+                <option value="confirmada">Confirmada</option>
+                <option value="en_consulta">En consulta</option>
+                <option value="completada">Completada</option>
+                <option value="cancelada">Cancelada</option>
+                <option value="vencida">Vencida</option>
+              </select>
+            </div>
+            <div class="col-auto">
+              <label class="form-label small mb-0">Veterinario</label>
+              <select id="filtroVeterinario" class="form-select">
+                <option value="">Todos</option>
+              </select>
+            </div>
+            <div class="col-auto">
+              <label class="form-label small mb-0">Rango</label>
+              <select id="filtroRango" class="form-select">
+                <option value="dia">Día</option>
+                <option value="semana">Semana</option>
+                <option value="todas">Sin filtro de fecha</option>
+              </select>
+            </div>
+            <div class="col-auto">
+              <label class="form-label small mb-0">Fecha</label>
+              <input type="date" id="filtroFecha" class="form-control">
+            </div>
+            <div class="col-auto">
+              <button class="btn btn-outline-light" id="btnFiltrarCitas">Filtrar</button>
+            </div>
+            <div class="col-auto ms-auto">
+              <button class="btn btn-primary" id="btnAgendarCita" data-bs-toggle="modal" data-bs-target="#modalCita">Agendar cita</button>
+            </div>
+          </div>
+          <div id="filtroMascotaInfo" class="mb-2"></div>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+              <thead class="table-dark">
+                <tr><th>Folio</th><th>Fecha</th><th>Hora</th><th>Mascota</th><th>Veterinario</th><th>Motivo</th><th>Estado</th><th>Llegada</th><th>Acciones</th></tr>
+              </thead>
+              <tbody id="tablaCitas"></tbody>
+            </table>
+          </div>
         </div>
 
         <!-- ===================== INVENTARIO (pendiente) ===================== -->
@@ -218,7 +301,7 @@
   </div><!-- /container-fluid -->
 
   <!-- ===================== MODALES ===================== -->
-  <!-- ===================== MODALES DE USUARIO===================== -->
+
   <div class="modal fade" id="modalUsuario" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content modal-content-veterinaria">
@@ -400,8 +483,9 @@
               <select required class="form-select" id="cita_veterinario_id"></select>
             </div>
             <div class="mb-3"><label class="form-label">Motivo de consulta</label><input required class="form-control" id="cita_motivo" maxlength="255"></div>
-            <div class="mb-3"><label class="form-label">Fecha</label><input required type="date" class="form-control" id="cita_fecha"></div>
-            <div class="mb-3"><label class="form-label">Hora</label><input required type="time" class="form-control" id="cita_hora"></div>
+            <div class="mb-3"><label class="form-label">Fecha</label><input required type="date" class="form-control"
+          min="{{ date('Y-m-d') }}" max="{{ date('Y-m-d', strtotime('+3 months')) }}" id="cita_fecha" required></div>
+            <div class="mb-3"><label class="form-label">Hora</label><input required type="time" class="form-control" id="cita_hora" min="07:00" max="21:00"></div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -426,8 +510,9 @@
               <label class="form-label">Veterinario</label>
               <select required class="form-select" id="reprogramar_veterinario_id"></select>
             </div>
-            <div class="mb-3"><label class="form-label">Fecha</label><input required type="date" class="form-control" id="reprogramar_fecha"></div>
-            <div class="mb-3"><label class="form-label">Hora</label><input required type="time" class="form-control" id="reprogramar_hora"></div>
+            <div class="mb-3"><label class="form-label">Fecha</label><input required type="date" class="form-control"
+           min="{{ date('Y-m-d') }}" max="{{ date('Y-m-d', strtotime('+3 months')) }}" id="reprogramar_fecha" required></div>
+            <div class="mb-3"><label class="form-label">Hora</label><input required type="time" class="form-control" id="reprogramar_hora" min="07:00" max="21:00"></div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -1229,9 +1314,11 @@
       tbody.innerHTML = citas.map((c) => {
         const mascotaNombre = c.mascota ? c.mascota.nombre : `#${c.mascota_id}`;
         const vetNombre = c.veterinario ? c.veterinario.nombre_completo : `#${c.veterinario_id}`;
+        const vencida = citaVencida(c);
         let acciones = '';
-
-        if (c.estado === 'agendada' || c.estado === 'confirmada') {
+        if (c.estado === 'agendada' && vencida) {
+        }
+        else if (c.estado === 'agendada' || c.estado === 'confirmada') {
           if (c.estado === 'agendada') {
             acciones += `<button class="btn btn-sm btn-info text-white mb-1" data-accion="confirmar" data-id="${c.id}">Confirmar</button> `;
           }
@@ -1295,6 +1382,10 @@
       }
 
       if (accion === 'cancelar') {
+        if (!citaCancelable(cita)) {
+          mostrarAlerta('Solo se puede cancelar una cita hasta 2 horas antes de la hora agendada', 'danger');
+          return;
+        }
         document.getElementById('formCancelar').reset();
         document.getElementById('cancelar_cita_id').value = cita.id;
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCancelar')).show();
@@ -1332,6 +1423,16 @@
 
     document.getElementById('formCita').addEventListener('submit', async (e) => {
       e.preventDefault();
+      const fecha = document.getElementById('cita_fecha').value;
+      if (!fechaDentroDeRango(fecha)) {
+        mostrarAlerta('Solo se pueden agendar citas entre hoy y un año a partir de hoy', 'danger');
+        return;
+      }
+      const hora = document.getElementById('cita_hora').value;
+      if (!horaValida(hora)) {
+        mostrarAlerta('Las citas solo se pueden agendar entre las 7:00 y las 22:00 horas', 'danger');
+        return;
+      }
       const payload = {
         mascota_id: document.getElementById('cita_mascota_id').value,
         veterinario_id: document.getElementById('cita_veterinario_id').value,
@@ -1352,6 +1453,16 @@
 
     document.getElementById('formReprogramar').addEventListener('submit', async (e) => {
       e.preventDefault();
+      const fecha = document.getElementById('reprogramar_fecha').value;
+      if (!fechaDentroDeRango(fecha)) {
+        mostrarAlerta('Solo se pueden reprogramar citas entre hoy y un año a partir de hoy', 'danger');
+        return;
+      }
+      const hora = document.getElementById('reprogramar_hora').value;
+      if (!horaValida(hora)) {
+        mostrarAlerta('Las citas solo se pueden agendar entre las 7:00 y las 22:00 horas', 'danger');
+        return;
+      }
       const id = document.getElementById('reprogramar_cita_id').value;
       const payload = {
         veterinario_id: document.getElementById('reprogramar_veterinario_id').value,
@@ -1383,6 +1494,30 @@
         mostrarAlerta(mensajeError(err), 'danger');
       }
     });
+
+    function citaVencida(c) {
+      return new Date(`${soloFecha(c.fecha)}T${soloHora(c.hora)}`) < new Date();
+    }
+
+    function citaCancelable(c) {
+      const fechaHoraCita = new Date(`${soloFecha(c.fecha)}T${soloHora(c.hora)}`);
+      const ahora = new Date();
+      const diferenciaHoras = (fechaHoraCita - ahora) / (1000 * 60 * 60);
+      return diferenciaHoras >= 2;
+    }
+
+    function horaValida(hora) {
+      const [h] = hora.split(':').map(Number);
+      return h >= 7 && h < 22;
+    }
+
+    function fechaDentroDeRango(fecha) {
+      const hoy = new Date().toISOString().slice(0, 10);
+      const en3Meses = new Date();
+      en3Meses.setMonth(en3Meses.getMonth() + 3);
+      const maxFecha = en3Meses.toISOString().slice(0, 10);
+      return fecha >= hoy && fecha <= maxFecha;
+    }
 
     document.getElementById('tabBtnCitas').addEventListener('click', () => { if (Object.keys(citasCache).length === 0) fetchCitas(); });
     document.getElementById('tabBtnMascotas').addEventListener('click', () => { if (Object.keys(mascotasCache).length === 0) fetchMascotas(); });
