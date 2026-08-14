@@ -286,9 +286,53 @@
           </div>
         </div>
 
-        <!-- ===================== INVENTARIO (pendiente) ===================== -->
+        <!-- ===================== INVENTARIO ===================== -->
         <div class="tab-pane fade" id="tab-gestionar-inventario">
-          <p class="text-secondary">Sección en construcción.</p>
+          <div class="panel-card">
+            <ul class="nav nav-tabs">
+              <li class="nav-item"><button class="nav-link active" id="tabBtnProveedores" data-bs-toggle="tab" data-bs-target="#tab-gestionar-proveedores" type="button">Gestionar proveedores</button></li>
+              <li class="nav-item"><button class="nav-link" id="tabBtnMedicamentos" data-bs-toggle="tab" data-bs-target="#tab-gestionar-medicamentos" type="button">Gestionar medicamentos</button></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane fade show active" id="tab-gestionar-proveedores">
+                <div class="d-flex gap-2 mb-3 flex-wrap">
+                  <input type="text" id="buscarProveedor" class="form-control" style="max-width:620px" placeholder="Buscar proveedor por su correo para restaurarlo o hacer otras acciones:">
+                  <button class="btn btn-outline-light" id="btnBuscarProveedor">Buscar</button>
+                  <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaProveedor">Limpiar</button>
+                  <button type="button" class="btn btn-primary ms-auto" id="btnAgregarProveedor" data-bs-toggle="modal" data-bs-target="#modalProveedor">
+                    Agregar proveedor
+                  </button>
+                </div>
+                <div class="table-responsive">
+                  <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                      <tr><th>Nombre</th><th>Telefono</th><th>Correo</th><th>Estado</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody id="tablaProveedores"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="tab-pane fade" id="tab-gestionar-medicamentos">
+                <div class="d-flex gap-2 mb-3 flex-wrap">
+                  <input type="text" id="buscarMedicamento" class="form-control" style="max-width:620px" placeholder="Buscar medicamento:">
+                  <button class="btn btn-outline-light" id="btnBuscarMedicamento">Buscar</button>
+                  <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaMedicamento">Limpiar</button>
+                  <button type="button" class="btn btn-primary ms-auto" id="btnAgregarMedicamento" data-bs-toggle="modal" data-bs-target="#modalMedicamento">
+                    Agregar medicamento
+                  </button>
+                </div>
+                <div class="table-responsive">
+                  <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                      <tr><th>Nombre</th><th>Tipo</th><th>Unidad</th><th>Cant. actual</th><th>Cant. mínima</th><th>Proveedor</th><th>Estado</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody id="tablaMedicamentos"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- ===================== REPORTES (pendiente) ===================== -->
@@ -543,6 +587,162 @@
             <button type="submit" class="btn btn-danger">Cancelar cita</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalProveedor" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content modal-content-veterinaria">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalProveedorTitulo">Agregar proveedor</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="formProveedor">
+          <div class="modal-body">
+            <input type="hidden" id="proveedor_id">
+            <div class="mb-3">
+              <label class="form-label">Nombre</label>
+              <input type="text" id="proveedor_nombre" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Telefono</label>
+              <input type="tel" id="proveedor_telefono" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Correo</label>
+              <input type="email" id="proveedor_correo" class="form-control" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalVerProveedor" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content modal-content-veterinaria">
+        <div class="modal-header">
+          <h5 class="modal-title">Detalles del Proveedor</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Nombre:</strong> <span id="ver_proveedor_nombre"></span></p>
+          <p><strong>Telefono:</strong> <span id="ver_proveedor_telefono"></span></p>
+          <p><strong>Correo:</strong> <span id="ver_proveedor_correo"></span></p>
+          <p><strong>Estado:</strong> <span id="ver_proveedor_estado"></span></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Agregar/Editar Medicamento -->
+  <div class="modal fade" id="modalMedicamento" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content modal-content-veterinaria bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalMedicamentoTitulo">Agregar medicamento</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="formMedicamento">
+          <div class="modal-body">
+            <input type="hidden" id="medicamento_id">
+            <div class="mb-3">
+              <label class="form-label">Nombre</label>
+              <input type="text" id="medicamento_nombre" class="form-control" required maxlength="150">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Tipo</label>
+              <input type="text" id="medicamento_tipo" class="form-control" required maxlength="100">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Unidad de medida</label>
+              <input type="text" id="medicamento_unidad" class="form-control" required maxlength="50" placeholder="ej: ml, tabletas, cajas">
+            </div>
+            <div class="mb-3" id="medicamento_cantidad_actual_grupo">
+              <label class="form-label">Cantidad actual (inicial)</label>
+              <input type="number" id="medicamento_cantidad_actual" class="form-control" required min="0" step="0.01">
+              <div class="form-text">Para modificar el stock después de crear el medicamento, usa Entrada/Salida.</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Cantidad mínima de alerta</label>
+              <input type="number" id="medicamento_cantidad_minima" class="form-control" required min="0" step="0.01">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Proveedor</label>
+              <select id="medicamento_proveedor_id" class="form-select">
+                <option value="">Sin proveedor asignado</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Entrada/Salida de stock -->
+  <div class="modal fade" id="modalMovimiento" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content modal-content-veterinaria bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalMovimientoTitulo">Registrar movimiento</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="formMovimiento">
+          <div class="modal-body">
+            <input type="hidden" id="movimiento_medicamento_id">
+            <input type="hidden" id="movimiento_tipo">
+            <p class="mb-2">Medicamento: <strong id="movimiento_medicamento_nombre"></strong></p>
+            <div class="mb-3">
+              <label class="form-label">Cantidad</label>
+              <input type="number" id="movimiento_cantidad" class="form-control" required min="0.01" step="0.01">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Motivo (opcional)</label>
+              <input type="text" id="movimiento_motivo" class="form-control" maxlength="255">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary" id="btnGuardarMovimiento">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Historial de movimientos (solo lectura) -->
+  <div class="modal fade" id="modalHistorialMedicamento" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content modal-content-veterinaria bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title">Historial de movimientos — <span id="historial_medicamento_nombre"></span></h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+              <thead class="table-dark">
+                <tr><th>Fecha</th><th>Tipo</th><th>Cantidad</th><th>Motivo</th><th>Usuario</th></tr>
+              </thead>
+              <tbody id="tablaHistorialMedicamento"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1521,7 +1721,375 @@
 
     document.getElementById('tabBtnCitas').addEventListener('click', () => { if (Object.keys(citasCache).length === 0) fetchCitas(); });
     document.getElementById('tabBtnMascotas').addEventListener('click', () => { if (Object.keys(mascotasCache).length === 0) fetchMascotas(); });
+    
+   // Proveedor
+let proveedoresCache = {};
 
+async function fetchProveedores() {
+  try {
+    const res = await apiFetch('/proveedores');
+    const lista = res.data ? res.data : res;
+    renderProveedores(lista);
+  } catch (e) {
+    mostrarAlerta(mensajeError(e), 'danger');
+  }
+}
+
+function renderProveedores(proveedores) {
+  proveedoresCache = {};
+  const tbody = document.getElementById('tablaProveedores');
+
+  if (!proveedores || proveedores.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center">No se encontraron proveedores.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = proveedores.map((p) => {
+    proveedoresCache[p.id] = p;
+    const esActivo = Boolean(p.activo);
+
+    const botonEstado = esActivo
+      ? `<button class="btn btn-danger btn-sm mb-1" data-accion="baja" data-id="${p.id}">Dar de baja</button>`
+      : `<button class="btn btn-success btn-sm mb-1" data-accion="reactivar" data-id="${p.id}">Reactivar</button>`;
+
+    return `
+      <tr>
+        <td>${esc(p.nombre)}</td>
+        <td>${esc(p.telefono)}</td>
+        <td>${esc(p.correo)}</td>
+        <td><span class="badge ${esActivo ? 'bg-success' : 'bg-secondary'}">${esActivo ? 'Activo' : 'Inactivo'}</span></td>
+        <td>
+          <button class="btn btn-info btn-sm text-white mb-1" data-accion="ver" data-id="${p.id}">Ver</button>
+          <button class="btn btn-warning btn-sm mb-1" data-accion="editar" data-id="${p.id}">Modificar</button>
+          ${botonEstado}
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+document.getElementById('btnBuscarProveedor').addEventListener('click', async () => {
+  const correo = document.getElementById('buscarProveedor').value.trim();
+
+  if (!correo) {
+    mostrarAlerta('Ingresa un correo para buscar', 'warning');
+    return;
+  }
+
+  try {
+    const res = await apiFetch('/proveedores/buscar-correo', {
+      method: 'POST',
+      body: JSON.stringify({ correo: correo })
+    });
+
+    const proveedorEncontrado = res.data;
+
+    if (proveedorEncontrado) {
+      renderProveedores([proveedorEncontrado]);
+    } else {
+      mostrarAlerta('No se encontró ningún proveedor con ese correo', 'info');
+    }
+  } catch (err) {
+    mostrarAlerta(mensajeError(err), 'danger');
+  }
+});
+
+document.getElementById('btnLimpiarBusquedaProveedor').addEventListener('click', () => {
+  document.getElementById('buscarProveedor').value = '';
+  fetchProveedores();
+});
+
+document.getElementById('tablaProveedores').addEventListener('click', (e) => {
+  const boton = e.target.closest('button[data-accion]');
+  if (!boton) return;
+  const id = boton.dataset.id;
+  const accion = boton.dataset.accion;
+  const proveedor = proveedoresCache[id];
+
+  if (!proveedor) return;
+
+ if (accion === 'ver') {
+  document.getElementById('ver_proveedor_nombre').innerText = proveedor.nombre;
+  document.getElementById('ver_proveedor_telefono').innerText = proveedor.telefono;
+  document.getElementById('ver_proveedor_correo').innerText = proveedor.correo;
+  document.getElementById('ver_proveedor_estado').innerText = proveedor.activo ? 'Activo' : 'Inactivo';
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('modalVerProveedor')).show();
+}
+
+if (accion === 'editar') {
+  document.getElementById('formProveedor').reset();
+  document.getElementById('proveedor_id').value = proveedor.id;
+  document.getElementById('proveedor_nombre').value = proveedor.nombre;
+  document.getElementById('proveedor_telefono').value = proveedor.telefono;
+  document.getElementById('proveedor_correo').value = proveedor.correo;
+  document.getElementById('modalProveedorTitulo').innerText = 'Actualizar proveedor';
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('modalProveedor')).show();
+}
+
+  if (accion === 'baja') {
+    if (confirm(`¿Dar de baja a ${proveedor.nombre}?`)) {
+      apiFetch(`/proveedores/${id}`, { method: 'DELETE' })
+        .then(() => {
+          mostrarAlerta('Proveedor dado de baja correctamente');
+          fetchProveedores();
+        })
+        .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
+    }
+  }
+
+  if (accion === 'reactivar') {
+    if (confirm('¿Deseas reactivar a este proveedor?')) {
+      apiFetch(`/proveedores/${id}/reactivar`, { method: 'PUT' })
+        .then(() => {
+          mostrarAlerta('Proveedor reactivado con éxito');
+          fetchProveedores();
+        })
+        .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
+    }
+  }
+});
+
+document.getElementById('formProveedor').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = document.getElementById('proveedor_id').value;
+  const payload = {
+    nombre: document.getElementById('proveedor_nombre').value,
+    telefono: document.getElementById('proveedor_telefono').value,
+    correo: document.getElementById('proveedor_correo').value,
+  };
+
+  try {
+    if (id) {
+      await apiFetch(`/proveedores/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+      mostrarAlerta('Proveedor actualizado correctamente');
+    } else {
+      await apiFetch('/proveedores', { method: 'POST', body: JSON.stringify(payload) });
+      mostrarAlerta('Proveedor registrado correctamente');
+    }
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalProveedor')).hide();
+    fetchProveedores();
+  } catch (err) {
+    mostrarAlerta(mensajeError(err), 'danger');
+  }
+});
+
+document.getElementById('btnAgregarProveedor').addEventListener('click', () => {
+  document.getElementById('formProveedor').reset();
+  document.getElementById('proveedor_id').value = '';
+  document.getElementById('modalProveedorTitulo').innerText = 'Agregar proveedor';
+});
+
+// ============ MEDICAMENTOS ============
+let medicamentosCache = {};
+
+async function fetchMedicamentos() {
+  try {
+    const res = await apiFetch('/medicamentos');
+    const lista = res.data ? res.data : res;
+    renderMedicamentos(lista);
+  } catch (e) {
+    mostrarAlerta(mensajeError(e), 'danger');
+  }
+}
+
+function renderMedicamentos(medicamentos) {
+  medicamentosCache = {};
+  const tbody = document.getElementById('tablaMedicamentos');
+
+  if (!medicamentos || medicamentos.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center">No se encontraron medicamentos.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = medicamentos.map((m) => {
+    medicamentosCache[m.id] = m;
+    const esActivo = Boolean(m.activo);
+    const stockBajo = Boolean(m.stock_bajo);
+    const proveedorNombre = m.proveedor ? m.proveedor.nombre : '<span class="text-secondary">—</span>';
+
+    const botonEstado = esActivo
+      ? `<button class="btn btn-danger btn-sm mb-1" data-accion="baja" data-id="${m.id}">Dar de baja</button>`
+      : `<button class="btn btn-success btn-sm mb-1" data-accion="reactivar" data-id="${m.id}">Reactivar</button>`;
+
+    return `
+      <tr>
+        <td>${esc(m.nombre)}</td>
+        <td>${esc(m.tipo)}</td>
+        <td>${esc(m.unidad_medida)}</td>
+        <td>${esc(m.cantidad_actual)} ${stockBajo ? '<span class="badge bg-danger ms-1">Stock bajo</span>' : ''}</td>
+        <td>${esc(m.cantidad_minima_alerta)}</td>
+        <td>${m.proveedor ? esc(m.proveedor.nombre) : '<span class="text-secondary">—</span>'}</td>
+        <td><span class="badge ${esActivo ? 'bg-success' : 'bg-secondary'}">${esActivo ? 'Activo' : 'Inactivo'}</span></td>
+        <td>
+          <button class="btn btn-info btn-sm text-white mb-1" data-accion="entrada" data-id="${m.id}">Entrada</button>
+          <button class="btn btn-warning btn-sm mb-1" data-accion="salida" data-id="${m.id}">Salida</button>
+          <button class="btn btn-outline-light btn-sm mb-1" data-accion="historial" data-id="${m.id}">Historial</button>
+          <button class="btn btn-secondary btn-sm mb-1" data-accion="editar" data-id="${m.id}">Editar</button>
+          ${botonEstado}
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+async function cargarProveedoresSelect() {
+  try {
+    const res = await apiFetch('/proveedores');
+    const select = document.getElementById('medicamento_proveedor_id');
+    select.innerHTML = '<option value="">Sin proveedor asignado</option>';
+    res.data.forEach((p) => {
+      select.innerHTML += `<option value="${p.id}">${esc(p.nombre)}</option>`;
+    });
+  } catch (e) {
+    mostrarAlerta(mensajeError(e), 'danger');
+  }
+}
+
+document.getElementById('btnBuscarMedicamento').addEventListener('click', fetchMedicamentos);
+document.getElementById('buscarMedicamento').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); fetchMedicamentos(); } });
+document.getElementById('btnLimpiarBusquedaMedicamento').addEventListener('click', () => {
+  document.getElementById('buscarMedicamento').value = '';
+  fetchMedicamentos();
+});
+
+document.getElementById('btnAgregarMedicamento').addEventListener('click', async () => {
+  document.getElementById('formMedicamento').reset();
+  document.getElementById('medicamento_id').value = '';
+  document.getElementById('modalMedicamentoTitulo').innerText = 'Agregar medicamento';
+  document.getElementById('medicamento_cantidad_actual_grupo').style.display = 'block';
+  document.getElementById('medicamento_cantidad_actual').required = true;
+  await cargarProveedoresSelect();
+});
+
+document.getElementById('tablaMedicamentos').addEventListener('click', async (e) => {
+  const boton = e.target.closest('button[data-accion]');
+  if (!boton) return;
+  const id = boton.dataset.id;
+  const accion = boton.dataset.accion;
+  const medicamento = medicamentosCache[id];
+
+  if (!medicamento) return;
+
+  if (accion === 'editar') {
+    document.getElementById('formMedicamento').reset();
+    await cargarProveedoresSelect();
+    document.getElementById('medicamento_id').value = medicamento.id;
+    document.getElementById('medicamento_nombre').value = medicamento.nombre;
+    document.getElementById('medicamento_tipo').value = medicamento.tipo;
+    document.getElementById('medicamento_unidad').value = medicamento.unidad_medida;
+    document.getElementById('medicamento_cantidad_minima').value = medicamento.cantidad_minima_alerta;
+    document.getElementById('medicamento_proveedor_id').value = medicamento.proveedor_id || '';
+    // La cantidad actual solo se ajusta vía Entrada/Salida, no se edita aquí.
+    document.getElementById('medicamento_cantidad_actual_grupo').style.display = 'none';
+    document.getElementById('medicamento_cantidad_actual').required = false;
+    document.getElementById('modalMedicamentoTitulo').innerText = `Editar medicamento — ${medicamento.nombre}`;
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalMedicamento')).show();
+  }
+
+  if (accion === 'baja') {
+    if (confirm(`¿Dar de baja a ${medicamento.nombre}?`)) {
+      apiFetch(`/medicamentos/${id}`, { method: 'DELETE' })
+        .then(() => { mostrarAlerta('Medicamento dado de baja'); fetchMedicamentos(); })
+        .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
+    }
+  }
+
+  if (accion === 'entrada' || accion === 'salida') {
+    document.getElementById('formMovimiento').reset();
+    document.getElementById('movimiento_medicamento_id').value = medicamento.id;
+    document.getElementById('movimiento_tipo').value = accion;
+    document.getElementById('movimiento_medicamento_nombre').innerText = medicamento.nombre;
+    document.getElementById('modalMovimientoTitulo').innerText = accion === 'entrada' ? 'Registrar entrada' : 'Registrar salida';
+    document.getElementById('btnGuardarMovimiento').className = accion === 'entrada' ? 'btn btn-success' : 'btn btn-warning';
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalMovimiento')).show();
+  }
+
+  if (accion === 'historial') {
+    try {
+      const res = await apiFetch(`/medicamentos/${id}/movimientos`);
+      renderHistorialMedicamento(res.data, medicamento.nombre);
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('modalHistorialMedicamento')).show();
+    } catch (err) {
+      mostrarAlerta(mensajeError(err), 'danger');
+    }
+  }
+});
+
+function renderHistorialMedicamento(movimientos, nombreMedicamento) {
+  document.getElementById('historial_medicamento_nombre').innerText = nombreMedicamento;
+  const tbody = document.getElementById('tablaHistorialMedicamento');
+
+  if (!movimientos || movimientos.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center">Sin movimientos registrados.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = movimientos.map((mv) => {
+    const badge = mv.tipo === 'entrada' ? 'bg-success' : 'bg-warning';
+    return `
+      <tr>
+        <td>${soloFecha(mv.fecha)} ${soloHora(mv.fecha)}</td>
+        <td><span class="badge ${badge}">${esc(mv.tipo)}</span></td>
+        <td>${esc(mv.cantidad)}</td>
+        <td>${esc(mv.motivo || '')}</td>
+        <td>${mv.usuario ? esc(mv.usuario.nombre_completo) : ''}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+document.getElementById('formMedicamento').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = document.getElementById('medicamento_id').value;
+  const payload = {
+    nombre: document.getElementById('medicamento_nombre').value,
+    tipo: document.getElementById('medicamento_tipo').value,
+    unidad_medida: document.getElementById('medicamento_unidad').value,
+    cantidad_minima_alerta: document.getElementById('medicamento_cantidad_minima').value,
+    proveedor_id: document.getElementById('medicamento_proveedor_id').value || null,
+  };
+
+  if (!id) {
+    payload.cantidad_actual = document.getElementById('medicamento_cantidad_actual').value;
+  }
+
+  try {
+    if (id) {
+      await apiFetch(`/medicamentos/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+      mostrarAlerta('Medicamento actualizado correctamente');
+    } else {
+      await apiFetch('/medicamentos', { method: 'POST', body: JSON.stringify(payload) });
+      mostrarAlerta('Medicamento registrado correctamente');
+    }
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalMedicamento')).hide();
+    fetchMedicamentos();
+  } catch (err) {
+    mostrarAlerta(mensajeError(err), 'danger');
+  }
+});
+
+document.getElementById('formMovimiento').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const medicamentoId = document.getElementById('movimiento_medicamento_id').value;
+  const tipo = document.getElementById('movimiento_tipo').value;
+  const payload = {
+    cantidad: document.getElementById('movimiento_cantidad').value,
+    motivo: document.getElementById('movimiento_motivo').value,
+  };
+
+  try {
+    await apiFetch(`/medicamentos/${medicamentoId}/${tipo}`, { method: 'POST', body: JSON.stringify(payload) });
+    mostrarAlerta(tipo === 'entrada' ? 'Entrada registrada correctamente' : 'Salida registrada correctamente');
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalMovimiento')).hide();
+    fetchMedicamentos();
+  } catch (err) {
+    mostrarAlerta(mensajeError(err), 'danger');
+  }
+});
+
+document.getElementById('tabBtnInventario').addEventListener('click', () => {
+  if (Object.keys(medicamentosCache).length === 0) fetchMedicamentos();
+});
     // ============ CARGA INICIAL ============
     document.addEventListener('DOMContentLoaded', () => {
       try {

@@ -12,6 +12,10 @@ class ConsultaRepository
             throw new \Exception("No tienes permiso para registrar la consulta de esta cita.");
         }
 
+        if ($cita->estado !== "en_consulta") {
+            throw new \Exception("La cita debe estar en consulta para registrar el diagnostico.");
+        }
+
         if ($cita->consulta) {
             throw new \Exception("Esta cita ya tiene una consulta registrada.");
         }
