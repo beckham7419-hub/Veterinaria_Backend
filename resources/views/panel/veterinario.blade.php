@@ -483,7 +483,9 @@
         fichaMascotaId = res.mascota ? res.mascota.id : null;
         const consulta = res.consulta;
         fichaConsultaId = consulta ? consulta.id : null;
-        fichaSoloLectura = cita.estado === 'completada';
+
+        const puedeEditar = cita.estado === 'en_consulta';
+        fichaSoloLectura = !puedeEditar;
 
         document.getElementById('ficha_diagnostico').value = consulta?.diagnostico || '';
         document.getElementById('ficha_tratamiento').value = consulta?.tratamiento || '';
@@ -494,9 +496,20 @@
 
         ['ficha_diagnostico', 'ficha_tratamiento', 'ficha_medicamentos', 'ficha_observaciones', 'ficha_peso', 'ficha_temperatura']
           .forEach((id) => { document.getElementById(id).readOnly = fichaSoloLectura; });
-        document.getElementById('btnGuardarFicha').style.display = fichaSoloLectura ? 'none' : 'inline-block';
-        document.getElementById('ficha_solo_lectura_aviso').style.display = fichaSoloLectura ? 'inline' : 'none';
-        document.getElementById('formArchivo').style.display = fichaSoloLectura ? 'none' : 'flex';
+        document.getElementById('btnGuardarFicha').style.display = puedeEditar ? 'inline-block' : 'none';
+
+        const avisoEl = document.getElementById('ficha_solo_lectura_aviso');
+        if (cita.estado === 'completada') {
+          avisoEl.textContent = 'Esta cita ya está completada; la consulta es de solo lectura.';
+          avisoEl.style.display = 'inline';
+        } else if (!puedeEditar) {
+          avisoEl.textContent = 'Esta cita aún no está en consulta; inícala desde la agenda para poder registrar el diagnóstico.';
+          avisoEl.style.display = 'inline';
+        } else {
+          avisoEl.style.display = 'none';
+        }
+
+        document.getElementById('formArchivo').style.display = puedeEditar ? 'flex' : 'none';
 
         if (fichaConsultaId) {
           cargarArchivos();
