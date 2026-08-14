@@ -20,8 +20,8 @@ class UpdateConsultaRequest extends FormRequest
             'tratamiento' => 'sometimes|nullable|string',
             'medicamentos_recetados' => 'sometimes|nullable|string',
             'observaciones' => 'sometimes|nullable|string',
-            'peso' => 'sometimes|nullable|numeric|min:0|max:999.99',
-            'temperatura' => 'sometimes|nullable|numeric|min:0|max:999.9'
+            'peso' => 'sometimes|nullable|numeric|min:0|max:200',
+            'temperatura' => 'sometimes|nullable|numeric|min:30|max:50'
         ];
     }
 
