@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Panel del admin</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <style>
    body {
       background-color: #1a1a1a;
@@ -118,6 +119,14 @@
 
     .btn-outline-light:hover { color: #1a1a1a; }
 
+    .form-select:disabled,
+    .form-control:disabled {
+    background-color: #2a2a2a;
+    color: #999999;
+    border-color: #333333;
+    opacity: 1; 
+    }
+
     /* ---------- Modales ---------- */
     .modal-content-veterinaria {
       background-color: #242424;
@@ -180,6 +189,7 @@
             <button type="button" class="btn btn-primary ms-auto" id="btnAgregarUsuario" data-bs-toggle="modal" data-bs-target="#modalUsuario">
               Agregar empleado
             </button>
+            <button id="btnReintentarPersonal" class="btn btn-outline-warning d-none" type="button">Reintentar formulario('sin guardar')</button>
           </div>
           <div class="table-responsive">
             <table class="table table-striped table-hover align-middle">
@@ -203,11 +213,12 @@
     <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaDuenoCorreo">Limpiar</button>
 
     <button class="btn btn-primary ms-auto" id="btnAgregarDueno" data-bs-toggle="modal" data-bs-target="#modalDueno">Agregar dueño</button>
+    <button id="btnReintentarDueno" class="btn btn-outline-warning d-none" type="button">Reintentar formulario('sin guardar')</button>
   </div>
           <div class="table-responsive">
             <table class="table table-striped table-hover align-middle">
               <thead class="table-dark">
-               <tr><th>Id</th><th>Nombre</th><th>Teléfono</th><th>Correo</th><th>Dirección</th><th>Estado</th><th>Acciones</th></tr>
+               <tr><th>Nombre</th><th>Teléfono</th><th>Correo</th><th>Dirección</th><th>Estado</th><th>Acciones</th></tr>
               </thead>
               <tbody id="tablaDuenos"></tbody>
             </table>
@@ -336,13 +347,42 @@
         </div>
 
         <!-- ===================== REPORTES (pendiente) ===================== -->
-        <div class="tab-pane fade" id="tab-reportes">
-          <p class="text-secondary">Sección en construcción.</p>
-        </div>
+      <div class="tab-pane fade" id="tab-reportes">
+          <div class="row g-2 mb-4 align-items-end">
+          <div class="col-auto">
+          <label class="form-label small mb-0">Fecha inicio (periodo)</label>
+          <input type="date" id="reporte_fecha_inicio" class="form-control">
+      </div>
+      <div class="col-auto">
+          <label class="form-label small mb-0">Fecha fin (periodo)</label>
+          <input type="date" id="reporte_fecha_fin" class="form-control">
+      </div>
+      <div class="col-auto">
+          <label class="form-label small mb-0">Fecha (resumen del día)</label>
+          <input type="date" id="reporte_fecha_dia" class="form-control">
+      </div>
+      <div class="col-auto">
+          <label class="form-label small mb-0">Veterinario</label>
+          <select id="reporte_veterinario_id" class="form-select">
+          <option value="">Todos</option>
+          </select>
+      </div>
+      <div class="col-auto">
+          <label class="form-label small mb-0">Especie</label>
+          <select id="reporte_especie" class="form-select">
+          <option value="">Todas</option>
+      </select>
+      </div>
+      </div>
+      <p class="text-secondary small">Cada tarjeta usa solo los filtros que le aplican.</p>
 
-      </div><!-- /tab-content -->
-    </div><!-- /panel-card -->
-  </div><!-- /container-fluid -->
+      <div class="row g-3" id="tarjetasReportes"></div>
+      </div>
+
+
+      </div>
+    </div>
+  </div>
 
   <!-- ===================== MODALES ===================== -->
 
@@ -358,7 +398,12 @@
             <input type="hidden" id="usuario_id">
             <div class="mb-3">
               <label class="form-label">Nombre completo</label>
-              <input type="text" id="usuario_nombre" class="form-control" required>
+              <input type="text" id="usuario_nombre" class="form-control" required
+              maxlength="160"
+              pattern="[A-Za-zÀ-ÿÑñ'-]{2,50}(\s[A-Za-zÀ-ÿÑñ'-]{2,50}){1,}"
+              title="Debe incluir al menos nombre y apellido, cada uno con 3 a 50 letras."
+              placeholder="Nombre Apellido">
+            <div class="form-text">Nombre y al menos un apellido (mínimo 3 letras cada uno).</div>
             </div>
             <div class="mb-3">
               <label class="form-label">Correo electrónico</label>
@@ -374,11 +419,28 @@
             </div>
             <div class="mb-3">
               <label class="form-label" id="usuario_contrasena_label">Contraseña</label>
-              <input type="password" id="usuario_contrasena" class="form-control">
+              <div class="input-group">
+              <input type="password" id="usuario_contrasena" class="form-control" autocomplete="new-password">
+              <button type="button" class="btn btn-outline-secondary" id="btnTogglePass" tabindex="-1">
+              <i class="bi bi-eye" id="iconTogglePass"></i>
+              </button>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" id="usuario_contrasena_confirm_label">Confirmar contraseña</label>
+              <div class="input-group">
+              <input type="password" id="usuario_contrasena_confirm" class="form-control" autocomplete="new-password">
+              <button type="button" class="btn btn-outline-secondary" id="btnTogglePassConfirm" tabindex="-1">
+              <i class="bi bi-eye" id="iconTogglePassConfirm"></i>
+              </button>
+              </div>
+              <div class="invalid-feedback d-block d-none" id="errorContrasenaMatch">
+              Las contraseñas no coinciden
+              </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-secondary" id="btnCancelarPersonal">Cancelar</button>
             <button type="submit" class="btn btn-primary">Guardar</button>
           </div>
         </form>
@@ -418,11 +480,12 @@
             <input type="hidden" id="dueno_id">
             <div class="mb-3">
               <label class="form-label">Nombre completo</label>
-              <input required class="form-control" id="dueno_nombre" maxlength="160"
-                pattern="[A-Za-zÀ-ÿÑñ]{3,50}(\s[A-Za-zÀ-ÿÑñ]{3,50}){2,}"
-                title="Debe incluir nombre, apellido paterno y apellido materno, cada uno con 3 a 50 letras."
-                placeholder="Nombre Apellido paterno Apellido materno">
-              <div class="form-text">Nombre, apellido paterno y apellido materno (mínimo 3 letras cada uno).</div>
+              <input required class="form-control" id="dueno_nombre" 
+              maxlength="160"
+              pattern="[A-Za-zÀ-ÿÑñ'-]{2,50}(\s[A-Za-zÀ-ÿÑñ'-]{2,50}){1,}"
+              title="Debe incluir al menos nombre y apellido, cada uno con 3 a 50 letras."
+              placeholder="Nombre Apellido">
+              <div class="form-text">Nombre y al menos un apellido (mínimo 3 letras cada uno).</div>
             </div>
             <div class="mb-3"><label class="form-label">Teléfono</label><input required class="form-control" id="dueno_telefono" maxlength="10" pattern="\d{10}" inputmode="numeric"></div>
             <div class="mb-3"><label class="form-label">Correo</label><input required type="email" class="form-control" id="dueno_correo" maxlength="150"></div>
@@ -432,19 +495,37 @@
                 placeholder="Ciudad, Colonia, Calle, Número (ej: Tijuana, Centro, Av. Insurgentes, 123)">
               <div class="form-text">Debe incluir ciudad, colonia, calle y número de casa, separados por comas.</div>
             </div>
-            <div class="mb-3">
+             <div class="mb-3">
               <label class="form-label" id="dueno_contrasena_label">Contraseña</label>
-              <input type="password" class="form-control" id="dueno_contrasena" minlength="8">
+              <div class="input-group">
+              <input type="password" id="dueno_contrasena" class="form-control" autocomplete="new-password">
+              <button type="button" class="btn btn-outline-secondary" id="btnTogglePassDueno" tabindex="-1">
+              <i class="bi bi-eye" id="iconTogglePassDueno"></i>
+              </button>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" id="dueno_contrasena_confirm_label">Confirmar contraseña</label>
+              <div class="input-group">
+              <input type="password" id="dueno_contrasena_confirm" class="form-control" autocomplete="new-password">
+              <button type="button" class="btn btn-outline-secondary" id="btnTogglePassConfirmDueno" tabindex="-1">
+              <i class="bi bi-eye" id="iconTogglePassConfirmDueno"></i>
+              </button>
+              </div>
+              <div class="invalid-feedback d-block d-none" id="errorContrasenaMatchDueno">
+              Las contraseñas no coinciden
+              </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-secondary" id="btnCancelarDueno">Cerrar</button>
             <button type="submit" class="btn btn-primary">Guardar</button>
           </div>
         </form>
       </div>
     </div>
   </div>
+
 
   <div class="modal fade" id="modalMascota" tabindex="-1">
     <div class="modal-dialog">
@@ -607,7 +688,7 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Telefono</label>
-              <input type="tel" id="proveedor_telefono" class="form-control" required>
+              <input type="tel" id="proveedor_telefono" class="form-control" required maxlength="10" pattern="\d{10}" inputmode="numeric">
             </div>
             <div class="mb-3">
               <label class="form-label">Correo</label>
@@ -660,20 +741,35 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Tipo</label>
-              <input type="text" id="medicamento_tipo" class="form-control" required maxlength="100">
+              <select id="medicamento_tipo" class="form-select" required>
+              <option value="">Selecciona un tipo</option>
+              <option value="Inyectable">Inyectable</option>
+              <option value="Tableta">Tableta</option>
+              <option value="Jarabe">Jarabe</option>
+              <option value="Ungüento">Ungüento</option>
+              <option value="Gotas">Gotas</option>
+              <option value="Otro">Otro</option>
+              </select>
             </div>
             <div class="mb-3">
               <label class="form-label">Unidad de medida</label>
-              <input type="text" id="medicamento_unidad" class="form-control" required maxlength="50" placeholder="ej: ml, tabletas, cajas">
+              <select id="medicamento_unidad" class="form-select" required>
+              <option value="">Selecciona una unidad</option>
+              <option value="ml">Mililitros (ml)</option>
+              <option value="mg">Miligramos (mg)</option>
+              <option value="tabletas">Tabletas</option>
+              <option value="cajas">Cajas</option>
+              <option value="frascos">Frascos</option>
+              </select>
             </div>
             <div class="mb-3" id="medicamento_cantidad_actual_grupo">
               <label class="form-label">Cantidad actual (inicial)</label>
-              <input type="number" id="medicamento_cantidad_actual" class="form-control" required min="0" step="0.01">
+              <input type="number" id="medicamento_cantidad_actual" class="form-control" required min="0" step="0.01" value="0">
               <div class="form-text">Para modificar el stock después de crear el medicamento, usa Entrada/Salida.</div>
             </div>
             <div class="mb-3">
               <label class="form-label">Cantidad mínima de alerta</label>
-              <input type="number" id="medicamento_cantidad_minima" class="form-control" required min="0" step="0.01">
+              <input type="number" id="medicamento_cantidad_minima" class="form-control" required min="1" step="0.01" value="1">
             </div>
             <div class="mb-3">
               <label class="form-label">Proveedor</label>
@@ -743,6 +839,20 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
         </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal fade" id="modalVerReporte" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content modal-content-veterinaria bg-dark text-white">
+        <div class="modal-header">
+        <h5 class="modal-title" id="verReporteTitulo">Reporte</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+      <div class="modal-body" id="verReporteContenido">
+        <div class="text-center text-secondary py-4">Sin datos</div>
+      </div>
       </div>
     </div>
   </div>
@@ -906,6 +1016,25 @@
       fetchEmpleados();
     });
 
+     //para poder borrar los datos del usuario en el formulario
+    let UsuarioConDatosPendientes = false;
+
+    document.getElementById('btnCancelarPersonal').addEventListener('click', () => {
+      document.getElementById('formUsuario').reset();
+      document.getElementById('usuario_id').value='';
+      duenoConDatosPendientes=false;
+      document.getElementById('btnReintentarPersonal').classList.add('d-none');
+      document.getElementById('errorContrasenaMatch').classList.add('d-none');
+      document.getElementById('usuario_contrasena_confirm').classList.remove('is-invalid');
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('modalUsuario')).hide();
+    });
+
+    //para en dado caso del mensaje de error del formulario del modal
+
+    document.getElementById('btnReintentarPersonal').addEventListener('click', () => {
+       bootstrap.Modal.getOrCreateInstance(document.getElementById('modalUsuario')).show();
+    });
+
     document.getElementById('tablaUsuarios').addEventListener('click', (e) => {
       const boton = e.target.closest('button[data-accion]');
       if (!boton) return;
@@ -930,6 +1059,8 @@
         document.getElementById('modalUsuarioTitulo').innerText = 'Actualizar empleado';
         document.getElementById('usuario_contrasena_label').innerText = 'Nueva contraseña (dejar en blanco para no cambiar)';
         document.getElementById('usuario_contrasena').required = false;
+        document.getElementById('errorContrasenaMatch').classList.add('d-none');
+        document.getElementById('usuario_contrasena_confirm').classList.remove('is-invalid');
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalUsuario')).show();
       }
 
@@ -965,6 +1096,20 @@
         rol: document.getElementById('usuario_rol').value,
       };
       const contrasena = document.getElementById('usuario_contrasena').value;
+      const contrasenaConfirmada=document.getElementById('usuario_contrasena_confirm').value;
+      const errorContrasenaDiv=document.getElementById('errorContrasenaMatch');
+      if(contrasena||contrasenaConfirmada){
+     
+      if(contrasena!==contrasenaConfirmada){
+        errorContrasenaDiv.classList.remove('d-none');
+        document.getElementById('usuario_contrasena_confirm').classList.add('is-invalid');
+        return;
+      }
+
+      }
+      errorContrasenaDiv.classList.add('d-none');
+      document.getElementById('usuario_contrasena_confirm').classList.remove('is-invalid');
+      
       if (contrasena) payload.contrasena = contrasena;
 
       try {
@@ -975,10 +1120,17 @@
           await apiFetch('/usuarios', { method: 'POST', body: JSON.stringify(payload) });
           mostrarAlerta('Empleado registrado correctamente');
         }
+        document.getElementById('formUsuario').reset();
+        UsuarioConDatosPendientes=false;
+        document.getElementById('btnReintentarPersonal').classList.add('d-none');
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalUsuario')).hide();
+        cargarDuenosCache();
         fetchEmpleados();
       } catch (err) {
         mostrarAlerta(mensajeError(err), 'danger');
+        UsuarioConDatosPendientes=true;
+        document.getElementById('btnReintentarPersonal').classList.remove('d-none');
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalUsuario')).hide()
       }
     });
 
@@ -988,6 +1140,28 @@
       document.getElementById('modalUsuarioTitulo').innerText = 'Agregar empleado';
       document.getElementById('usuario_contrasena_label').innerText = 'Contraseña';
       document.getElementById('usuario_contrasena').required = true;
+      document.getElementById('usuario_contrasena_confirm').required = true; 
+      document.getElementById('errorContrasenaMatch').classList.add('d-none');
+      document.getElementById('usuario_contrasena_confirm').classList.remove('is-invalid');
+    });
+
+    //funcion para poder ver la contraseña mediante el icono del ojito
+    function verContrasenaIconoOjo(usuarios_id_contra, icon_toogle_id){
+      const input=document.getElementById(usuarios_id_contra);
+      const icono=document.getElementById(icon_toogle_id);
+      const miContrasena=input.type==='password';
+      input.type=miContrasena?'text':'password';
+      icono.classList.toggle('bi-eye', !miContrasena);
+      icono.classList.toggle('bi-eye-slash', miContrasena);
+    }
+
+    //en dado caso de que sea la contraseña que se active el ojito
+    document.getElementById('btnTogglePass').addEventListener('click', () =>{
+    verContrasenaIconoOjo('usuario_contrasena', 'iconTooglePass')
+    });
+
+    document.getElementById('btnTogglePassConfirm').addEventListener('click', () => {
+     verContrasenaIconoOjo('usuario_contrasena_confirm', 'iconTooglePassConfirm')
     });
 
     // ============ DUEÑOS ============
@@ -1043,7 +1217,6 @@
 
         return `
           <tr>
-            <td>${d.id}</td>
             <td>${esc(d.nombre_completo)}</td>
             <td>${esc(d.telefono)}</td>
             <td>${esc(d.correo)}</td>
@@ -1098,6 +1271,28 @@
       document.getElementById('modalDuenoTitulo').innerText = 'Agregar dueño';
       document.getElementById('dueno_contrasena_label').innerText = 'Contraseña';
       document.getElementById('dueno_contrasena').required = true;
+      document.getElementById('dueno_contrasena_confirm').required = true;
+      document.getElementById('errorContrasenaMatchDueno').classList.add('d-none');
+      document.getElementById('dueno_contrasena_confirm').classList.remove('is-invalid');
+    });
+
+    //para poder borrar los datos del dueño en el formulario
+    let duenoConDatosPendientes = false;
+
+    document.getElementById('btnCancelarDueno').addEventListener('click', () => {
+      document.getElementById('formDueno').reset();
+      document.getElementById('dueno_id').value='';
+      duenoConDatosPendientes=false;
+      document.getElementById('btnReintentarDueno').classList.add('d-none');
+      document.getElementById('errorContrasenaMatchDueno').classList.add('d-none');
+      document.getElementById('dueno_contrasena_confirm').classList.remove('is-invalid');
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDueno')).hide();
+    });
+
+    //para en dado caso del mensaje de error del formulario del modal
+
+    document.getElementById('btnReintentarDueno').addEventListener('click', () => {
+       bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDueno')).show();
     });
 
     document.getElementById('tablaDuenos').addEventListener('click', (e) => {
@@ -1116,6 +1311,8 @@
         document.getElementById('modalDuenoTitulo').innerText = 'Editar dueño';
         document.getElementById('dueno_contrasena_label').innerText = 'Nueva contraseña (dejar en blanco para no cambiar)';
         document.getElementById('dueno_contrasena').required = false;
+        document.getElementById('errorContrasenaMatchDueno').classList.add('d-none');
+        document.getElementById('dueno_contrasena_confirm').classList.remove('is-invalid');
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDueno')).show();
       }
 
@@ -1152,6 +1349,20 @@
         direccion: document.getElementById('dueno_direccion').value,
       };
       const contrasena = document.getElementById('dueno_contrasena').value;
+      const contrasenaConfirmada=document.getElementById('dueno_contrasena_confirm').value;
+      const errorContrasenaDiv=document.getElementById('errorContrasenaMatchDueno');
+      if(contrasena||contrasenaConfirmada){
+     
+      if(contrasena!==contrasenaConfirmada){
+        errorContrasenaDiv.classList.remove('d-none');
+        document.getElementById('dueno_contrasena_confirm').classList.add('is-invalid');
+        return;
+      }
+
+      }
+      errorContrasenaDiv.classList.add('d-none');
+      document.getElementById('dueno_contrasena_confirm').classList.remove('is-invalid');
+
       if (contrasena) payload.contrasena = contrasena;
 
       try {
@@ -1162,12 +1373,37 @@
           await apiFetch('/duenos', { method: 'POST', body: JSON.stringify(payload) });
           mostrarAlerta('Dueño registrado');
         }
+        document.getElementById('formDueno').reset();
+        duenoConDatosPendientes=false;
+        document.getElementById('btnReintentarDueno').classList.add('d-none');
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDueno')).hide();
         fetchDuenos();
         cargarDuenosCache();
       } catch (err) {
         mostrarAlerta(mensajeError(err), 'danger');
+        duenoConDatosPendientes=true;
+        document.getElementById('btnReintentarDueno').classList.remove('d-none');
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDueno')).hide()
       }
+    });
+
+     //funcion para poder ver la contraseña mediante el icono del ojito
+    function verContrasenaIconoOjoDueno(duenos_id_contra, icon_dueno_toogle_id){
+      const input=document.getElementById(duenos_id_contra);
+      const icono=document.getElementById(icon_dueno_toogle_id);
+      const miContrasena=input.type==='password';
+      input.type=miContrasena?'text':'password';
+      icono.classList.toggle('bi-eye', !miContrasena);
+      icono.classList.toggle('bi-eye-slash', miContrasena);
+    }
+
+    //en dado caso de que sea la contraseña que se active el ojito
+    document.getElementById('btnTogglePassDueno').addEventListener('click', () =>{
+    verContrasenaIconoOjo('dueno_contrasena', 'iconTooglePassDueno')
+    });
+
+    document.getElementById('btnTogglePassConfirmDueno').addEventListener('click', () => {
+     verContrasenaIconoOjo('dueno_contrasena_confirm', 'iconTooglePassConfirmDueno')
     });
 
     // ============ MASCOTAS ============
@@ -1879,6 +2115,15 @@ document.getElementById('btnAgregarProveedor').addEventListener('click', () => {
   document.getElementById('modalProveedorTitulo').innerText = 'Agregar proveedor';
 });
 
+document.getElementById('tabBtnProveedores').addEventListener('click', () => {
+  if (Object.keys(proveedoresCache).length === 0) fetchProveedores();
+});
+
+document.getElementById('tabBtnInventario').addEventListener('click', () => {
+  if (Object.keys(medicamentosCache).length === 0) fetchMedicamentos();
+  if (Object.keys(proveedoresCache).length === 0) fetchProveedores();
+});
+
 // ============ MEDICAMENTOS ============
 let medicamentosCache = {};
 
@@ -1945,8 +2190,34 @@ async function cargarProveedoresSelect() {
   }
 }
 
-document.getElementById('btnBuscarMedicamento').addEventListener('click', fetchMedicamentos);
+document.getElementById('btnBuscarMedicamento').addEventListener('click', async () => {
+  const nombre = document.getElementById('buscarMedicamento').value.trim();
+
+  if (!nombre) {
+    mostrarAlerta('Ingresa un nombre para buscar', 'warning');
+    return;
+  }
+
+  try {
+    const res = await apiFetch('/medicamentos/buscar-nombre', {
+      method: 'POST',
+      body: JSON.stringify({ nombre })
+    });
+
+    const medicamentoEncontrado = res.data;
+
+    if (medicamentoEncontrado) {
+      renderMedicamentos([medicamentoEncontrado]);
+    } else {
+      mostrarAlerta('No se encontró ningún medicamento con ese nombre', 'info');
+    }
+  } catch (err) {
+    mostrarAlerta(mensajeError(err), 'danger');
+  }
+});
+
 document.getElementById('buscarMedicamento').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); fetchMedicamentos(); } });
+
 document.getElementById('btnLimpiarBusquedaMedicamento').addEventListener('click', () => {
   document.getElementById('buscarMedicamento').value = '';
   fetchMedicamentos();
@@ -2090,6 +2361,210 @@ document.getElementById('formMovimiento').addEventListener('submit', async (e) =
 document.getElementById('tabBtnInventario').addEventListener('click', () => {
   if (Object.keys(medicamentosCache).length === 0) fetchMedicamentos();
 });
+
+//Reportes
+const REPORTES=[
+  {id:'resumen-del-dia', titulo:"Resumen del dia", filtros:['fecha']},
+  {id:'consultas-por-periodo', titulo:"Consultas por periodo", filtros:['fecha_inicio', 'fecha_fin', 'veterinario_id', 'especie']},
+  {id:'motivos-frecuentes', titulo:"Motivos frecuentes", filtros:['fecha_inicio', 'fecha_fin', 'veterinario_id']},
+  {id:'vacunas-por-vencer', titulo:"Vacunas por vencer", filtros:['especie']},
+  {id:'medicamentos-stock-bajo', titulo:"Medicamentos con stock bajo", filtros:[]},
+];
+
+  function renderizarTarjetasReportes() {
+  const contenedor = document.getElementById('tarjetasReportes');
+  contenedor.innerHTML = REPORTES.map((r) => `
+    <div class="col-md-6 col-lg-4">
+      <div class="panel-card h-100 d-flex flex-column">
+        <h6 class="mb-3">${esc(r.titulo)}</h6>
+        <div class="mt-auto d-flex gap-2 flex-wrap">
+          <button class="btn btn-outline-light btn-sm" data-accion="ver" data-reporte="${r.id}">
+            <i class="bi bi-eye"></i> Ver
+          </button>
+          <button class="btn btn-outline-danger btn-sm" data-accion="pdf" data-reporte="${r.id}">
+            <i class="bi bi-file-earmark-pdf"></i> PDF
+          </button>
+          <button class="btn btn-outline-success btn-sm" data-accion="excel" data-reporte="${r.id}">
+            <i class="bi bi-file-earmark-excel"></i> Excel
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function construirParamsReporte(reporte) {
+  const params = new URLSearchParams();
+  const mapaCampos = {
+    fecha_inicio: 'reporte_fecha_inicio',
+    fecha_fin: 'reporte_fecha_fin',
+    fecha: 'reporte_fecha_dia',
+    veterinario_id: 'reporte_veterinario_id',
+    especie: 'reporte_especie',
+  };
+
+  reporte.filtros.forEach((campo) => {
+    const valor = document.getElementById(mapaCampos[campo]).value;
+    if (valor) params.set(campo, valor);
+  });
+
+  return params.toString();
+}
+
+async function poblarFiltroEspecieReportes() {
+  const select = document.getElementById('reporte_especie');
+  select.innerHTML = '<option value="">Todas</option>' +
+    Object.entries(ESPECIES).map(([valor, etiqueta]) => `<option value="${valor}">${esc(etiqueta)}</option>`).join('');
+}
+
+async function poblarFiltroVeterinarioReportes() {
+  try {
+    const res = await apiFetch('/veterinarios');
+    const select = document.getElementById('reporte_veterinario_id');
+    select.innerHTML = '<option value="">Todos</option>' +
+      res.data.map((v) => `<option value="${v.id}">${esc(v.nombre_completo)}</option>`).join('');
+  } catch (e) {
+    mostrarAlerta(mensajeError(e), 'danger');
+  }
+}
+
+ async function conEstadoCarga(boton, textoCargando, tarea) {
+  const contenidoOriginal = boton.innerHTML;
+  boton.disabled = true;
+  boton.innerHTML = `<span class="spinner-border spinner-border-sm"></span> ${textoCargando}`;
+  try {
+    await tarea();
+  } finally {
+    boton.disabled = false;
+    boton.innerHTML = contenidoOriginal;
+  }
+}
+
+  async function descargarArchivoReporte(path, nombreArchivo) {
+  const res = await fetch(`/api${path}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (res.status === 401) {
+    localStorage.removeItem('token_veterinaria');
+    localStorage.removeItem('rol_usuario');
+    window.location.href = '/';
+    throw new Error('No autenticado');
+  }
+
+  if (!res.ok) {
+    let mensaje = 'No se pudo generar el archivo';
+    try {
+      const data = await res.json();
+      mensaje = data.mensaje || mensaje;
+    } catch (e) {}
+    throw new Error(mensaje);
+  }
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const enlace = document.createElement('a');
+  enlace.href = url;
+  enlace.download = nombreArchivo;
+  document.body.appendChild(enlace);
+  enlace.click();
+  enlace.remove();
+  URL.revokeObjectURL(url);
+}
+
+function tablaSimple(columnas, filas) {
+  if (!filas || filas.length === 0) return '<p class="text-secondary">Sin registros.</p>';
+  return `
+    <table class="table table-striped table-sm">
+      <thead><tr>${columnas.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead>
+      <tbody>${filas.map((fila) => `<tr>${fila.map((v) => `<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table>
+  `;
+}
+
+const RENDERIZADORES_REPORTE = {
+  'resumen-del-dia': (json) => {
+    const d = json.data || {};
+    return tablaSimple(['Estado', 'Total'], [
+      ['Agendadas', d.agendadas],
+      ['Confirmadas', d.confirmadas],
+      ['En consulta', d.en_consulta],
+      ['Completadas', d.completadas],
+      ['Canceladas', d.canceladas],
+    ]);
+  },
+
+  'consultas-por-periodo': (json) => `
+    <h6 class="text-uppercase text-secondary">Por veterinario</h6>
+    ${tablaSimple(['Veterinario', 'Total'], (json.por_veterinario || []).map((f) => [f.veterinario, f.total]))}
+    <h6 class="text-uppercase text-secondary mt-4">Por especie</h6>
+    ${tablaSimple(['Especie', 'Total'], (json.por_especie || []).map((f) => [f.especie, f.total]))}
+  `,
+
+  'motivos-frecuentes': (json) =>
+    tablaSimple(['Motivo', 'Total'], (json.data || []).map((f) => [f.motivo, f.total])),
+
+  'vacunas-por-vencer': (json) =>
+    tablaSimple(
+      ['Mascota', 'Especie', 'Vacuna', 'Próxima dosis'],
+      (json.data || []).map((v) => [
+        v.mascota ? v.mascota.nombre : '',
+        v.mascota ? v.mascota.especie : '',
+        v.nombre_vacuna,
+        soloFecha(v.fecha_proxima_dosis),
+      ])
+    ),
+
+  'medicamentos-stock-bajo': (json) =>
+    tablaSimple(
+      ['Nombre', 'Tipo', 'Cant. actual', 'Cant. mínima'],
+      (json.data || []).map((m) => [m.nombre, m.tipo, m.cantidad_actual, m.cantidad_minima_alerta])
+    ),
+};
+
+document.getElementById('tarjetasReportes').addEventListener('click', async (e) => {
+  const boton = e.target.closest('button[data-accion]');
+  if (!boton) return;
+
+  const reporte = REPORTES.find((r) => r.id === boton.dataset.reporte);
+  if (!reporte) return;
+
+  const accion = boton.dataset.accion;
+  const params = construirParamsReporte(reporte);
+  const query = params ? `?${params}` : '';
+
+  if (accion === 'ver') {
+    await conEstadoCarga(boton, 'Cargando...', async () => {
+      try {
+        const json = await apiFetch(`/reportes/${reporte.id}${query}`);
+        document.getElementById('verReporteTitulo').innerText = reporte.titulo;
+        document.getElementById('verReporteContenido').innerHTML = RENDERIZADORES_REPORTE[reporte.id](json);
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalVerReporte')).show();
+      } catch (err) {
+        mostrarAlerta(mensajeError(err), 'danger');
+      }
+    });
+  }
+
+  if (accion === 'pdf' || accion === 'excel') {
+    const extension = accion === 'pdf' ? 'pdf' : 'xlsx';
+    await conEstadoCarga(boton, 'Generando...', async () => {
+      try {
+        await descargarArchivoReporte(`/reportes/${reporte.id}/${accion}${query}`, `${reporte.id}.${extension}`);
+        mostrarAlerta('Archivo generado correctamente');
+      } catch (err) {
+        mostrarAlerta(err.message, 'danger');
+      }
+    });
+  }
+});
+
+document.getElementById('tabBtnReportes').addEventListener('click', () => {
+  if (document.getElementById('reporte_veterinario_id').options.length <= 1) {
+    poblarFiltroVeterinarioReportes();
+  }
+});
+
     // ============ CARGA INICIAL ============
     document.addEventListener('DOMContentLoaded', () => {
       try {
@@ -2104,6 +2579,14 @@ document.getElementById('tabBtnInventario').addEventListener('click', () => {
       cargarVeterinarios();
       fetchDuenos();
       poblarEspecies();
+      renderizarTarjetasReportes();
+      poblarFiltroEspecieReportes();
+      poblarFiltroVeterinarioReportes();
+      document.getElementById('reporte_fecha_dia').value = new Date().toISOString().slice(0, 10);
+      const hoy = new Date();
+      const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+      document.getElementById('reporte_fecha_inicio').value = inicioMes.toISOString().slice(0, 10);
+      document.getElementById('reporte_fecha_fin').value = hoy.toISOString().slice(0, 10);
       document.getElementById('filtroFecha').value = new Date().toISOString().slice(0, 10);
     });
   </script>

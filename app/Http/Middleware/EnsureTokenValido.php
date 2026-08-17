@@ -17,6 +17,10 @@ class EnsureTokenValido
             return response()->json(["mensaje" => "No autenticado"], 401);
         }
 
+         if (!$usuario->activo) {
+            return response()->json(["mensaje" => "Cuenta deshabilitada. Contacta al administrador."], 401);
+        }
+
         if ($usuario->tokens_validos_desde) {
             $iat = Carbon::createFromTimestampUTC(Auth::guard($guard)->payload()["iat"]);
 

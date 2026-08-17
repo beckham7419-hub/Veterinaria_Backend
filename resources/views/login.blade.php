@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Veterinaria</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
 <body>
 
@@ -24,6 +25,9 @@
             
             <div class="input-group-custom">
                 <input type="password" id="contrasena" name="contrasena" class="form-control" placeholder="Contraseña" required>
+                <button type="button" class="btn btn-outline-secondary" id="btnTogglePassUsuarioLogin" tabindex="-1">
+                <i class="bi bi-eye" id="iconTogglePassUsuarioLogin"></i>
+                </button>
             </div>
             
             <button type="submit" class="btn btn-login">iniciar sesion</button>
@@ -290,6 +294,22 @@
                 mensajeEl.style.display = 'block';
             }
         });
+
+        //funcion para poder ver la contraseña mediante el icono del ojito
+    function verContrasenaIconoOjo(usuario_id_contra, icon_usuario_toogle_id){
+      const input=document.getElementById(usuario_id_contra);
+      const icono=document.getElementById(icon_usuario_toogle_id);
+      const miContrasena=input.type==='password';
+      input.type=miContrasena?'text':'password';
+      icono.classList.toggle('bi-eye', !miContrasena);
+      icono.classList.toggle('bi-eye-slash', miContrasena);
+    }
+
+    //en dado caso de que sea la contraseña que se active el ojito
+    document.getElementById('btnTogglePassUsuarioLogin').addEventListener('click', () =>{
+    verContrasenaIconoOjo('contrasena', 'iconTogglePassUsuarioLogin')
+    });
+
     </script>
 
 </body>

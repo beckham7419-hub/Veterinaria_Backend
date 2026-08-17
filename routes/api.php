@@ -94,3 +94,5 @@ Route::get('mis-citas/veterinarios-disponibles', [UsuarioController::class, 'vet
 
 Route::post('proveedores/buscar-correo', [ProveedorController::class, 'readOne'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 Route::put('/proveedores/{id}/reactivar', [ProveedorController::class, 'reactivar'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
+
+Route::post('medicamentos/buscar-nombre', [MedicamentoController::class, 'readOne'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
