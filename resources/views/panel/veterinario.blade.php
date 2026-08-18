@@ -408,11 +408,8 @@
 
     function badgeEstado(estado) {
       const etiquetas = {
-        agendada: 'Agendada',
-        confirmada: 'Confirmada',
-        en_consulta: 'En consulta',
-        completada: 'Completada',
-        cancelada: 'Cancelada',
+        agendada: 'Agendada', confirmada: 'Confirmada', en_consulta: 'En consulta',
+        completada: 'Completada', cancelada: 'Cancelada', vencida: 'Vencida',
       };
       return `<span class="badge badge-estado-${estado}">${etiquetas[estado] || estado}</span>`;
     }
@@ -429,6 +426,7 @@
       return [formatear(lunes), formatear(domingo)];
     }
 
+    // ============ AGENDA ============
     let citasCache = {};
 
     async function fetchCitas() {
@@ -774,9 +772,7 @@
     document.getElementById('btnLogout').addEventListener('click', async () => {
       try {
         await apiFetch('/auth/usuarios/logout', { method: 'POST' });
-      } catch (e) {
-        // continua con el cierre de sesion local aunque falle la peticion
-      }
+      } catch (e) {}
       localStorage.removeItem('token_veterinaria');
       localStorage.removeItem('rol_usuario');
       window.location.href = '/';
@@ -793,6 +789,46 @@
       document.getElementById('filtroFecha').value = new Date().toISOString().slice(0, 10);
       fetchCitas();
     });
+
+    // ============ HISTORIAL CLÍNICO ============
+    async function abrirHistorial() {
+      if (!fichaMascotaId) return;
+      try {
+        const res = await apiFetch(`/mascotas/${fichaMascotaId}/historial`);
+
+        const consultasDiv = document.getElementById('historialConsultas');
+        if (!res.consultas || res.consultas.length === 0) {
+          consultasDiv.innerHTML = '<p class="texto-tenue">Sin consultas completadas registradas.</p>';
+        } else {
+          consultasDiv.innerHTML = res.consultas.map((c) => `
+            <div class="mb-2 pb-2" style="border-bottom: 1px solid #333;">
+              <p class="mb-1"><strong>${soloFecha(c.fecha_cita)}</strong> — Dr(a). ${esc(c.veterinario_nombre)} — ${esc(c.motivo)}</p>
+              <p class="mb-1"><strong>Diagnóstico:</strong> ${esc(c.diagnostico || '—')}</p>
+              <p class="mb-1"><strong>Tratamiento:</strong> ${esc(c.tratamiento || '—')}</p>
+              ${c.peso ? `<p class="mb-0 texto-tenue">Peso: ${esc(c.peso)} kg — Temp: ${esc(c.temperatura || '—')} °C</p>` : ''}
+            </div>
+          `).join('');
+        }
+
+        const vacunasDiv = document.getElementById('historialVacunas');
+        if (!res.vacunas || res.vacunas.length === 0) {
+          vacunasDiv.innerHTML = '<p class="texto-tenue">Sin vacunas registradas.</p>';
+        } else {
+          vacunasDiv.innerHTML = res.vacunas.map((v) => `
+            <div class="mb-1">
+              <strong>${esc(v.nombre_vacuna)}</strong> — ${soloFecha(v.fecha_aplicacion)}
+              ${v.proxima_a_vencer ? '<span class="badge bg-warning text-dark">Próxima a vencer</span>' : ''}
+            </div>
+          `).join('');
+        }
+
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalHistorial')).show();
+      } catch (e) {
+        mostrarAlerta(mensajeError(e), 'danger');
+      }
+    }
+
+    document.getElementById('btnVerHistorial').addEventListener('click', abrirHistorial);
   </script>
 </body>
 </html>

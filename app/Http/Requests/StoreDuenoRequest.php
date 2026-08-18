@@ -16,7 +16,7 @@ class StoreDuenoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre_completo' => ['required', 'string', 'min:6', 'max:150', 'regex:/^\p{L}+(\s\p{L}+){2,}$/u'],
+            'nombre_completo' => ['required', 'string', 'min:5', 'max:150', 'regex:/^[\p{L}\'-]{2,50}(\s[\p{L}\'-]{2,50}){1,}$/u'],
             'telefono' => 'required|digits:10',
             'correo' => 'required|string|email|max:150|unique:duenos,correo',
             'contrasena' => 'required|string|min:8',
@@ -38,7 +38,7 @@ class StoreDuenoRequest extends FormRequest
     {
         return [
             'nombre_completo.required' => 'El nombre completo es obligatorio.',
-            'nombre_completo.regex' => 'El nombre completo debe incluir nombre, apellido paterno y apellido materno, separados por un solo espacio.',
+            'nombre_completo.regex' => 'El nombre completo debe incluir al menos un nombre y un apellido, separados por un espacio.',
             'telefono.required' => 'El telefono es obligatorio.',
             'telefono.digits' => 'El telefono debe tener exactamente 10 digitos.',
             'correo.required' => 'El correo es obligatorio.',
