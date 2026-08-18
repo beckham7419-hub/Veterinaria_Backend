@@ -140,7 +140,6 @@
     .badge-estado-en_consulta { background-color: #fd7e14; }
     .badge-estado-completada { background-color: #198754; }
     .badge-estado-cancelada { background-color: #dc3545; }
-    .badge-estado-vencida { background-color: #6c757d; }
   </style>
 </head>
 <body>
@@ -247,7 +246,6 @@
                 <option value="en_consulta">En consulta</option>
                 <option value="completada">Completada</option>
                 <option value="cancelada">Cancelada</option>
-                <option value="vencida">Vencida</option>
               </select>
             </div>
             <div class="col-auto">
@@ -916,17 +914,17 @@
       }
 
       if (boton.dataset.accion === 'baja') {
-        if (confirm(`¿Dar de baja a ${dueno.nombre_completo}? Esto también dará de baja a todas sus mascotas (su historial clínico se conservará).`)) {
+        if (confirm(`¿Dar de baja a ${dueno.nombre_completo}?`)) {
           apiFetch(`/duenos/${id}`, { method: 'DELETE' })
-            .then((res) => { mostrarAlerta(res.mensaje || 'Dueño dado de baja'); fetchDuenos(); cargarDuenosCache(); fetchMascotas(); })
+            .then(() => { mostrarAlerta('Dueño dado de baja'); fetchDuenos(); cargarDuenosCache(); })
             .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
         }
       }
 
       if (boton.dataset.accion === 'reactivar') {
-        if (confirm(`¿Deseas reactivar a ${dueno.nombre_completo}? Esto también reactivará todas sus mascotas.`)) {
+        if (confirm(`¿Deseas reactivar a ${dueno.nombre_completo}?`)) {
           apiFetch(`/duenos/${id}/reactivar`, { method: 'PUT' })
-            .then((res) => { mostrarAlerta(res.mensaje || 'Dueño reactivado'); fetchDuenos(); cargarDuenosCache(); fetchMascotas(); })
+            .then(() => { mostrarAlerta('Dueño reactivado'); fetchDuenos(); cargarDuenosCache(); })
             .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
         }
       }
@@ -1123,7 +1121,6 @@
         document.getElementById('mascota_sexo').value = mascota.sexo;
         document.getElementById('mascota_fecha_nacimiento').value = soloFecha(mascota.fecha_nacimiento);
         document.getElementById('mascota_color').value = mascota.color || '';
-        // El dueño, la especie y la raza no se pueden modificar una vez creada la mascota.
         document.getElementById('mascota_dueno_id').disabled = true;
         document.getElementById('mascota_especie').disabled = true;
         document.getElementById('mascota_raza').disabled = true;
@@ -1172,7 +1169,6 @@
 
       try {
         if (id) {
-          // Dueño, especie y raza son inmutables una vez registrada la mascota; no se envían al editar.
           formData.append('_method', 'PUT');
           await apiFetch(`/mascotas/${id}`, { method: 'POST', body: formData });
           mostrarAlerta('Mascota actualizada');
@@ -1291,7 +1287,6 @@
         en_consulta: 'En consulta',
         completada: 'Completada',
         cancelada: 'Cancelada',
-        vencida: 'Vencida',
       };
       return `<span class="badge badge-estado-${estado}">${etiquetas[estado] || estado}</span>`;
     }

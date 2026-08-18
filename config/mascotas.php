@@ -3,15 +3,7 @@
 return [
 
     /*
-    |--------------------------------------------------------------------------
     | Especies y razas permitidas
-    |--------------------------------------------------------------------------
-    |
-    | Catalogo cerrado de especies de mascotas que la clinica atiende y las
-    | razas validas para cada una. Se usa para validar el registro/edicion
-    | de mascotas y para poblar los selectores del panel de recepcion y
-    | administracion.
-    |
     */
 
     'especies' => [
