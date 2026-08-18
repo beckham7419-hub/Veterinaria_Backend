@@ -63,7 +63,7 @@ class MascotaController extends Controller
     {
         try {
             $datos = $request->validated();
-            unset($datos['foto'], $datos['dueno_id'], $datos['especie'], $datos['raza']);
+            unset($datos['foto'], $datos['dueno_id'], $datos['especie']);
 
             if ($request->hasFile('foto')) {
                 if ($mascota->foto_url) {
@@ -103,4 +103,24 @@ class MascotaController extends Controller
             return response()->json(["mensaje" => $e -> getMessage()], 500);
         }
     }
+
+    public function inactivas(Request $request)
+{
+    try {
+        $mascotas = $this->mascotaRepository->obtenerMascotasInactivas($request->query('buscar'));
+        return response()->json($mascotas, 200);
+    } catch (\Exception $e) {
+        return response()->json(['mensaje' => $e->getMessage()], 500);
+    }
+}
+
+public function reactivar(Mascota $mascota)
+{
+    try {
+        $resultado = $this->mascotaRepository->reactivarMascota($mascota);
+        return response()->json($resultado, 200);
+    } catch (\Exception $e) {
+        return response()->json(['mensaje' => $e->getMessage()], 500);
+    }
+}
 }

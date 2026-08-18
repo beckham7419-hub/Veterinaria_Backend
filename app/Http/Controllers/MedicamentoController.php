@@ -81,4 +81,14 @@ class MedicamentoController extends Controller
     }
 }
 
+public function reactivar(Medicamento $medicamento) {
+    try {
+        $resultado = $this->medicamentoRepository->reactivarMedicamento($medicamento);
+        return response()->json($resultado, 200);
+    }
+    catch (\Exception $e) {
+        return response()->json(["mensaje" => $e -> getMessage()], 500);
+    }
+}
+
 }

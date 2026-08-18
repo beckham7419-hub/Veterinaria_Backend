@@ -34,6 +34,8 @@ Route::post('auth/duenos/logout', [AuthDuenoController::class, 'logout'])->middl
 Route::post('duenos/buscar-correo', [DuenoController::class, 'buscarCorreo'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista,administrador']);
 Route::put('duenos/{id}/reactivar', [DuenoController::class, 'reactivar'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista,administrador']);
 
+Route::get('/mascotas/inactivas', [MascotaController::class, 'inactivas'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista,administrador']);
+Route::put('/mascotas/{mascota}/reactivar', [MascotaController::class, 'reactivar'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista,administrador']);
 Route::apiResource('mascotas', MascotaController::class)->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:recepcionista,administrador']);
 Route::get('mis-mascotas', [MisMascotasController::class, 'index'])->middleware(['auth:duenos', 'token.valido:duenos']);
 Route::post('mis-mascotas', [MisMascotasController::class, 'store'])->middleware(['auth:duenos', 'token.valido:duenos']);
@@ -61,10 +63,15 @@ Route::get('mis-mascotas/{mascota}/historial', [MisMascotasController::class, 'h
 Route::get('citas/{cita}/consulta', [ConsultaController::class, 'show'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista,administrador']);
 Route::get('consultas/{consulta}/archivos', [ArchivoConsultaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista,administrador']);
 Route::get('mascotas/{mascota}/vacunas', [VacunaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista,administrador']);
+
+Route::post('proveedores/buscar-correo', [ProveedorController::class, 'readOne'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
+Route::put('/proveedores/{id}/reactivar', [ProveedorController::class, 'reactivar'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
+
 Route::apiResource('proveedores', ProveedorController::class)->parameters(['proveedores' => 'proveedor'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 
 Schedule::command('app:vencer-citas-no-confirmadas')->everyFiveMinutes();
 
+Route::put('medicamentos/{medicamento}/reactivar', [MedicamentoController::class, 'reactivar'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 Route::apiResource('medicamentos', MedicamentoController::class)->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 Route::post('medicamentos/{medicamento}/entrada', [MovimientoInventarioController::class, 'entrada'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 Route::post('medicamentos/{medicamento}/salida', [MovimientoInventarioController::class, 'salida'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador,veterinario']);
@@ -91,8 +98,5 @@ Route::post('auth/duenos/restablecer-contrasena', [AuthDuenoController::class, '
 Route::get('mascotas/{mascota}/historial', [MascotaController::class, 'historial'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista,administrador']);
 
 Route::get('mis-citas/veterinarios-disponibles', [UsuarioController::class, 'veterinarios'])->middleware(['auth:duenos', 'token.valido:duenos']);
-
-Route::post('proveedores/buscar-correo', [ProveedorController::class, 'readOne'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
-Route::put('/proveedores/{id}/reactivar', [ProveedorController::class, 'reactivar'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 
 Route::post('medicamentos/buscar-nombre', [MedicamentoController::class, 'readOne'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);

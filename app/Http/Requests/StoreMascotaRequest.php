@@ -29,7 +29,7 @@ class StoreMascotaRequest extends FormRequest
             }],
             'sexo' => 'required|string|in:macho,hembra',
             'fecha_nacimiento' => [
-                'required',
+                'nullable',
                 'date',
                 'before:today',
                 'after_or_equal:'.now()->subYears(30)->toDateString(),

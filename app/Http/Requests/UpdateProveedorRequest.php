@@ -18,7 +18,10 @@ class UpdateProveedorRequest extends FormRequest
         return [
             'nombre' => 'sometimes|required|string|max:150',
             'telefono' => 'sometimes|required|digits:10',
-            'correo' => 'sometimes|required|string|email|max:150'
+             'correo' => [
+                'sometimes', 'required', 'string', 'email', 'max:150',
+                Rule::unique('proveedores', 'correo')->ignore($this->route('proveedor')),
+            ],
         ];
     }
 
