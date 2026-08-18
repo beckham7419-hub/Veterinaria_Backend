@@ -6,6 +6,7 @@ use App\Models\Proveedor;
 use App\Http\Requests\StoreProveedorRequest;
 use App\Http\Requests\UpdateProveedorRequest;
 use App\Http\Repositories\ProveedorRepository;
+use Illuminate\Http\Request;
 
 class ProveedorController extends Controller
 {
@@ -63,4 +64,32 @@ class ProveedorController extends Controller
             return response()->json(["mensaje" => $e -> getMessage()],500);
         }
     }
+
+    
+    public function reactivar($id)
+{
+    try {
+        $resultado = $this->proveedorRepository->reactivarProveedor($id);
+        return response()->json($resultado, 200);
+    } catch (\Exception $e) {
+        return response()->json(['mensaje' => $e->getMessage()], 500);
+    }
+}
+
+ public function readOne(Request $request) {
+    try {
+        $request->validate([
+            'correo' => 'required|email'
+        ]);
+
+        $correo = $request->input('correo');
+        $resultado = $this->proveedorRepository->obtenerUnProveedor($correo);
+
+        return response()->json($resultado, $resultado['data'] ? 200 : 404);
+    }
+    catch (\Exception $e) {
+        return response()->json(["mensaje" => $e->getMessage()], 404);
+    }
+}
+
 }

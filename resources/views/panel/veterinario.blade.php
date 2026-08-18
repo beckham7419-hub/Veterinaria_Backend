@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Panel del veterinario</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <style>
     body {
       background-color: #1a1a1a;
@@ -12,10 +13,29 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
+    /* ---------- Navbar ---------- */
     .navbar-veterinaria {
       background-color: #242424;
       border-bottom: 2px solid #ff4d4d;
       box-shadow: 0 2px 12px rgba(255, 77, 77, 0.15);
+    }
+
+    .logo-container-nav {
+      width: 48px;
+      height: 48px;
+      border: 2px solid #ff4d4d;
+      border-radius: 10px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(255, 77, 77, 0.3);
+    }
+
+    .logo-container-nav img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
     }
 
     #btnLogout {
@@ -29,6 +49,7 @@
       color: #ffffff;
     }
 
+    /* ---------- Panel principal ---------- */
     .panel-card {
       background-color: #242424;
       border: 2px solid #ff4d4d;
@@ -37,6 +58,18 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 77, 77, 0.15);
     }
 
+    /* ---------- Tabs (modal de ficha) ---------- */
+    .nav-tabs { border-bottom: 1px solid #333333; }
+    .nav-tabs .nav-link { color: #999999; border: none; font-weight: 500; }
+    .nav-tabs .nav-link:hover { color: #ffffff; border-color: transparent; }
+    .nav-tabs .nav-link.active {
+      background-color: transparent;
+      color: #ff4d4d;
+      border: none;
+      border-bottom: 2px solid #ff4d4d;
+    }
+
+    /* ---------- Tablas ---------- */
     .table { color: #ffffff; }
     .table > :not(caption) > * > * { background-color: transparent; color: #ffffff; border-bottom-color: #333333; }
     .table-dark thead { background-color: #1a1a1a; }
@@ -44,6 +77,7 @@
     .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: #262626; }
     .table-hover > tbody > tr:hover > * { background-color: #2f2020; }
 
+    /* ---------- Formularios ---------- */
     .form-control, .form-select {
       background-color: #1a1a1a;
       border: 1px solid #333333;
@@ -60,8 +94,18 @@
       box-shadow: 0 0 0 0.2rem rgba(255, 77, 77, 0.25);
     }
 
+    .form-select option { background-color: #1a1a1a; color: #ffffff; }
     .form-label { color: #cccccc; }
 
+    .form-select:disabled,
+    .form-control:disabled {
+      background-color: #2a2a2a;
+      color: #999999;
+      border-color: #333333;
+      opacity: 1;
+    }
+
+    /* ---------- Botones ---------- */
     .btn-primary {
       background-color: #ff4d4d;
       border-color: #ff4d4d;
@@ -75,6 +119,7 @@
 
     .btn-outline-light:hover { color: #1a1a1a; }
 
+    /* ---------- Modales ---------- */
     .modal-content-veterinaria {
       background-color: #242424;
       border: 2px solid #ff4d4d;
@@ -87,41 +132,30 @@
       border-color: #333333;
     }
 
+    /* ---------- Alertas ---------- */
     .alert { border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); }
 
+    /* ---------- Badges de estado ---------- */
     .badge-estado-agendada { background-color: #6c757d; }
     .badge-estado-confirmada { background-color: #0d6efd; }
     .badge-estado-en_consulta { background-color: #fd7e14; }
     .badge-estado-completada { background-color: #198754; }
     .badge-estado-cancelada { background-color: #dc3545; }
-    .badge-estado-vencida { background-color: #6c757d; }
 
-    .seccion-ficha {
-      background-color: #1a1a1a;
-      border: 1px solid #333333;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 15px;
-    }
+    /* ---------- Acciones de la tabla ---------- */
+    .acciones-cell { display: flex; flex-wrap: wrap; gap: 6px; }
 
-    .seccion-ficha h6 {
-      color: #ff4d4d;
-      text-transform: uppercase;
-      font-size: 0.8rem;
-      letter-spacing: 0.5px;
-      margin-bottom: 10px;
-    }
-
-    .texto-tenue {
-      color: #999999;
-    }
+    .archivo-link { color: #6ea8fe; }
+    .list-group-item { background-color: #1a1a1a; color: #fff; border-color: #333333; }
   </style>
 </head>
 <body>
   <nav class="navbar navbar-veterinaria" data-bs-theme="dark">
     <div class="container-fluid">
       <span class="navbar-brand d-flex align-items-center gap-2">
-        <img src="{{ asset('Imagenes/logo_de_la_veterinaria.jpg') }}" width="45" height="45" class="rounded-circle" alt="Logo">
+        <span class="logo-container-nav">
+          <img src="{{ asset('Imagenes/logo_de_la_veterinaria.jpg') }}" width="45" height="45" class="rounded-circle" alt="Logo">
+        </span>
         Bienvenido, <span id="nombre-usuario">Cargando...</span>
       </span>
       <button class="btn btn-outline-light btn-sm" id="btnLogout">Cerrar sesión</button>
@@ -134,7 +168,7 @@
     <div class="panel-card">
       <h2 class="mb-3">Mi agenda</h2>
 
-      <div class="row g-2 mb-2 align-items-end">
+      <div class="row g-2 mb-3 align-items-end">
         <div class="col-auto">
           <label class="form-label small mb-0">Estado</label>
           <select id="filtroEstado" class="form-select">
@@ -144,7 +178,6 @@
             <option value="en_consulta">En consulta</option>
             <option value="completada">Completada</option>
             <option value="cancelada">Cancelada</option>
-            <option value="vencida">Vencida</option>
           </select>
         </div>
         <div class="col-auto">
@@ -160,7 +193,7 @@
           <input type="date" id="filtroFecha" class="form-control">
         </div>
         <div class="col-auto">
-          <button class="btn btn-outline-light" id="btnFiltrar">Filtrar</button>
+          <button class="btn btn-primary" id="btnFiltrar">Filtrar</button>
         </div>
       </div>
 
@@ -175,115 +208,109 @@
     </div>
   </div>
 
-  <!-- ===================== MODAL FICHA DE CONSULTA ===================== -->
-  <div class="modal fade" id="modalFicha" tabindex="-1">
+  <!-- ===================== MODAL: FICHA DE CONSULTA ===================== -->
+  <div class="modal fade" id="modalFicha" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content modal-content-veterinaria">
         <div class="modal-header">
-          <h5 class="modal-title">Ficha de consulta — <span id="ficha_folio"></span></h5>
+          <h5 class="modal-title">Ficha de consulta</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-
-          <div class="seccion-ficha">
-            <h6>Datos de la visita</h6>
-            <p class="mb-1"><strong>Mascota:</strong> <span id="ficha_mascota_nombre"></span></p>
-            <p class="mb-1"><strong>Dueño:</strong> <span id="ficha_dueno_nombre"></span></p>
-            <p class="mb-0"><strong>Motivo:</strong> <span id="ficha_motivo"></span></p>
-            <button type="button" class="btn btn-sm btn-outline-light mt-2" id="btnVerHistorial">Ver historial clínico completo</button>
+          <div class="row mb-3">
+            <div class="col-md-4"><strong>Mascota:</strong> <span id="fichaMascota">-</span></div>
+            <div class="col-md-4"><strong>Dueño:</strong> <span id="fichaDueno">-</span></div>
+            <div class="col-md-4"><strong>Motivo:</strong> <span id="fichaMotivo">-</span></div>
           </div>
 
-          <div class="seccion-ficha">
-            <h6>Diagnóstico y tratamiento</h6>
-            <form id="formFicha">
-              <input type="hidden" id="ficha_cita_id">
-              <div class="row g-2">
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabDiagnostico" type="button">Diagnóstico</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabArchivos" type="button">Archivos</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabVacunas" type="button">Vacunación</button></li>
+          </ul>
+
+          <div class="tab-content pt-3">
+            <!-- Diagnóstico / tratamiento / peso / temperatura -->
+            <div class="tab-pane fade show active" id="tabDiagnostico">
+              <div class="row g-2 mb-2">
                 <div class="col-md-6">
-                  <label class="form-label">Peso (kg)</label>
-                  <input type="number" step="0.01" min="0" max="999.99" class="form-control" id="ficha_peso">
+                  <label class="form-label small mb-0">Peso (kg)</label>
+                  <input type="number" step="0.01" class="form-control" id="inputPeso">
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Temperatura (°C)</label>
-                  <input type="number" step="0.1" min="0" max="999.9" class="form-control" id="ficha_temperatura">
+                  <label class="form-label small mb-0">Temperatura (°C)</label>
+                  <input type="number" step="0.1" class="form-control" id="inputTemperatura">
                 </div>
               </div>
-              <div class="mb-2 mt-2">
-                <label class="form-label">Diagnóstico</label>
-                <textarea class="form-control" id="ficha_diagnostico" rows="2"></textarea>
+              <div class="mb-2">
+                <label class="form-label small mb-0">Diagnóstico</label>
+                <textarea class="form-control" id="inputDiagnostico" rows="2"></textarea>
               </div>
               <div class="mb-2">
-                <label class="form-label">Tratamiento indicado</label>
-                <textarea class="form-control" id="ficha_tratamiento" rows="2"></textarea>
+                <label class="form-label small mb-0">Tratamiento indicado</label>
+                <textarea class="form-control" id="inputTratamiento" rows="2"></textarea>
               </div>
               <div class="mb-2">
-                <label class="form-label">Medicamentos recetados</label>
-                <textarea class="form-control" id="ficha_medicamentos" rows="2"></textarea>
+                <label class="form-label small mb-0">Medicamentos recetados</label>
+                <textarea class="form-control" id="inputMedicamentos" rows="2"></textarea>
               </div>
               <div class="mb-2">
-                <label class="form-label">Observaciones</label>
-                <textarea class="form-control" id="ficha_observaciones" rows="2"></textarea>
+                <label class="form-label small mb-0">Observaciones</label>
+                <textarea class="form-control" id="inputObservaciones" rows="2"></textarea>
               </div>
-              <button type="submit" class="btn btn-primary" id="btnGuardarFicha">Guardar consulta</button>
-              <span id="ficha_solo_lectura_aviso" class="texto-tenue ms-2" style="display:none;">Esta cita ya está completada; la consulta es de solo lectura.</span>
-            </form>
-          </div>
+              <button class="btn btn-primary" id="btnGuardarConsulta">Guardar consulta</button>
+            </div>
 
-          <div class="seccion-ficha">
-            <h6>Archivos adjuntos</h6>
-            <div id="listaArchivos" class="mb-2"></div>
-            <form id="formArchivo" class="d-flex gap-2">
-              <input type="file" id="ficha_archivo" class="form-control" accept=".pdf,.jpg,.jpeg,.png">
-              <button type="submit" class="btn btn-outline-light">Adjuntar</button>
-            </form>
-            <div class="form-text">PDF, JPG o PNG, máximo 10MB. Guarda la consulta antes de adjuntar archivos.</div>
-          </div>
+            <!-- Archivos -->
+            <div class="tab-pane fade" id="tabArchivos">
+              <div class="input-group mb-3">
+                <input type="file" class="form-control" id="inputArchivo" accept=".pdf,.jpg,.jpeg,.png">
+                <button class="btn btn-outline-light" id="btnSubirArchivo">Adjuntar</button>
+              </div>
+              <ul class="list-group" id="listaArchivos"></ul>
+            </div>
 
-          <div class="seccion-ficha">
-            <h6>Vacunación</h6>
-            <div id="listaVacunas" class="mb-2"></div>
-            <form id="formVacuna" class="row g-2">
-              <div class="col-md-4">
-                <input type="text" id="vacuna_nombre" class="form-control" placeholder="Nombre de la vacuna" required>
+            <!-- Vacunas -->
+            <div class="tab-pane fade" id="tabVacunas">
+              <div class="row g-2 mb-3">
+                <div class="col-md-5">
+                  <label class="form-label small mb-0">Vacuna aplicada</label>
+                  <input type="text" class="form-control" id="inputNombreVacuna">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small mb-0">Fecha aplicación</label>
+                  <input type="date" class="form-control" id="inputFechaAplicacion">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small mb-0">Próxima dosis</label>
+                  <input type="date" class="form-control" id="inputProximaDosis">
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                  <button class="btn btn-primary w-100" id="btnAgregarVacuna">+</button>
+                </div>
               </div>
-              <div class="col-md-3">
-                <label class="form-label small mb-0">Fecha de aplicación</label>
-                <input type="date" id="vacuna_fecha_aplicacion" class="form-control" required>
-              </div>
-              <div class="col-md-3">
-                <label class="form-label small mb-0">Próxima dosis (opcional)</label>
-                <input type="date" id="vacuna_proxima_dosis" class="form-control">
-              </div>
-              <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-outline-light w-100">Registrar</button>
-              </div>
-            </form>
+              <ul class="list-group" id="listaVacunas"></ul>
+            </div>
           </div>
-
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-success" id="btnCompletarDesdeFicha">Marcar como completada</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ===================== MODAL HISTORIAL CLÍNICO ===================== -->
-  <div class="modal fade" id="modalHistorial" tabindex="-1">
+  <!-- ===================== MODAL: HISTORIAL CLÍNICO ===================== -->
+  <div class="modal fade" id="modalHistorial" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content modal-content-veterinaria">
         <div class="modal-header">
-          <h5 class="modal-title">Historial clínico completo</h5>
+          <h5 class="modal-title">Historial clínico</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <div class="seccion-ficha">
-            <h6>Consultas anteriores</h6>
-            <div id="historialConsultas"></div>
-          </div>
-          <div class="seccion-ficha">
-            <h6>Vacunas aplicadas</h6>
-            <div id="historialVacunas"></div>
-          </div>
+          <div id="historialContenido">Cargando...</div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -320,6 +347,30 @@
       headers['Authorization'] = `Bearer ${token}`;
 
       const res = await fetch(`/api${path}`, Object.assign({}, options, { headers }));
+
+      if (res.status === 401) {
+        localStorage.removeItem('token_veterinaria');
+        localStorage.removeItem('rol_usuario');
+        window.location.href = '/';
+        throw new Error('No autenticado');
+      }
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        const error = new Error(data.mensaje || 'Ocurrio un error');
+        error.data = data;
+        throw error;
+      }
+
+      return data;
+    }
+
+    // Variante para envío de archivos (multipart/form-data): no fijar Content-Type,
+    // el navegador lo arma junto con el boundary.
+    async function apiFetchForm(path, formData, method = 'POST') {
+      const headers = { Accept: 'application/json', Authorization: `Bearer ${token}` };
+      const res = await fetch(`/api${path}`, { method, headers, body: formData });
 
       if (res.status === 401) {
         localStorage.removeItem('token_veterinaria');
@@ -420,14 +471,15 @@
         let acciones = '';
 
         if (c.estado === 'agendada' || c.estado === 'confirmada') {
-          acciones += `<button class="btn btn-sm btn-primary mb-1" data-accion="iniciar" data-id="${c.id}">Iniciar consulta</button> `;
+          acciones += `<button class="btn btn-sm btn-primary" data-accion="iniciar" data-id="${c.id}">Iniciar consulta</button>`;
         } else if (c.estado === 'en_consulta') {
-          acciones += `<button class="btn btn-sm btn-success mb-1" data-accion="completar" data-id="${c.id}">Completar</button> `;
+          acciones += `<button class="btn btn-sm btn-warning" data-accion="ficha" data-id="${c.id}">Abrir ficha</button>`;
+          acciones += `<button class="btn btn-sm btn-success" data-accion="completar" data-id="${c.id}">Completar</button>`;
+        } else if (c.estado === 'completada') {
+          acciones += `<button class="btn btn-sm btn-outline-light" data-accion="ficha" data-id="${c.id}">Ver ficha</button>`;
         }
 
-        if (c.estado !== 'cancelada' && c.estado !== 'vencida') {
-          acciones += `<button class="btn btn-sm btn-outline-light mb-1" data-accion="ficha" data-id="${c.id}">Ficha</button>`;
-        }
+        acciones += `<button class="btn btn-sm btn-outline-light" data-accion="historial" data-mascota-id="${c.mascota_id}">Historial</button>`;
 
         return `
         <tr>
@@ -438,7 +490,7 @@
           <td>${esc(c.motivo)}</td>
           <td>${badgeEstado(c.estado)}</td>
           <td>${c.hora_llegada ? 'Sí' : 'No'}</td>
-          <td>${acciones}</td>
+          <td><div class="acciones-cell">${acciones}</div></td>
         </tr>
       `;
       }).join('');
@@ -449,192 +501,274 @@
     document.getElementById('tablaCitas').addEventListener('click', (e) => {
       const boton = e.target.closest('button[data-accion]');
       if (!boton) return;
-      const id = boton.dataset.id;
       const accion = boton.dataset.accion;
 
-      if (accion === 'ficha') {
-        abrirFicha(citasCache[id]);
-        return;
+      if (accion === 'iniciar') {
+        iniciarConsulta(boton.dataset.id);
+      } else if (accion === 'completar') {
+        completarCita(boton.dataset.id);
+      } else if (accion === 'ficha') {
+        abrirFicha(boton.dataset.id);
+      } else if (accion === 'historial') {
+        abrirHistorial(boton.dataset.mascotaId);
       }
-
-      const rutas = { iniciar: `/citas/${id}/iniciar-consulta`, completar: `/citas/${id}/completar` };
-      const mensajes = { iniciar: 'Consulta iniciada', completar: 'Cita completada' };
-
-      apiFetch(rutas[accion], { method: 'PUT' })
-        .then(() => { mostrarAlerta(mensajes[accion]); fetchCitas(); })
-        .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
     });
 
-    // ============ FICHA DE CONSULTA ============
+    async function iniciarConsulta(id) {
+      try {
+        await apiFetch(`/citas/${id}/iniciar-consulta`, { method: 'PUT' });
+        mostrarAlerta('Consulta iniciada');
+        await fetchCitas();
+        abrirFicha(id);
+      } catch (e) {
+        mostrarAlerta(mensajeError(e), 'danger');
+      }
+    }
+
+    async function completarCita(id) {
+      try {
+        await apiFetch(`/citas/${id}/completar`, { method: 'PUT' });
+        mostrarAlerta('Cita completada');
+        fetchCitas();
+      } catch (e) {
+        mostrarAlerta(mensajeError(e), 'danger');
+      }
+    }
+
+    // ===================== FICHA DE CONSULTA =====================
+
+    let fichaCitaId = null;
     let fichaConsultaId = null;
     let fichaMascotaId = null;
-    let fichaSoloLectura = false;
+    const modalFichaEl = document.getElementById('modalFicha');
+    const modalFicha = new bootstrap.Modal(modalFichaEl);
 
-    async function abrirFicha(cita) {
+    function limpiarFicha() {
+      ['inputPeso', 'inputTemperatura', 'inputDiagnostico', 'inputTratamiento', 'inputMedicamentos', 'inputObservaciones', 'inputNombreVacuna', 'inputFechaAplicacion', 'inputProximaDosis', 'inputArchivo'].forEach((id) => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('listaArchivos').innerHTML = '';
+      document.getElementById('listaVacunas').innerHTML = '';
+    }
+
+    async function abrirFicha(citaId) {
+      limpiarFicha();
+      fichaCitaId = citaId;
+
       try {
-        const res = await apiFetch(`/citas/${cita.id}/consulta`);
-
-        document.getElementById('ficha_cita_id').value = cita.id;
-        document.getElementById('ficha_folio').innerText = cita.numero_folio;
-        document.getElementById('ficha_mascota_nombre').innerText = res.mascota ? res.mascota.nombre : '';
-        document.getElementById('ficha_dueno_nombre').innerText = res.dueno ? res.dueno.nombre_completo : '';
-        document.getElementById('ficha_motivo').innerText = res.motivo || '';
-
+        const res = await apiFetch(`/citas/${citaId}/consulta`);
+        document.getElementById('fichaMascota').innerText = res.mascota ? res.mascota.nombre : `#${res.mascota?.id ?? ''}`;
+        document.getElementById('fichaDueno').innerText = res.dueno ? res.dueno.nombre_completo || res.dueno.nombre : '-';
+        document.getElementById('fichaMotivo').innerText = res.motivo || '-';
         fichaMascotaId = res.mascota ? res.mascota.id : null;
-        const consulta = res.consulta;
-        fichaConsultaId = consulta ? consulta.id : null;
 
-        const puedeEditar = cita.estado === 'en_consulta';
-        fichaSoloLectura = !puedeEditar;
-
-        document.getElementById('ficha_diagnostico').value = consulta?.diagnostico || '';
-        document.getElementById('ficha_tratamiento').value = consulta?.tratamiento || '';
-        document.getElementById('ficha_medicamentos').value = consulta?.medicamentos_recetados || '';
-        document.getElementById('ficha_observaciones').value = consulta?.observaciones || '';
-        document.getElementById('ficha_peso').value = consulta?.peso ?? '';
-        document.getElementById('ficha_temperatura').value = consulta?.temperatura ?? '';
-
-        ['ficha_diagnostico', 'ficha_tratamiento', 'ficha_medicamentos', 'ficha_observaciones', 'ficha_peso', 'ficha_temperatura']
-          .forEach((id) => { document.getElementById(id).readOnly = fichaSoloLectura; });
-        document.getElementById('btnGuardarFicha').style.display = puedeEditar ? 'inline-block' : 'none';
-
-        const avisoEl = document.getElementById('ficha_solo_lectura_aviso');
-        if (cita.estado === 'completada') {
-          avisoEl.textContent = 'Esta cita ya está completada; la consulta es de solo lectura.';
-          avisoEl.style.display = 'inline';
-        } else if (!puedeEditar) {
-          avisoEl.textContent = 'Esta cita aún no está en consulta; inícala desde la agenda para poder registrar el diagnóstico.';
-          avisoEl.style.display = 'inline';
+        if (res.consulta) {
+          fichaConsultaId = res.consulta.id;
+          document.getElementById('inputPeso').value = res.consulta.peso ?? '';
+          document.getElementById('inputTemperatura').value = res.consulta.temperatura ?? '';
+          document.getElementById('inputDiagnostico').value = res.consulta.diagnostico ?? '';
+          document.getElementById('inputTratamiento').value = res.consulta.tratamiento ?? '';
+          document.getElementById('inputMedicamentos').value = res.consulta.medicamentos_recetados ?? '';
+          document.getElementById('inputObservaciones').value = res.consulta.observaciones ?? '';
+          cargarArchivos(fichaConsultaId);
         } else {
-          avisoEl.style.display = 'none';
+          fichaConsultaId = null;
         }
 
-        document.getElementById('formArchivo').style.display = puedeEditar ? 'flex' : 'none';
-
-        if (fichaConsultaId) {
-          cargarArchivos();
-        } else {
-          document.getElementById('listaArchivos').innerHTML = '<p class="texto-tenue">Guarda la consulta primero para poder adjuntar archivos.</p>';
+        if (fichaMascotaId) {
+          cargarVacunas(fichaMascotaId);
         }
 
-        if (fichaMascotaId) cargarVacunas();
+        const estadoCompletada = citasCache[citaId] && citasCache[citaId].estado === 'completada';
+        document.getElementById('btnGuardarConsulta').disabled = estadoCompletada;
+        document.getElementById('btnCompletarDesdeFicha').disabled = estadoCompletada;
+        document.getElementById('btnSubirArchivo').disabled = estadoCompletada;
+        document.getElementById('btnAgregarVacuna').disabled = estadoCompletada;
 
-        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalFicha')).show();
+        modalFicha.show();
       } catch (e) {
         mostrarAlerta(mensajeError(e), 'danger');
       }
     }
 
-    document.getElementById('formFicha').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const citaId = document.getElementById('ficha_cita_id').value;
+    document.getElementById('btnGuardarConsulta').addEventListener('click', async () => {
       const payload = {
-        diagnostico: document.getElementById('ficha_diagnostico').value,
-        tratamiento: document.getElementById('ficha_tratamiento').value,
-        medicamentos_recetados: document.getElementById('ficha_medicamentos').value,
-        observaciones: document.getElementById('ficha_observaciones').value,
-        peso: document.getElementById('ficha_peso').value || null,
-        temperatura: document.getElementById('ficha_temperatura').value || null,
+        peso: document.getElementById('inputPeso').value || null,
+        temperatura: document.getElementById('inputTemperatura').value || null,
+        diagnostico: document.getElementById('inputDiagnostico').value || null,
+        tratamiento: document.getElementById('inputTratamiento').value || null,
+        medicamentos_recetados: document.getElementById('inputMedicamentos').value || null,
+        observaciones: document.getElementById('inputObservaciones').value || null,
       };
 
       try {
         if (fichaConsultaId) {
-          await apiFetch(`/consultas/${fichaConsultaId}`, { method: 'PUT', body: JSON.stringify(payload) });
-          mostrarAlerta('Consulta actualizada');
+          const res = await apiFetch(`/consultas/${fichaConsultaId}`, { method: 'PUT', body: JSON.stringify(payload) });
+          mostrarAlerta(res.mensaje || 'Consulta actualizada');
         } else {
-          const res = await apiFetch(`/citas/${citaId}/consulta`, { method: 'POST', body: JSON.stringify(payload) });
+          const res = await apiFetch(`/citas/${fichaCitaId}/consulta`, { method: 'POST', body: JSON.stringify(payload) });
           fichaConsultaId = res.consulta.id;
-          mostrarAlerta('Consulta registrada');
-          cargarArchivos();
+          mostrarAlerta(res.mensaje || 'Consulta registrada');
         }
-      } catch (err) {
-        mostrarAlerta(mensajeError(err), 'danger');
-      }
-    });
-
-    // ---- Archivos ----
-    async function cargarArchivos() {
-      try {
-        const res = await apiFetch(`/consultas/${fichaConsultaId}/archivos`);
-        const lista = document.getElementById('listaArchivos');
-        if (!res.data || res.data.length === 0) {
-          lista.innerHTML = '<p class="texto-tenue">Sin archivos adjuntos.</p>';
-          return;
-        }
-        lista.innerHTML = res.data.map((a) => `
-          <div class="mb-1">
-            <a href="/storage/${esc(a.ruta_archivo)}" target="_blank" class="text-info">${esc(a.nombre_archivo)}</a>
-            <span class="badge bg-secondary">${esc(a.tipo)}</span>
-          </div>
-        `).join('');
       } catch (e) {
         mostrarAlerta(mensajeError(e), 'danger');
       }
-    }
+    });
 
-    document.getElementById('formArchivo').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!fichaConsultaId) {
-        mostrarAlerta('Guarda la consulta antes de adjuntar archivos', 'warning');
+    document.getElementById('btnCompletarDesdeFicha').addEventListener('click', async () => {
+      if (!fichaCitaId) return;
+      try {
+        await apiFetch(`/citas/${fichaCitaId}/completar`, { method: 'PUT' });
+        mostrarAlerta('Cita completada');
+        modalFicha.hide();
+        fetchCitas();
+      } catch (e) {
+        mostrarAlerta(mensajeError(e), 'danger');
+      }
+    });
+
+    // Archivos
+
+    function renderArchivos(archivos) {
+      const lista = document.getElementById('listaArchivos');
+      if (!archivos || !archivos.length) {
+        lista.innerHTML = '<li class="list-group-item">Sin archivos adjuntos.</li>';
         return;
       }
-      const archivo = document.getElementById('ficha_archivo').files[0];
-      if (!archivo) return;
+      lista.innerHTML = archivos.map((a) => `
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <a class="archivo-link" href="${esc(a.ruta_archivo)}" target="_blank" rel="noopener">${esc(a.nombre_archivo)}</a>
+          <span class="badge bg-secondary">${esc(a.tipo)}</span>
+        </li>
+      `).join('');
+    }
 
-      const formData = new FormData();
-      formData.append('archivo', archivo);
-
+    async function cargarArchivos(consultaId) {
       try {
-        await apiFetch(`/consultas/${fichaConsultaId}/archivos`, { method: 'POST', body: formData });
-        mostrarAlerta('Archivo adjuntado');
-        document.getElementById('ficha_archivo').value = '';
-        cargarArchivos();
-      } catch (err) {
-        mostrarAlerta(mensajeError(err), 'danger');
-      }
-    });
-
-    // ---- Vacunas ----
-    async function cargarVacunas() {
-      try {
-        const res = await apiFetch(`/mascotas/${fichaMascotaId}/vacunas`);
-        const lista = document.getElementById('listaVacunas');
-        if (!res.data || res.data.length === 0) {
-          lista.innerHTML = '<p class="texto-tenue">Sin vacunas registradas.</p>';
-          return;
-        }
-        lista.innerHTML = res.data.map((v) => `
-          <div class="mb-1">
-            <strong>${esc(v.nombre_vacuna)}</strong> — Aplicada: ${soloFecha(v.fecha_aplicacion)}
-            ${v.fecha_proxima_dosis ? ` — Próxima dosis: ${soloFecha(v.fecha_proxima_dosis)}` : ''}
-          </div>
-        `).join('');
+        const res = await apiFetch(`/consultas/${consultaId}/archivos`);
+        renderArchivos(res.data || res.archivos || res);
       } catch (e) {
         mostrarAlerta(mensajeError(e), 'danger');
       }
     }
 
-    document.getElementById('formVacuna').addEventListener('submit', async (e) => {
-      e.preventDefault();
+    document.getElementById('btnSubirArchivo').addEventListener('click', async () => {
+      const input = document.getElementById('inputArchivo');
+      const file = input.files[0];
+      if (!file) {
+        mostrarAlerta('Selecciona un archivo (PDF, JPG o PNG).', 'warning');
+        return;
+      }
+      if (!fichaConsultaId) {
+        mostrarAlerta('Guarda primero los datos de la consulta antes de adjuntar archivos.', 'warning');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('archivo', file);
+
+      try {
+        await apiFetchForm(`/consultas/${fichaConsultaId}/archivos`, formData);
+        mostrarAlerta('Archivo adjuntado');
+        input.value = '';
+        cargarArchivos(fichaConsultaId);
+      } catch (e) {
+        mostrarAlerta(mensajeError(e), 'danger');
+      }
+    });
+
+    // Vacunas
+
+    function renderVacunas(vacunas) {
+      const lista = document.getElementById('listaVacunas');
+      if (!vacunas || !vacunas.length) {
+        lista.innerHTML = '<li class="list-group-item">Sin vacunas registradas.</li>';
+        return;
+      }
+      lista.innerHTML = vacunas.map((v) => `
+        <li class="list-group-item">
+          <strong>${esc(v.nombre_vacuna)}</strong> — aplicada: ${soloFecha(v.fecha_aplicacion)}
+          ${v.fecha_proxima_dosis ? ` · próxima dosis: ${soloFecha(v.fecha_proxima_dosis)}` : ''}
+        </li>
+      `).join('');
+    }
+
+    async function cargarVacunas(mascotaId) {
+      try {
+        const res = await apiFetch(`/mascotas/${mascotaId}/vacunas`);
+        renderVacunas(res.data || res);
+      } catch (e) {
+        mostrarAlerta(mensajeError(e), 'danger');
+      }
+    }
+
+    document.getElementById('btnAgregarVacuna').addEventListener('click', async () => {
+      const nombre = document.getElementById('inputNombreVacuna').value.trim();
+      const fechaAplicacion = document.getElementById('inputFechaAplicacion').value;
+      const proximaDosis = document.getElementById('inputProximaDosis').value;
+
+      if (!nombre || !fechaAplicacion) {
+        mostrarAlerta('Nombre de vacuna y fecha de aplicación son obligatorios.', 'warning');
+        return;
+      }
+      if (!fichaMascotaId) {
+        mostrarAlerta('No se pudo determinar la mascota de esta ficha.', 'danger');
+        return;
+      }
+
       const payload = {
-        nombre_vacuna: document.getElementById('vacuna_nombre').value,
-        fecha_aplicacion: document.getElementById('vacuna_fecha_aplicacion').value,
+        nombre_vacuna: nombre,
+        fecha_aplicacion: fechaAplicacion,
+        fecha_proxima_dosis: proximaDosis || null,
+        consulta_id: fichaConsultaId || null,
       };
-      const proximaDosis = document.getElementById('vacuna_proxima_dosis').value;
-      if (proximaDosis) payload.fecha_proxima_dosis = proximaDosis;
-      if (fichaConsultaId) payload.consulta_id = fichaConsultaId;
 
       try {
         await apiFetch(`/mascotas/${fichaMascotaId}/vacunas`, { method: 'POST', body: JSON.stringify(payload) });
         mostrarAlerta('Vacuna registrada');
-        document.getElementById('formVacuna').reset();
-        cargarVacunas();
-      } catch (err) {
-        mostrarAlerta(mensajeError(err), 'danger');
+        document.getElementById('inputNombreVacuna').value = '';
+        document.getElementById('inputFechaAplicacion').value = '';
+        document.getElementById('inputProximaDosis').value = '';
+        cargarVacunas(fichaMascotaId);
+      } catch (e) {
+        mostrarAlerta(mensajeError(e), 'danger');
       }
     });
 
-    // ============ LOGOUT Y CARGA INICIAL ============
+    // ===================== HISTORIAL CLÍNICO =====================
+
+    const modalHistorial = new bootstrap.Modal(document.getElementById('modalHistorial'));
+
+    function renderHistorial(consultas) {
+      if (!consultas || !consultas.length) {
+        return '<p>Esta mascota no tiene consultas registradas.</p>';
+      }
+      return consultas.map((c) => `
+        <div class="panel-card mb-2 p-3">
+          <h6>${soloFecha(c.fecha || c.cita?.fecha)} — ${esc(c.motivo || c.cita?.motivo || '')}</h6>
+          <p class="mb-1"><strong>Diagnóstico:</strong> ${esc(c.diagnostico) || '—'}</p>
+          <p class="mb-1"><strong>Tratamiento:</strong> ${esc(c.tratamiento) || '—'}</p>
+          <p class="mb-1"><strong>Medicamentos:</strong> ${esc(c.medicamentos_recetados) || '—'}</p>
+          <p class="mb-1"><strong>Observaciones:</strong> ${esc(c.observaciones) || '—'}</p>
+          <p class="mb-0"><strong>Peso:</strong> ${esc(c.peso) || '—'} kg &nbsp; <strong>Temp.:</strong> ${esc(c.temperatura) || '—'} °C</p>
+        </div>
+      `).join('');
+    }
+
+    async function abrirHistorial(mascotaId) {
+      document.getElementById('historialContenido').innerHTML = 'Cargando...';
+      modalHistorial.show();
+      try {
+        const res = await apiFetch(`/mascotas/${mascotaId}/historial`);
+        const consultas = res.data || res.historial || res;
+        document.getElementById('historialContenido').innerHTML = renderHistorial(consultas);
+      } catch (e) {
+        document.getElementById('historialContenido').innerHTML = `<div class="alert alert-danger">${esc(mensajeError(e))}</div>`;
+      }
+    }
+
+    // ===================== LOGOUT / INIT =====================
+
     document.getElementById('btnLogout').addEventListener('click', async () => {
       try {
         await apiFetch('/auth/usuarios/logout', { method: 'POST' });

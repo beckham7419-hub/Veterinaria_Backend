@@ -60,4 +60,5 @@ class AuthUsuarioController extends Controller
             return response()->json(["mensaje" => $e -> getMessage()],422);
         }
     }
+    
 }

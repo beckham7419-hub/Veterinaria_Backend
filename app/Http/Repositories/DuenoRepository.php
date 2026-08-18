@@ -69,6 +69,7 @@ class DuenoRepository
 
         try {
             $dueno->activo = false;
+            $dueno->tokens_validos_desde = now();
             $dueno->save();
 
             $dueno->mascotas()->where('activo', true)->update([

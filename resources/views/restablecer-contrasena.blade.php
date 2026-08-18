@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Restablecer Contraseña - Veterinaria</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
 <body>
 
@@ -19,9 +20,15 @@
             <form id="formRestablecer">
                 <div class="input-group-custom">
                     <input type="password" id="contrasena_nueva" class="form-control" placeholder="Nueva contraseña" minlength="8" required>
+                    <button type="button" class="btn btn-outline-secondary" id="btnTogglePassUsuario" tabindex="-1">
+                    <i class="bi bi-eye" id="iconTogglePassUsuario"></i>
+                    </button>
                 </div>
                 <div class="input-group-custom">
                     <input type="password" id="contrasena_confirmar" class="form-control" placeholder="Confirma tu nueva contraseña" minlength="8" required>
+                    <button type="button" class="btn btn-outline-secondary" id="btnTogglePassUsuarioConfirm" tabindex="-1">
+                    <i class="bi bi-eye" id="iconTogglePassUsuarioConfirm"></i>
+                    </button>
                 </div>
                 <button type="submit" class="btn btn-login">Restablecer contraseña</button>
             </form>
@@ -210,6 +217,25 @@
                 mensajeEl.style.display = 'block';
             }
         });
+
+    //funcion para poder ver la contraseña mediante el icono del ojito
+    function verContrasenaIconoOjo(usuario_id_contra, icon_usuario_toogle_id){
+      const input=document.getElementById(usuario_id_contra);
+      const icono=document.getElementById(icon_usuario_toogle_id);
+      const miContrasena=input.type==='password';
+      input.type=miContrasena?'text':'password';
+      icono.classList.toggle('bi-eye', !miContrasena);
+      icono.classList.toggle('bi-eye-slash', miContrasena);
+    }
+
+    //en dado caso de que sea la contraseña que se active el ojito
+    document.getElementById('btnTogglePassUsuario').addEventListener('click', () =>{
+    verContrasenaIconoOjo('contrasena_nueva', 'iconTogglePassUsuario')
+    });
+
+    document.getElementById('btnTogglePassUsuarioConfirm').addEventListener('click', () =>{
+    verContrasenaIconoOjo('contrasena_confirmar', 'iconTogglePassUsuarioConfirm')
+    });
     </script>
 
 </body>

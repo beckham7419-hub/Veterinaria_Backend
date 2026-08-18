@@ -83,6 +83,7 @@ class UsuarioRepository
     {
         try {
             $usuario->activo = false;
+            $usuario->tokens_validos_desde = now();
             $usuario->save();
 
             return [
