@@ -2,27 +2,19 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Cita;
+use App\Http\Repositories\CitaRepository;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
 #[Signature('app:vencer-citas-no-confirmadas')]
-#[Description('Command description')]
+#[Description('Marca como vencida cualquier cita agendada cuya fecha y hora ya paso sin confirmarse')]
 class vencerCitasNoConfirmadas extends Command
 {
-    public function handle()
+    public function handle(CitaRepository $citaRepository)
     {
-        $citas=Cita::where('estado', 'agendada')
-        ->whereRaw("CONCAT(fecha, ' ', hora)<?", [now()])
-        ->get();
+        $total = $citaRepository->expirarAgendadasVencidas();
 
-        foreach($citas as $cita){
-            $cita->update([
-                'estado'=>'cancelada',
-                'motivo_cancelacion'=>'No confirmada a tiempo por la recepcion'
-            ]);
-        }
-
+        $this->info("Citas marcadas como vencidas: {$total}");
     }
 }

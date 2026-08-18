@@ -15,7 +15,7 @@ class UsuarioSeederPruebas extends Seeder
     public function run(): void
     {
         DB::table('usuarios')->insert([
-               [
+            [
                 'nombre_completo' => 'Rafael Moreno',
                 'correo'          => 'admin@veterinaria.com',
                 'contrasena'      => Hash::make('12345678'), 
@@ -45,7 +45,7 @@ class UsuarioSeederPruebas extends Seeder
                 'created_at'      => now(),
                 'updated_at'      => now(),
             ],
-             [
+            [
                 'nombre_completo' => 'Rafael Moreno',
                 'correo'          => 'administrador@veterinaria.com',
                 'contrasena'      => Hash::make('12345678'), 

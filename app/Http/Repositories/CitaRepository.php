@@ -12,9 +12,9 @@ class CitaRepository
      * Marca como 'vencida' cualquier cita 'agendada' cuya fecha y hora ya pasaron
      * sin haber sido confirmada. Se ejecuta antes de listar o de operar sobre una cita.
      */
-    private function expirarAgendadasVencidas(): void
+    public function expirarAgendadasVencidas(): int
     {
-        Cita::where('estado', 'agendada')
+        return Cita::where('estado', 'agendada')
             ->where(function ($query) {
                 $query->whereDate('fecha', '<', now()->toDateString())
                     ->orWhere(function ($query) {
@@ -208,6 +208,10 @@ class CitaRepository
 
         if (! \in_array($cita->estado, ['agendada', 'confirmada'])) {
             throw new \Exception('Solo se puede iniciar la consulta de una cita agendada o confirmada.');
+        }
+
+        if (! $cita->hora_llegada) {
+            throw new \Exception('No se puede iniciar la consulta sin haber registrado el check-in de la mascota.');
         }
 
         try {
