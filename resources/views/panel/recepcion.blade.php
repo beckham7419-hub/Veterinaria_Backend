@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Panel de recepción</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <style>
     body {
       background-color: #1a1a1a;
@@ -125,6 +126,14 @@
 
     .btn-outline-light:hover { color: #1a1a1a; }
 
+    .form-select:disabled,
+    .form-control:disabled {
+    background-color: #2a2a2a;
+    color: #999999;
+    border-color: #333333;
+    opacity: 1;
+    }
+
     /* ---------- Modales ---------- */
     .modal-content-veterinaria {
       background-color: #242424;
@@ -178,12 +187,18 @@
           <input type="text" id="buscarDueno" class="form-control" style="max-width:320px" placeholder="Buscar por nombre, correo o teléfono">
           <button class="btn btn-outline-light" id="btnBuscarDueno">Buscar</button>
           <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaDueno">Limpiar</button>
+
+          <input type="text" id="buscarDuenoCorreo" class="form-control" style="max-width:420px" placeholder="Buscar dueño por correo para restaurarlo">
+          <button class="btn btn-outline-light" id="btnBuscarDuenoCorreo">Buscar por correo</button>
+          <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaDuenoCorreo">Limpiar</button>
+
           <button class="btn btn-primary ms-auto" id="btnAgregarDueno" data-bs-toggle="modal" data-bs-target="#modalDueno">Agregar dueño</button>
+          <button id="btnReintentarDueno" class="btn btn-outline-warning d-none" type="button">Reintentar formulario('sin guardar')</button>
         </div>
         <div class="table-responsive">
           <table class="table table-striped table-hover align-middle">
             <thead class="table-dark">
-              <tr><th>Id</th><th>Nombre</th><th>Teléfono</th><th>Correo</th><th>Dirección</th><th>Acciones</th></tr>
+              <tr><th>Nombre</th><th>Teléfono</th><th>Correo</th><th>Dirección</th><th>Estado</th><th>Acciones</th></tr>
             </thead>
             <tbody id="tablaDuenos"></tbody>
           </table>
@@ -274,11 +289,12 @@
             <input type="hidden" id="dueno_id">
             <div class="mb-3">
               <label class="form-label">Nombre completo</label>
-              <input required class="form-control" id="dueno_nombre" maxlength="160"
-                pattern="[A-Za-zÀ-ÿÑñ]{3,50}(\s[A-Za-zÀ-ÿÑñ]{3,50}){2,}"
-                title="Debe incluir nombre, apellido paterno y apellido materno, cada uno con 3 a 50 letras."
-                placeholder="Nombre Apellido paterno Apellido materno">
-              <div class="form-text">Nombre, apellido paterno y apellido materno (mínimo 3 letras cada uno).</div>
+              <input required class="form-control" id="dueno_nombre"
+              maxlength="160"
+              pattern="[A-Za-zÀ-ÿÑñ'-]{2,50}(\s[A-Za-zÀ-ÿÑñ'-]{2,50}){1,}"
+              title="Debe incluir al menos nombre y apellido, cada uno con 3 a 50 letras."
+              placeholder="Nombre Apellido">
+              <div class="form-text">Nombre y al menos un apellido (mínimo 3 letras cada uno).</div>
             </div>
             <div class="mb-3"><label class="form-label">Teléfono</label><input required class="form-control" id="dueno_telefono" maxlength="10" pattern="\d{10}" inputmode="numeric"></div>
             <div class="mb-3"><label class="form-label">Correo</label><input required type="email" class="form-control" id="dueno_correo" maxlength="150"></div>
@@ -290,11 +306,28 @@
             </div>
             <div class="mb-3">
               <label class="form-label" id="dueno_contrasena_label">Contraseña</label>
-              <input type="password" class="form-control" id="dueno_contrasena" minlength="8">
+              <div class="input-group">
+              <input type="password" id="dueno_contrasena" class="form-control" minlength="8" autocomplete="new-password">
+              <button type="button" class="btn btn-outline-secondary" id="btnTogglePassDueno" tabindex="-1">
+              <i class="bi bi-eye" id="iconTogglePassDueno"></i>
+              </button>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" id="dueno_contrasena_confirm_label">Confirmar contraseña</label>
+              <div class="input-group">
+              <input type="password" id="dueno_contrasena_confirm" class="form-control" minlength="8" autocomplete="new-password">
+              <button type="button" class="btn btn-outline-secondary" id="btnTogglePassConfirmDueno" tabindex="-1">
+              <i class="bi bi-eye" id="iconTogglePassConfirmDueno"></i>
+              </button>
+              </div>
+              <div class="invalid-feedback d-block d-none" id="errorContrasenaMatchDueno">
+              Las contraseñas no coinciden
+              </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-secondary" id="btnCancelarDueno">Cerrar</button>
             <button type="submit" class="btn btn-primary">Guardar</button>
           </div>
         </form>
@@ -578,26 +611,65 @@
     function renderDuenos(duenos) {
       duenos.forEach((d) => { duenosCache[d.id] = d; });
       const tbody = document.getElementById('tablaDuenos');
-      tbody.innerHTML = duenos.map((d) => `
-        <tr>
-          <td>${d.id}</td>
-          <td>${esc(d.nombre_completo)}</td>
-          <td>${esc(d.telefono)}</td>
-          <td>${esc(d.correo)}</td>
-          <td>${esc(d.direccion || '')}</td>
-          <td>
-            <button class="btn btn-sm btn-outline-light mb-1" data-accion="ver-mascotas" data-id="${d.id}">Mascotas</button>
-            <button class="btn btn-sm btn-warning mb-1" data-accion="editar" data-id="${d.id}">Editar</button>
-            <button class="btn btn-sm btn-danger mb-1" data-accion="baja" data-id="${d.id}">Baja</button>
-          </td>
-        </tr>
-      `).join('');
+
+      if (!duenos || duenos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center">No se encontraron dueños.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = duenos.map((d) => {
+        const esActivo = Boolean(d.activo);
+        const botonEstado = esActivo
+          ? `<button class="btn btn-sm btn-danger mb-1" data-accion="baja" data-id="${d.id}">Baja</button>`
+          : `<button class="btn btn-sm btn-success mb-1" data-accion="reactivar" data-id="${d.id}">Reactivar</button>`;
+
+        return `
+          <tr>
+            <td>${esc(d.nombre_completo)}</td>
+            <td>${esc(d.telefono)}</td>
+            <td>${esc(d.correo)}</td>
+            <td>${esc(d.direccion || '')}</td>
+            <td><span class="badge ${esActivo ? 'bg-success' : 'bg-secondary'}">${esActivo ? 'Activo' : 'Inactivo'}</span></td>
+            <td>
+              <button class="btn btn-sm btn-outline-light mb-1" data-accion="ver-mascotas" data-id="${d.id}">Mascotas</button>
+              <button class="btn btn-sm btn-warning mb-1" data-accion="editar" data-id="${d.id}">Editar</button>
+              ${botonEstado}
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
+
+    document.getElementById('btnBuscarDuenoCorreo').addEventListener('click', async () => {
+      const correo = document.getElementById('buscarDuenoCorreo').value.trim();
+      if (!correo) {
+        mostrarAlerta('Ingresa un correo para buscar', 'warning');
+        return;
+      }
+      try {
+        const res = await apiFetch('/duenos/buscar-correo', {
+          method: 'POST',
+          body: JSON.stringify({ correo }),
+        });
+        if (res.data) {
+          renderDuenos([res.data]);
+        } else {
+          mostrarAlerta('No se encontró ningún dueño con ese correo', 'info');
+        }
+      } catch (err) {
+        mostrarAlerta(mensajeError(err), 'danger');
+      }
+    });
 
     document.getElementById('btnBuscarDueno').addEventListener('click', fetchDuenos);
     document.getElementById('buscarDueno').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); fetchDuenos(); } });
     document.getElementById('btnLimpiarBusquedaDueno').addEventListener('click', () => {
       document.getElementById('buscarDueno').value = '';
+      fetchDuenos();
+    });
+
+    document.getElementById('btnLimpiarBusquedaDuenoCorreo').addEventListener('click', () => {
+      document.getElementById('buscarDuenoCorreo').value = '';
       fetchDuenos();
     });
 
@@ -607,6 +679,25 @@
       document.getElementById('modalDuenoTitulo').innerText = 'Agregar dueño';
       document.getElementById('dueno_contrasena_label').innerText = 'Contraseña';
       document.getElementById('dueno_contrasena').required = true;
+      document.getElementById('dueno_contrasena_confirm').required = true;
+      document.getElementById('errorContrasenaMatchDueno').classList.add('d-none');
+      document.getElementById('dueno_contrasena_confirm').classList.remove('is-invalid');
+    });
+
+    let duenoConDatosPendientes = false;
+
+    document.getElementById('btnCancelarDueno').addEventListener('click', () => {
+      document.getElementById('formDueno').reset();
+      document.getElementById('dueno_id').value = '';
+      duenoConDatosPendientes = false;
+      document.getElementById('btnReintentarDueno').classList.add('d-none');
+      document.getElementById('errorContrasenaMatchDueno').classList.add('d-none');
+      document.getElementById('dueno_contrasena_confirm').classList.remove('is-invalid');
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDueno')).hide();
+    });
+
+    document.getElementById('btnReintentarDueno').addEventListener('click', () => {
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDueno')).show();
     });
 
     document.getElementById('tablaDuenos').addEventListener('click', (e) => {
@@ -625,6 +716,8 @@
         document.getElementById('modalDuenoTitulo').innerText = 'Editar dueño';
         document.getElementById('dueno_contrasena_label').innerText = 'Nueva contraseña (dejar en blanco para no cambiar)';
         document.getElementById('dueno_contrasena').required = false;
+        document.getElementById('errorContrasenaMatchDueno').classList.add('d-none');
+        document.getElementById('dueno_contrasena_confirm').classList.remove('is-invalid');
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDueno')).show();
       }
 
@@ -632,6 +725,14 @@
         if (confirm(`¿Dar de baja a ${dueno.nombre_completo}?`)) {
           apiFetch(`/duenos/${id}`, { method: 'DELETE' })
             .then(() => { mostrarAlerta('Dueño dado de baja'); fetchDuenos(); cargarDuenosCache(); })
+            .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
+        }
+      }
+
+      if (boton.dataset.accion === 'reactivar') {
+        if (confirm(`¿Deseas reactivar a ${dueno.nombre_completo}?`)) {
+          apiFetch(`/duenos/${id}/reactivar`, { method: 'PUT' })
+            .then(() => { mostrarAlerta('Dueño reactivado'); fetchDuenos(); cargarDuenosCache(); })
             .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
         }
       }
@@ -653,6 +754,18 @@
         direccion: document.getElementById('dueno_direccion').value,
       };
       const contrasena = document.getElementById('dueno_contrasena').value;
+      const contrasenaConfirmada = document.getElementById('dueno_contrasena_confirm').value;
+      const errorContrasenaDiv = document.getElementById('errorContrasenaMatchDueno');
+      if (contrasena || contrasenaConfirmada) {
+        if (contrasena !== contrasenaConfirmada) {
+          errorContrasenaDiv.classList.remove('d-none');
+          document.getElementById('dueno_contrasena_confirm').classList.add('is-invalid');
+          return;
+        }
+      }
+      errorContrasenaDiv.classList.add('d-none');
+      document.getElementById('dueno_contrasena_confirm').classList.remove('is-invalid');
+
       if (contrasena) payload.contrasena = contrasena;
 
       try {
@@ -663,12 +776,35 @@
           await apiFetch('/duenos', { method: 'POST', body: JSON.stringify(payload) });
           mostrarAlerta('Dueño registrado');
         }
+        document.getElementById('formDueno').reset();
+        duenoConDatosPendientes = false;
+        document.getElementById('btnReintentarDueno').classList.add('d-none');
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDueno')).hide();
         fetchDuenos();
         cargarDuenosCache();
       } catch (err) {
         mostrarAlerta(mensajeError(err), 'danger');
+        duenoConDatosPendientes = true;
+        document.getElementById('btnReintentarDueno').classList.remove('d-none');
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDueno')).hide();
       }
+    });
+
+    function verContrasenaIconoOjoDueno(idInput, idIcono) {
+      const input = document.getElementById(idInput);
+      const icono = document.getElementById(idIcono);
+      const esPassword = input.type === 'password';
+      input.type = esPassword ? 'text' : 'password';
+      icono.classList.toggle('bi-eye', !esPassword);
+      icono.classList.toggle('bi-eye-slash', esPassword);
+    }
+
+    document.getElementById('btnTogglePassDueno').addEventListener('click', () => {
+      verContrasenaIconoOjoDueno('dueno_contrasena', 'iconTogglePassDueno');
+    });
+
+    document.getElementById('btnTogglePassConfirmDueno').addEventListener('click', () => {
+      verContrasenaIconoOjoDueno('dueno_contrasena_confirm', 'iconTogglePassConfirmDueno');
     });
 
     // ---------- MASCOTAS ----------
