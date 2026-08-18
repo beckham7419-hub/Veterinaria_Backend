@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class StoreProveedorRequest extends FormRequest
 {
@@ -18,7 +19,7 @@ class StoreProveedorRequest extends FormRequest
         return [
             'nombre' => 'required|string|max:150',
             'telefono' => 'required|digits:10',
-            'correo' => 'required|string|email|max:150'
+            'correo' => ['required', 'string', 'email', 'max:150', Rule::unique('proveedores', 'correo')],
         ];
     }
 
@@ -29,7 +30,8 @@ class StoreProveedorRequest extends FormRequest
             'telefono.required' => 'El telefono es obligatorio.',
             'telefono.digits' => 'El telefono debe tener exactamente 10 digitos.',
             'correo.required' => 'El correo es obligatorio.',
-            'correo.email' => 'El correo debe tener un formato valido.'
+            'correo.email' => 'El correo debe tener un formato valido.',
+            'correo.unique' => 'Ya existe un proveedor registrado con ese correo.'
         ];
     }
 

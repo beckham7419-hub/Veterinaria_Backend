@@ -310,7 +310,14 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <div id="historialContenido">Cargando...</div>
+          <div class="seccion-ficha">
+            <h6>Consultas anteriores</h6>
+            <div id="historialConsultas"></div>
+          </div>
+          <div class="seccion-ficha">
+            <h6>Vacunas aplicadas</h6>
+            <div id="historialVacunas"></div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -739,31 +746,46 @@
 
     const modalHistorial = new bootstrap.Modal(document.getElementById('modalHistorial'));
 
-    function renderHistorial(consultas) {
-      if (!consultas || !consultas.length) {
-        return '<p>Esta mascota no tiene consultas registradas.</p>';
-      }
-      return consultas.map((c) => `
-        <div class="panel-card mb-2 p-3">
-          <h6>${soloFecha(c.fecha || c.cita?.fecha)} — ${esc(c.motivo || c.cita?.motivo || '')}</h6>
-          <p class="mb-1"><strong>Diagnóstico:</strong> ${esc(c.diagnostico) || '—'}</p>
-          <p class="mb-1"><strong>Tratamiento:</strong> ${esc(c.tratamiento) || '—'}</p>
-          <p class="mb-1"><strong>Medicamentos:</strong> ${esc(c.medicamentos_recetados) || '—'}</p>
-          <p class="mb-1"><strong>Observaciones:</strong> ${esc(c.observaciones) || '—'}</p>
-          <p class="mb-0"><strong>Peso:</strong> ${esc(c.peso) || '—'} kg &nbsp; <strong>Temp.:</strong> ${esc(c.temperatura) || '—'} °C</p>
-        </div>
-      `).join('');
-    }
-
     async function abrirHistorial(mascotaId) {
-      document.getElementById('historialContenido').innerHTML = 'Cargando...';
-      modalHistorial.show();
+      const idMascota = mascotaId || fichaMascotaId;
+      if (!idMascota) return;
+
+      const consultasDiv = document.getElementById('historialConsultas');
+      const vacunasDiv = document.getElementById('historialVacunas');
+      consultasDiv.innerHTML = 'Cargando...';
+      vacunasDiv.innerHTML = '';
+
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('modalHistorial')).show();
+
       try {
-        const res = await apiFetch(`/mascotas/${mascotaId}/historial`);
-        const consultas = res.data || res.historial || res;
-        document.getElementById('historialContenido').innerHTML = renderHistorial(consultas);
+        const res = await apiFetch(`/mascotas/${idMascota}/historial`);
+
+        if (!res.consultas || res.consultas.length === 0) {
+          consultasDiv.innerHTML = '<p class="texto-tenue">Sin consultas completadas registradas.</p>';
+        } else {
+          consultasDiv.innerHTML = res.consultas.map((c) => `
+            <div class="mb-2 pb-2" style="border-bottom: 1px solid #333;">
+              <p class="mb-1"><strong>${soloFecha(c.fecha_cita)}</strong> — Dr(a). ${esc(c.veterinario_nombre)} — ${esc(c.motivo)}</p>
+              <p class="mb-1"><strong>Diagnóstico:</strong> ${esc(c.diagnostico || '—')}</p>
+              <p class="mb-1"><strong>Tratamiento:</strong> ${esc(c.tratamiento || '—')}</p>
+              ${c.peso ? `<p class="mb-0 texto-tenue">Peso: ${esc(c.peso)} kg — Temp: ${esc(c.temperatura || '—')} °C</p>` : ''}
+            </div>
+          `).join('');
+        }
+
+        if (!res.vacunas || res.vacunas.length === 0) {
+          vacunasDiv.innerHTML = '<p class="texto-tenue">Sin vacunas registradas.</p>';
+        } else {
+          vacunasDiv.innerHTML = res.vacunas.map((v) => `
+            <div class="mb-1">
+              <strong>${esc(v.nombre_vacuna)}</strong> — ${soloFecha(v.fecha_aplicacion)}
+              ${v.proxima_a_vencer ? '<span class="badge bg-warning text-dark">Próxima a vencer</span>' : ''}
+            </div>
+          `).join('');
+        }
       } catch (e) {
-        document.getElementById('historialContenido').innerHTML = `<div class="alert alert-danger">${esc(mensajeError(e))}</div>`;
+        consultasDiv.innerHTML = `<div class="alert alert-danger">${esc(mensajeError(e))}</div>`;
+        vacunasDiv.innerHTML = '';
       }
     }
 

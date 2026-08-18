@@ -233,6 +233,9 @@
               <option value="">Todos los dueños</option>
             </select>
             <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaMascota">Limpiar</button>
+            <input type="text" id="buscarMascotaInactiva" class="form-control" style="max-width:420px" placeholder="Buscar mascota dada de baja por nombre, especie o expediente">
+            <button class="btn btn-outline-light" id="btnBuscarMascotaInactiva">Buscar dadas de baja</button>
+            <button class="btn btn-outline-secondary" id="btnLimpiarBusquedaMascotaInactiva">Limpiar</button>
             <button class="btn btn-primary ms-auto" id="btnAgregarMascota" data-bs-toggle="modal" data-bs-target="#modalMascota">Agregar mascota</button>
           </div>
           <div class="table-responsive">
@@ -275,7 +278,7 @@
             </div>
             <div class="col-auto">
               <label class="form-label small mb-0">Fecha</label>
-              <input type="date" id="filtroFecha" class="form-control">
+              <input type="date" id="filtroFecha" class="form-control" min="{{ date('Y-m-d') }}">
             </div>
             <div class="col-auto">
               <button class="btn btn-outline-light" id="btnFiltrarCitas">Filtrar</button>
@@ -283,6 +286,7 @@
             <div class="col-auto ms-auto">
               <button class="btn btn-primary" id="btnAgendarCita" data-bs-toggle="modal" data-bs-target="#modalCita">Agendar cita</button>
             </div>
+             <button id="btnReintentarCita" class="btn btn-outline-warning d-none" type="button">Reintentar formulario('sin guardar')</button>
           </div>
           <div id="filtroMascotaInfo" class="mb-2"></div>
           <div class="table-responsive">
@@ -311,6 +315,7 @@
                   <button type="button" class="btn btn-primary ms-auto" id="btnAgregarProveedor" data-bs-toggle="modal" data-bs-target="#modalProveedor">
                     Agregar proveedor
                   </button>
+                  <button id="btnReintentarProveedor" class="btn btn-outline-warning d-none" type="button">Reintentar formulario('sin guardar')</button>
                 </div>
                 <div class="table-responsive">
                   <table class="table table-striped table-hover align-middle">
@@ -561,7 +566,7 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Fecha de nacimiento</label>
-              <input required type="date" class="form-control" id="mascota_fecha_nacimiento"
+              <input type="date" class="form-control" id="mascota_fecha_nacimiento"
                 max="{{ now()->subDay()->format('Y-m-d') }}" min="{{ now()->subYears(30)->format('Y-m-d') }}">
               <div class="form-text">No puede ser hoy, una fecha futura, ni de hace más de 30 años.</div>
             </div>
@@ -800,7 +805,7 @@
             <p class="mb-2">Medicamento: <strong id="movimiento_medicamento_nombre"></strong></p>
             <div class="mb-3">
               <label class="form-label">Cantidad</label>
-              <input type="number" id="movimiento_cantidad" class="form-control" required min="0.01" step="0.01">
+              <input type="number" id="movimiento_cantidad" class="form-control" required min="1" step="1">
             </div>
             <div class="mb-3">
               <label class="form-label">Motivo (opcional)</label>
@@ -1180,8 +1185,8 @@
     selectFiltro.innerHTML = '<option value="">Todos los dueños</option>';
 
     res.data.forEach((d) => {
-      selectMascota.innerHTML += `<option value="${d.id}">${esc(d.nombre_completo)}</option>`;
-      selectFiltro.innerHTML += `<option value="${d.id}">${esc(d.nombre_completo)}</option>`;
+    selectMascota.innerHTML += `<option value="${d.id}">${esc(d.correo)} (${esc(d.nombre_completo)})</option>`;
+    selectFiltro.innerHTML += `<option value="${d.id}">${esc(d.nombre_completo)} (${esc(d.correo)})</option>`; 
     });
   } catch (e) {
     mostrarAlerta(mensajeError(e), 'danger');
@@ -1489,41 +1494,45 @@
     mostrarAlerta(mensajeError(e), 'danger');
   }
 }
-    function renderMascotas(mascotas) {
-      mascotasCache = {};
-      mascotas.forEach((m) => { mascotasCache[m.id] = m; });
-      const tbody = document.getElementById('tablaMascotas');
+    function renderMascotas(mascotas, inactivas = false) {
+  mascotasCache = {};
+  mascotas.forEach((m) => { mascotasCache[m.id] = m; });
+  const tbody = document.getElementById('tablaMascotas');
 
-      if (!mascotas || mascotas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" class="text-center">No se encontraron mascotas.</td></tr>`;
-        return;
-      }
+  if (!mascotas || mascotas.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="10" class="text-center">No se encontraron mascotas${inactivas ? ' dadas de baja' : ''}.</td></tr>`;
+    return;
+  }
 
-      tbody.innerHTML = mascotas.map((m) => {
-        const dueno = duenosCache[m.dueno_id];
-        const fotoHtml = m.foto_url
-          ? `<img src="${esc(m.foto_url)}" alt="Foto de ${esc(m.nombre)}" class="rounded" style="width:40px; height:40px; object-fit:cover;">`
-          : '<span class="text-secondary">—</span>';
-        return `
-        <tr>
-          <td>${fotoHtml}</td>
-          <td>${esc(m.numero_expediente)}</td>
-          <td>${esc(m.nombre)}</td>
-          <td>${esc(m.especie)}</td>
-          <td>${esc(m.raza || '')}</td>
-          <td>${esc(m.sexo)}</td>
-          <td>${soloFecha(m.fecha_nacimiento)}</td>
-          <td>${esc(m.color || '')}</td>
-          <td>${esc(dueno ? dueno.nombre_completo : m.dueno_id)}</td>
-          <td>
-            <button class="btn btn-sm btn-outline-light mb-1" data-accion="historial" data-id="${m.id}">Historial</button>
-            <button class="btn btn-sm btn-warning mb-1" data-accion="editar" data-id="${m.id}">Editar</button>
-            <button class="btn btn-sm btn-danger mb-1" data-accion="baja" data-id="${m.id}">Baja</button>
-          </td>
-        </tr>
-      `;
-      }).join('');
-    }
+  tbody.innerHTML = mascotas.map((m) => {
+    const dueno = duenosCache[m.dueno_id];
+    const fotoHtml = m.foto_url
+      ? `<img src="${esc(m.foto_url)}" alt="Foto de ${esc(m.nombre)}" class="rounded" style="width:40px; height:40px; object-fit:cover;">`
+      : '<span class="text-secondary">—</span>';
+
+   const acciones = inactivas
+  ? `<button class="btn btn-sm btn-outline-light mb-1" data-accion="historial" data-id="${m.id}">Historial</button>
+     <button class="btn btn-sm btn-success mb-1" data-accion="reactivar" data-id="${m.id}">Reactivar</button>`
+  : `<button class="btn btn-sm btn-outline-light mb-1" data-accion="historial" data-id="${m.id}">Historial</button>
+     <button class="btn btn-sm btn-warning mb-1" data-accion="editar" data-id="${m.id}">Editar</button>
+     <button class="btn btn-sm btn-danger mb-1" data-accion="baja" data-id="${m.id}">Baja</button>`;
+
+    return `
+    <tr>
+      <td>${fotoHtml}</td>
+      <td>${esc(m.numero_expediente)}</td>
+      <td>${esc(m.nombre)}</td>
+      <td>${esc(m.especie)}</td>
+      <td>${esc(m.raza || '')}</td>
+      <td>${esc(m.sexo)}</td>
+      <td>${soloFecha(m.fecha_nacimiento)}</td>
+      <td>${esc(m.color || '')}</td>
+      <td>${esc(dueno ? dueno.nombre_completo : m.dueno_id)}</td>
+      <td>${acciones}</td>
+    </tr>
+  `;
+  }).join('');
+}
 
     document.getElementById('btnBuscarMascota').addEventListener('click', fetchMascotas);
     document.getElementById('buscarMascota').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); fetchMascotas(); } });
@@ -1546,6 +1555,7 @@
       mostrarFotoPreview(null);
       document.getElementById('modalMascotaTitulo').innerText = 'Agregar mascota';
     });
+    
 
     document.getElementById('tablaMascotas').addEventListener('click', (e) => {
       const boton = e.target.closest('button[data-accion]');
@@ -1566,7 +1576,7 @@
         document.getElementById('mascota_color').value = mascota.color || '';
         document.getElementById('mascota_dueno_id').disabled = true;
         document.getElementById('mascota_especie').disabled = true;
-        document.getElementById('mascota_raza').disabled = true;
+        document.getElementById('mascota_raza').disabled = false;
         mascotaFotoArchivo = null;
         mostrarFotoPreview(mascota.foto_url || null);
         document.getElementById('modalMascotaTitulo').innerText = `Editar mascota — ${mascota.numero_expediente}`;
@@ -1584,6 +1594,19 @@
       if (boton.dataset.accion === 'historial') {
         irAHistorialMascota(mascota.id, mascota.nombre);
       }
+
+      if (boton.dataset.accion === 'reactivar') {
+    if (confirm(`¿Deseas reactivar a ${mascota.nombre}?`)) {
+      apiFetch(`/mascotas/${id}/reactivar`, { method: 'PUT' })
+        .then(() => {
+          mostrarAlerta('Mascota reactivada');
+          document.getElementById('buscarMascotaInactiva').value = '';
+          mostrandoInactivas = false;
+          fetchMascotas();
+        })
+        .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
+    }
+  }
     });
 
     document.getElementById('formMascota').addEventListener('submit', async (e) => {
@@ -1604,7 +1627,11 @@
       const formData = new FormData();
       formData.append('nombre', document.getElementById('mascota_nombre').value);
       formData.append('sexo', document.getElementById('mascota_sexo').value);
+      if (fechaNacimiento) {
       formData.append('fecha_nacimiento', fechaNacimiento);
+      }
+
+      formData.append('raza', document.getElementById('mascota_raza').value);
       formData.append('color', document.getElementById('mascota_color').value);
       if (mascotaFotoArchivo) {
         formData.append('foto', mascotaFotoArchivo);
@@ -1629,9 +1656,34 @@
       }
     });
 
+    let mostrandoInactivas = false;
+
+document.getElementById('btnBuscarMascotaInactiva').addEventListener('click', async () => {
+  const buscar = document.getElementById('buscarMascotaInactiva').value.trim();
+  try {
+    const params = buscar ? `?buscar=${encodeURIComponent(buscar)}` : '';
+    const res = await apiFetch(`/mascotas/inactivas${params}`);
+    mostrandoInactivas = true;
+    renderMascotas(res.data, true);
+  } catch (e) {
+    mostrarAlerta(mensajeError(e), 'danger');
+  }
+});
+
+document.getElementById('buscarMascotaInactiva').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btnBuscarMascotaInactiva').click(); }
+});
+
+document.getElementById('btnLimpiarBusquedaMascotaInactiva').addEventListener('click', () => {
+  document.getElementById('buscarMascotaInactiva').value = '';
+  mostrandoInactivas = false;
+  fetchMascotas();
+});
+
     // ============ CITAS ============
     let citasCache = {};
     let mascotaHistorialId = null;
+    let citaConDatosPendientes = false;
 
     async function cargarVeterinarios() {
       try {
@@ -1642,7 +1694,8 @@
           const placeholder = idSelect === 'filtroVeterinario' ? '<option value="">Todos</option>' : '<option value="">Selecciona un veterinario</option>';
           select.innerHTML = placeholder;
           res.data.forEach((v) => {
-            select.innerHTML += `<option value="${v.id}">${esc(v.nombre_completo)}</option>`;
+          const texto = idSelect === 'filtroVeterinario'? `${esc(v.nombre_completo)} (${esc(v.correo || 'Sin correo')})`: esc(v.nombre_completo);
+          select.innerHTML += `<option value="${v.id}">${texto}</option>`;
           });
         });
       } catch (e) {
@@ -1847,7 +1900,8 @@
         select.innerHTML = res.data.map((m) => {
           const dueno = duenosCache[m.dueno_id];
           const duenoNombre = dueno ? dueno.nombre_completo : m.dueno_id;
-          return `<option value="${m.id}">${esc(m.nombre)} (${esc(m.numero_expediente)}) — ${esc(duenoNombre)}</option>`;
+          const duenoEmail = (m.dueno && m.dueno.correo) || (dueno && dueno.correo) || 'Sin correo';
+          return `<option value="${m.id}">${esc(m.nombre)} — Exp: ${esc(m.numero_expediente)} — Correo: ${esc(duenoEmail)} (${esc(duenoNombre)})</option>`;
         }).join('');
       } catch (e) {
         mostrarAlerta(mensajeError(e), 'danger');
@@ -1877,10 +1931,16 @@
       try {
         await apiFetch('/citas', { method: 'POST', body: JSON.stringify(payload) });
         mostrarAlerta('Cita agendada');
+        document.getElementById('formCita').reset();
+        citaConDatosPendientes = false;
+        document.getElementById('btnReintentarCita').classList.add('d-none');
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCita')).hide();
         mostrarFechaEnCalendario(payload.fecha);
       } catch (err) {
         mostrarAlerta(mensajeError(err), 'danger');
+        citaConDatosPendientes = true;
+        document.getElementById('btnReintentarCita').classList.remove('d-none');
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCita')).hide();
       }
     });
 
@@ -1954,9 +2014,21 @@
 
     document.getElementById('tabBtnCitas').addEventListener('click', () => { if (Object.keys(citasCache).length === 0) fetchCitas(); });
     document.getElementById('tabBtnMascotas').addEventListener('click', () => { if (Object.keys(mascotasCache).length === 0) fetchMascotas(); });
-    
+
+    document.getElementById('btnReintentarCita').addEventListener('click', () => {
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCita')).show();
+    });
+
+    document.getElementById('btnCancelarCita')?.addEventListener('click', () => {
+    document.getElementById('formCita').reset();
+    citaConDatosPendientes = false;
+    document.getElementById('btnReintentarCita').classList.add('d-none');
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCita')).hide();
+    });
+
    // Proveedor
 let proveedoresCache = {};
+let proveedorConDatosPendientes = false;
 
 async function fetchProveedores() {
   try {
@@ -2099,10 +2171,16 @@ document.getElementById('formProveedor').addEventListener('submit', async (e) =>
       await apiFetch('/proveedores', { method: 'POST', body: JSON.stringify(payload) });
       mostrarAlerta('Proveedor registrado correctamente');
     }
+    document.getElementById('formProveedor').reset();
+    proveedorConDatosPendientes = false;
+    document.getElementById('btnReintentarProveedor').classList.add('d-none');
     bootstrap.Modal.getOrCreateInstance(document.getElementById('modalProveedor')).hide();
     fetchProveedores();
   } catch (err) {
     mostrarAlerta(mensajeError(err), 'danger');
+    proveedorConDatosPendientes = true;
+    document.getElementById('btnReintentarProveedor').classList.remove('d-none');
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalProveedor')).hide();
   }
 });
 
@@ -2119,6 +2197,10 @@ document.getElementById('tabBtnProveedores').addEventListener('click', () => {
 document.getElementById('tabBtnInventario').addEventListener('click', () => {
   if (Object.keys(medicamentosCache).length === 0) fetchMedicamentos();
   if (Object.keys(proveedoresCache).length === 0) fetchProveedores();
+});
+
+document.getElementById('btnReintentarProveedor').addEventListener('click', () => {
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('modalProveedor')).show();
 });
 
 // ============ MEDICAMENTOS ============
@@ -2180,7 +2262,7 @@ async function cargarProveedoresSelect() {
     const select = document.getElementById('medicamento_proveedor_id');
     select.innerHTML = '<option value="">Sin proveedor asignado</option>';
     res.data.forEach((p) => {
-      select.innerHTML += `<option value="${p.id}">${esc(p.nombre)}</option>`;
+     select.innerHTML += `<option value="${p.id}">${esc(p.nombre)} (${esc(p.correo)})</option>`; 
     });
   } catch (e) {
     mostrarAlerta(mensajeError(e), 'danger');
@@ -2226,6 +2308,8 @@ document.getElementById('btnAgregarMedicamento').addEventListener('click', async
   document.getElementById('modalMedicamentoTitulo').innerText = 'Agregar medicamento';
   document.getElementById('medicamento_cantidad_actual_grupo').style.display = 'block';
   document.getElementById('medicamento_cantidad_actual').required = true;
+  document.getElementById('medicamento_tipo').disabled = false;
+
   await cargarProveedoresSelect();
 });
 
@@ -2244,12 +2328,14 @@ document.getElementById('tablaMedicamentos').addEventListener('click', async (e)
     document.getElementById('medicamento_id').value = medicamento.id;
     document.getElementById('medicamento_nombre').value = medicamento.nombre;
     document.getElementById('medicamento_tipo').value = medicamento.tipo;
+
     document.getElementById('medicamento_unidad').value = medicamento.unidad_medida;
     document.getElementById('medicamento_cantidad_minima').value = medicamento.cantidad_minima_alerta;
     document.getElementById('medicamento_proveedor_id').value = medicamento.proveedor_id || '';
     // La cantidad actual solo se ajusta vía Entrada/Salida, no se edita aquí.
     document.getElementById('medicamento_cantidad_actual_grupo').style.display = 'none';
     document.getElementById('medicamento_cantidad_actual').required = false;
+    document.getElementById('medicamento_tipo').disabled = true;
     document.getElementById('modalMedicamentoTitulo').innerText = `Editar medicamento — ${medicamento.nombre}`;
     bootstrap.Modal.getOrCreateInstance(document.getElementById('modalMedicamento')).show();
   }
@@ -2281,6 +2367,13 @@ document.getElementById('tablaMedicamentos').addEventListener('click', async (e)
       mostrarAlerta(mensajeError(err), 'danger');
     }
   }
+  if (accion === 'reactivar') {
+  if (confirm(`¿Deseas reactivar a ${medicamento.nombre}?`)) {
+    apiFetch(`/medicamentos/${id}/reactivar`, { method: 'PUT' })
+      .then(() => { mostrarAlerta('Medicamento reactivado'); fetchMedicamentos(); })
+      .catch((err) => mostrarAlerta(mensajeError(err), 'danger'));
+  }
+}
 });
 
 function renderHistorialMedicamento(movimientos, nombreMedicamento) {
@@ -2352,6 +2445,7 @@ document.getElementById('formMovimiento').addEventListener('submit', async (e) =
     fetchMedicamentos();
   } catch (err) {
     mostrarAlerta(mensajeError(err), 'danger');
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalMovimiento')).hide();
   }
 });
 
@@ -2419,7 +2513,7 @@ async function poblarFiltroVeterinarioReportes() {
     const res = await apiFetch('/veterinarios');
     const select = document.getElementById('reporte_veterinario_id');
     select.innerHTML = '<option value="">Todos</option>' +
-      res.data.map((v) => `<option value="${v.id}">${esc(v.nombre_completo)}</option>`).join('');
+    res.data.map((v) => `<option value="${v.id}">${esc(v.nombre_completo)} (${esc(v.correo || 'Sin correo')})</option>`).join('');
   } catch (e) {
     mostrarAlerta(mensajeError(e), 'danger');
   }

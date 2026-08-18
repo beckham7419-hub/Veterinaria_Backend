@@ -18,12 +18,12 @@ class UpdateMascotaRequest extends FormRequest
         return [
             'dueno_id' => 'prohibited',
             'especie' => 'prohibited',
-            'raza' => 'prohibited',
+            'raza' => 'sometimes|nullable|string|max:100',
             'nombre' => 'sometimes|required|string|min:2|max:100',
             'sexo' => 'sometimes|required|string|in:macho,hembra',
             'fecha_nacimiento' => [
                 'sometimes',
-                'required',
+                'nullable',
                 'date',
                 'before:today',
                 'after_or_equal:'.now()->subYears(30)->toDateString(),

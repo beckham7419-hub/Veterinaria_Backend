@@ -32,6 +32,7 @@ class MedicamentoRepository
 
     public function actualizarMedicamento(Medicamento $medicamento, array $data) {
         try {
+             unset($data['tipo']); 
             $medicamento->update($data);
             return ["mensaje" => "Medicamento actualizado", "medicamento" => $medicamento];
         }
@@ -63,5 +64,16 @@ class MedicamentoRepository
             throw new \Exception("No se pudo encontrar el medicamento: " . $e -> getMessage(), 0, $e);
         }
     }
+
+    public function reactivarMedicamento(Medicamento $medicamento) {
+    try {
+        $medicamento->activo = true;
+        $medicamento->save();
+        return ["mensaje" => "Medicamento reactivado", "medicamento" => $medicamento];
+    }
+    catch (\Exception $e) {
+        throw new \Exception("No se pudo reactivar el medicamento: " . $e -> getMessage(), 0, $e);
+    }
+}
 
 }

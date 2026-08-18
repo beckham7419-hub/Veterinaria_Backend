@@ -174,4 +174,43 @@ class MascotaRepository
             throw new \Exception("No se pudo obtener el historial: " . $e -> getMessage(), 0, $e);
         }
     }
+
+    public function obtenerMascotasInactivas(?string $buscar = null)
+{
+    try {
+        $query = Mascota::where('activo', false);
+
+        if ($buscar) {
+            $query->where(function ($q) use ($buscar) {
+                $q->where('nombre', 'like', "%{$buscar}%")
+                    ->orWhere('especie', 'like', "%{$buscar}%")
+                    ->orWhere('numero_expediente', 'like', "%{$buscar}%");
+            });
+        }
+
+        $mascotas = $query->get();
+
+        return [
+            'mensaje' => 'Mascotas inactivas obtenidas',
+            'data' => $mascotas,
+        ];
+    } catch (\Exception $e) {
+        throw new \Exception('No se pudieron obtener las mascotas inactivas: '.$e->getMessage(), 0, $e);
+    }
+}
+
+public function reactivarMascota(Mascota $mascota)
+{
+    try {
+        $mascota->activo = true;
+        $mascota->save();
+
+        return [
+            'mensaje' => 'Mascota reactivada',
+            'mascota' => $mascota,
+        ];
+    } catch (\Exception $e) {
+        throw new \Exception('No se pudo reactivar la mascota: '.$e->getMessage(), 0, $e);
+    }
+}
 }
