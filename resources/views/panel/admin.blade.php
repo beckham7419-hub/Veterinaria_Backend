@@ -1059,6 +1059,7 @@
         document.getElementById('modalUsuarioTitulo').innerText = 'Actualizar empleado';
         document.getElementById('usuario_contrasena_label').innerText = 'Nueva contraseña (dejar en blanco para no cambiar)';
         document.getElementById('usuario_contrasena').required = false;
+        document.getElementById('usuario_contrasena_confirm').required = false;
         document.getElementById('errorContrasenaMatch').classList.add('d-none');
         document.getElementById('usuario_contrasena_confirm').classList.remove('is-invalid');
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalUsuario')).show();
@@ -1311,6 +1312,7 @@
         document.getElementById('modalDuenoTitulo').innerText = 'Editar dueño';
         document.getElementById('dueno_contrasena_label').innerText = 'Nueva contraseña (dejar en blanco para no cambiar)';
         document.getElementById('dueno_contrasena').required = false;
+        document.getElementById('dueno_contrasena_confirm').required = false;
         document.getElementById('errorContrasenaMatchDueno').classList.add('d-none');
         document.getElementById('dueno_contrasena_confirm').classList.remove('is-invalid');
         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDueno')).show();
