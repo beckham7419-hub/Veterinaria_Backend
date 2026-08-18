@@ -8,7 +8,7 @@ class MedicamentoRepository
 {
     public function obtenerMedicamentos() {
         try {
-            $medicamentos = Medicamento::where("activo", true)->get()->map(function ($medicamento) {
+            $medicamentos = Medicamento::with('proveedor')->where("activo", true)->get()->map(function ($medicamento) {
                 $medicamento->stock_bajo = $medicamento->cantidad_actual < $medicamento->cantidad_minima_alerta;
                 return $medicamento;
             });
@@ -50,4 +50,18 @@ class MedicamentoRepository
             throw new \Exception("No se pudo dar de baja al medicamento: " . $e -> getMessage(), 0, $e);
         }
     }
+
+    public function obtenerUnMedicamento(string $nombre) {
+        try {
+            $medicamento = Medicamento::with('proveedor')->where('nombre', 'like', "%{$nombre}%")->first();
+            return [
+                "mensaje" => $medicamento?"Medicamento encontrado":"Medicamento no encontrado",
+                "data" => $medicamento
+            ];
+        } 
+        catch (\Exception $e) {
+            throw new \Exception("No se pudo encontrar el medicamento: " . $e -> getMessage(), 0, $e);
+        }
+    }
+
 }

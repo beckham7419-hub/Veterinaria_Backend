@@ -7,6 +7,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
+use App\Rules\ValidarHoraVeterinaria;
 
 class StoreMiCitaRequest extends FormRequest
 {
@@ -36,7 +37,7 @@ class StoreMiCitaRequest extends FormRequest
                 ->where('activo', true)],
             'motivo' => 'required|string|max:255',
             'fecha' => 'required|date|after_or_equal:today',
-            'hora' => 'required|date_format:H:i',
+            'hora' => ['required', 'date_format:H:i', new ValidarHoraVeterinaria(7, 22)]
         ];
     }
 

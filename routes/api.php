@@ -62,6 +62,9 @@ Route::get('citas/{cita}/consulta', [ConsultaController::class, 'show'])->middle
 Route::get('consultas/{consulta}/archivos', [ArchivoConsultaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista,administrador']);
 Route::get('mascotas/{mascota}/vacunas', [VacunaController::class, 'index'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista,administrador']);
 Route::apiResource('proveedores', ProveedorController::class)->parameters(['proveedores' => 'proveedor'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
+
+Schedule::command('app:vencer-citas-no-confirmadas')->everyFiveMinutes();
+
 Route::apiResource('medicamentos', MedicamentoController::class)->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 Route::post('medicamentos/{medicamento}/entrada', [MovimientoInventarioController::class, 'entrada'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
 Route::post('medicamentos/{medicamento}/salida', [MovimientoInventarioController::class, 'salida'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador,veterinario']);
@@ -86,3 +89,10 @@ Route::post('auth/usuarios/restablecer-contrasena', [AuthUsuarioController::clas
 Route::post('auth/duenos/olvide-contrasena', [AuthDuenoController::class, 'olvideContrasena']);
 Route::post('auth/duenos/restablecer-contrasena', [AuthDuenoController::class, 'restablecerContrasena']);
 Route::get('mascotas/{mascota}/historial', [MascotaController::class, 'historial'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista,administrador']);
+
+Route::get('mis-citas/veterinarios-disponibles', [UsuarioController::class, 'veterinarios'])->middleware(['auth:duenos', 'token.valido:duenos']);
+
+Route::post('proveedores/buscar-correo', [ProveedorController::class, 'readOne'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
+Route::put('/proveedores/{id}/reactivar', [ProveedorController::class, 'reactivar'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);
+
+Route::post('medicamentos/buscar-nombre', [MedicamentoController::class, 'readOne'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:administrador']);

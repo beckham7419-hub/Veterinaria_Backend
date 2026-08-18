@@ -16,6 +16,19 @@ class ProveedorRepository
         }
     }
 
+      public function obtenerUnProveedor(string $correo) {
+        try {
+            $proveedor = Proveedor::where('correo',$correo)->first();
+            return [
+                "mensaje" => $proveedor?"Proveedor encontrado":"Proveedor no encontrado",
+                "data" => $proveedor
+            ];
+        } 
+        catch (\Exception $e) {
+            throw new \Exception("No se pudo encontrar el proveedor: " . $e -> getMessage(), 0, $e);
+        }
+    }
+
     public function registrarProveedor(array $data) {
         try {
             $proveedor = Proveedor::create($data);
@@ -46,4 +59,17 @@ class ProveedorRepository
             throw new \Exception("No se pudo dar de baja al proveedor: " . $e -> getMessage(), 0, $e);
         }
     }
+
+   public function reactivarProveedor(int $id)
+{
+     try {
+    $proveedor = Proveedor::findOrFail($id);
+    $proveedor->activo = true;
+    $proveedor->save();
+
+    return ['mensaje' => 'Proveedor reactivado', 'proveedor' => $proveedor];
+     }catch (\Exception $e) {
+            throw new \Exception('No se pudo reactivar al proveedor: '.$e->getMessage(), 0, $e);
+        }
+}
 }

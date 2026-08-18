@@ -272,7 +272,7 @@ class CitaRepository
             $this->expirarAgendadasVencidas();
 
             $citas = Cita::where('dueno_id', $duenoId)
-                ->whereIn('estado', ['agendada', 'confirmada'])
+                ->whereIn('estado', ['agendada', 'confirmada', 'cancelada'])
                 ->orderBy('fecha')->orderBy('hora')
                 ->get();
 

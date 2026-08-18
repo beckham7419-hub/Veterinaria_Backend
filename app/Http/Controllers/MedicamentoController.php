@@ -6,6 +6,7 @@ use App\Models\Medicamento;
 use App\Http\Requests\StoreMedicamentoRequest;
 use App\Http\Requests\UpdateMedicamentoRequest;
 use App\Http\Repositories\MedicamentoRepository;
+use Illuminate\Http\Request;
 
 class MedicamentoController extends Controller
 {
@@ -63,4 +64,21 @@ class MedicamentoController extends Controller
             return response()->json(["mensaje" => $e -> getMessage()],500);
         }
     }
+
+    public function readOne(Request $request) {
+    try {
+        $request->validate([
+            'nombre' => 'required|string'
+        ]);
+
+        $nombre = $request->input('nombre');
+        $resultado = $this->medicamentoRepository->obtenerUnMedicamento($nombre);
+
+        return response()->json($resultado, $resultado['data'] ? 200 : 404);
+    }
+    catch (\Exception $e) {
+        return response()->json(["mensaje" => $e -> getMessage()], 404);
+    }
+}
+
 }

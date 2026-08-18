@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
+use App\Rules\ValidarHoraVeterinaria;
 
 class UpdateCitaRequest extends FormRequest
 {
@@ -21,7 +22,7 @@ class UpdateCitaRequest extends FormRequest
             Rule::exists('usuarios', 'id')->where('rol', 'veterinario')],
             'motivo' => 'sometimes|required|string|max:255',
             'fecha' => 'sometimes|required|date|after_or_equal:today',
-            'hora' => 'sometimes|required|date_format:H:i'
+            'hora' => ['sometimes', 'required', 'date_format:H:i', new ValidarHoraVeterinaria(7, 22)],
         ];
     }
 
