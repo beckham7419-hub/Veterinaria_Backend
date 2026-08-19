@@ -96,6 +96,7 @@ Route::post('auth/usuarios/restablecer-contrasena', [AuthUsuarioController::clas
 Route::post('auth/duenos/olvide-contrasena', [AuthDuenoController::class, 'olvideContrasena']);
 Route::post('auth/duenos/restablecer-contrasena', [AuthDuenoController::class, 'restablecerContrasena']);
 Route::get('mascotas/{mascota}/historial', [MascotaController::class, 'historial'])->middleware(['auth:usuarios', 'token.valido:usuarios', 'rol:veterinario,recepcionista,administrador']);
+Route::get('mis-mascotas/{mascota}/historial', [MisMascotasController::class, 'historial'])->middleware(['auth:duenos', 'token.valido:duenos']);
 
 Route::get('mis-citas/veterinarios-disponibles', [UsuarioController::class, 'veterinarios'])->middleware(['auth:duenos', 'token.valido:duenos']);
 

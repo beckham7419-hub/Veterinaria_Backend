@@ -805,7 +805,7 @@
             <p class="mb-2">Medicamento: <strong id="movimiento_medicamento_nombre"></strong></p>
             <div class="mb-3">
               <label class="form-label">Cantidad</label>
-              <input type="number" id="movimiento_cantidad" class="form-control" required min="1" step="1">
+              <input type="number" id="movimiento_cantidad" class="form-control" required min="1"max="20000" step="1">
             </div>
             <div class="mb-3">
               <label class="form-label">Motivo (opcional)</label>
